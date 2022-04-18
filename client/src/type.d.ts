@@ -154,6 +154,10 @@ export interface IShoppingCategory {
     description?: string
 }
 
+export interface IShoppingItemProps {
+    shoppingItem: IShoppingItem
+}
+
 export type ShoppingItemApiDataType = {
     shoppingItem?: IShoppingItem,
     shoppingItems: IShoppingItem[]
@@ -163,6 +167,10 @@ export interface IShoppingItem {
     category: string,
     name: string,
     description?: string
+}
+
+export interface IShoppingListProps {
+    shoppingList: IShoppingList
 }
 
 export type ShoppingListApiDataType = {
