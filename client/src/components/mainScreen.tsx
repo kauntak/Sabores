@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { getEmployee } from "../api";
 import { IEmployee, IEmployeeProps } from "../type";
 
 type Props = IEmployeeProps & {
@@ -13,10 +14,17 @@ function searchEmployees(input:string, list:IEmployee[]):IEmployee[] {
 }
 
 const LoginScreen: React.FC = () => {
-    const [employeeNameInput, setEmployeeNameInpu] = useState("");
-    const [employeeList, setEmployeeList] = useState([]);
+    const [employeeNameInput, setEmployeeNameInput] = useState("");
+    const [employeeList, setEmployeeList] = useState();
 
-    const 
+    useEffect(() => {
+        getEmployee(null).then( employees => {
+            setEmployeeList(employees);
+        }
+
+        );
+
+    }, []);
 
     return (
         <>
