@@ -4,8 +4,7 @@ const ObjectId = Schema.Types.ObjectId;
 
 export interface IReminder {
     description: string,
-    role: Types.ObjectId,
-    date: Date
+    role: Types.ObjectId
 }
 
 export interface IReminderDoc extends Document, IReminder {};
@@ -19,10 +18,6 @@ const reminderSchema = new Schema<IReminder>({
         type: ObjectId,
         ref: 'role',
         required: true
-    },
-    date: {
-        type: Date,
-        default: Date.now
     }
 });
 

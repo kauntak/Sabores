@@ -1,5 +1,5 @@
 // export interface IModule{
-//     _id: string,
+//     '_id': string,
 //     name: string
 // }
 export type RoleApiDataType = {
@@ -8,8 +8,9 @@ export type RoleApiDataType = {
 }
 
 export interface IRole {
-    _id: string,
+    '_id'?: string,
     name: string,
+    type: accessRoleType,
     description?: string
 }
 
@@ -22,13 +23,22 @@ export type EmployeeApiDataType = {
     employees: IEmployee[]
 }
 
+export type LoginApiDataType = {
+    token: string,
+    employee: Omit<IEmployee, "password">
+}
+
+type accessRoleType = "Administrator"| "Manager" | "Employee";
+
 export interface IEmployee {
-    _id: string,
+    '_id'?: string,
     firstName: string,
     middleName?: string,
     lastName: string,
+    password?:string,
     role: string,
-    access: [{module: string}],
+    checkedIn?: boolean,
+    access: {locationId: string}[],
     email?: string,
     phone?: string,
     address?: string
@@ -38,13 +48,24 @@ export interface IEmployeeProps {
     employee: IEmployee
 }
 
+export interface IModule {
+    '_id': string,
+    moduleName?:string,
+    displayName:string
+}
+
+export type ModuleApiDataType= {
+    modules: IModule[]
+}
+
+
 export type LocationApiDataType = {
     location?: ILocation,
     locations: ILocation[]
 }
 
 export interface ILocation {
-    _id: string
+    '_id'?: string
     name: string
 }
 
@@ -58,7 +79,7 @@ export type MessageApiDataType = {
 }
 
 export interface IMessage {
-    _id: string,
+    '_id': string,
     message: string,
     employee: string,
     date: Date
@@ -68,18 +89,22 @@ export interface IMessageProps {
     message: IMessage
 }
 
+
 export type EmployeeLogApiDataType = {
     employeeLog?: IEmployeeLog,
-    employeeLogs: IEmployeeLog[]
+    employeeLogs?: IEmployeeLog[]
 }
 export interface IEmployeeLog {
-    _id: string,
+    '_id': string,
     description: string,
     employee: string,
     checkInTime?: Date,
     checkOutTime?: Date,
     comment?: string,
-    reminder?: string
+    reminder?: [{
+        reminderId:string,
+        completed:boolean
+    }]
 }
 
 export interface IEmployeeLogProps {
@@ -92,7 +117,7 @@ export type OrderCategoryApiDataType = {
 }
 
 export interface IOrderCategory {
-    _id: string,
+    '_id'?: string,
     name: string,
     description? : string
 }
@@ -107,7 +132,7 @@ export type OrderItemApiDataType = {
 }
 
 export interface IOrderItem {
-    _id: string,
+    '_id'?: string,
     name: string,
     description?: string,
     category: string
@@ -123,20 +148,18 @@ export type OrderApiDataType = {
 }
 
 export interface IOrder {
-    _id: string,
+    '_id'?: string,
     location: string,
-    requestedBy: string,
     requestDate: Date,
     requestComment? : string,
     fulfilledBy?: string,
     fulfillDate?: Date,
     fulfillComment?: string,
-    items: [
-        {
-            item: string,
-            quantity: Number
-        }
-    ]
+    items: {
+        item: string,
+        quantity: number,
+        employee: string
+    }[]
 }
 
 export interface IOrderProps {
@@ -149,7 +172,7 @@ export type ShoppingCategoryApiDataType = {
 }
 
 export interface IShoppingCategory {
-    _id: string,
+    '_id'?: string,
     name: string,
     description?: string
 }
@@ -163,7 +186,7 @@ export type ShoppingItemApiDataType = {
     shoppingItems: IShoppingItem[]
 }
 export interface IShoppingItem {
-    _id: string,
+    '_id'?: string,
     category: string,
     name: string,
     description?: string
@@ -179,15 +202,86 @@ export type ShoppingListApiDataType = {
 }
 
 export interface IShoppingList {
-    _id: string,
-    dateCreated:Date,
-    comment: string,
-    items: [
-        {
-            item: string,
-            quantity: Number,
-            employee: string
-        }
-    ]
+    '_id': string,
+    createdAt?:Date,
+    comment?: string,
+    items: {
+        item: string,
+        quantity: number,
+        employee: string
+    }[]
 }
- 
+
+export interface IReminder {
+    '_id'?: string,
+    description: string,
+    role: string
+}
+
+export type ReminderApiDataType = {
+    reminder?: IReminder,
+    reminders: IReminder[]
+}
+
+export type SuggestionListType = {
+    name:string,
+    id:string
+}
+
+export type NavListType = {
+    id?:string,
+    moduleName:ModulesType,
+    displayName:string
+}
+
+export type ReminderListType = {
+    reminder:IReminder,
+    completed:boolean
+};
+
+export type ItemListType = {
+    name:string,
+    id:string,
+    display:string
+}
+
+export type ItemObjectType = {
+    [key:string]:{
+        quantity:number,
+        employee:string
+    }
+}
+
+export type CategoryListType = {
+    name:string,
+    items: ItemListType[]
+}
+
+type FieldType = "Single" | "Multi";
+
+export type Field = {
+    fieldType:FieldType,
+    field: SingleField|MultiField,
+    display:string,
+    name:string,
+    required?:boolean,
+    isCensored?:boolean,
+    notMatching?:boolean
+}
+
+type SingleField = {
+    id?:string,
+    requireId?:boolean,
+    name?: string,
+    display?: string,
+    value?:string|boolean,
+    isError?:boolean
+}
+
+type MultiField = {
+    name:string,
+    list: SingleField[],
+    selected?: SingleField,
+    isMultiSelect?:boolean
+    isError?: boolean
+}

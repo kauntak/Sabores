@@ -5,7 +5,7 @@ import { IError, returnError } from "../../models/error";
 
 export async function createLocation(req: Request, res: Response): Promise<void>{
     try {
-        const body = req.body;
+        const {body} = req;
         const location = new Location(body);
         const newLocation = await location.save();
         const locations = await Location.find();
@@ -36,14 +36,11 @@ export async function updateLocation(req: Request, res: Response): Promise<void>
     }
 }
 
-
-export async function getLocation(req: Request, res:Response):Promise<void>{
+export async function getLocations(req: Request, res:Response):Promise<void>{
     try{
-        const {params: {id}} = req.body;
-        const location:ILocation|null =  id === 'all' ? null : await Location.findOne({_id:id}).exec();
-        const locations: ILocation[] = await Location.find();
+        const {params: {id}} = req;
+        const locations: ILocation[]|null = await Location.find();
         res.status(200).json({
-            location,
             locations
         });
     } catch(error) {

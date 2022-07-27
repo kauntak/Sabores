@@ -74,3 +74,5 @@ typings/
 
 # FuseBox cache
 .fusebox/
+
+client_react_redux/

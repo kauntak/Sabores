@@ -3,8 +3,10 @@ import { Schema, model, Types, Document } from "mongoose";
 const ObjectId = Schema.Types.ObjectId;
 
 export interface IShoppingList {
-    dateCreated:Date,
+    createdAt:Date,
     comment: string,
+    isCompleted?: boolean,
+    location: Types.ObjectId,
     items: [
         {
             item: Types.ObjectId,
@@ -17,13 +19,22 @@ export interface IShoppingList {
 export interface IShoppingListDoc extends Document, IShoppingList {};
 
 const shoppingListSchema = new Schema<IShoppingList>({
-    dateCreated: {
+    createdAt: {
         type: Date,
         default: Date.now,
-        required: true
+        required: true,
+        expires: '30d'
+    },
+    isCompleted: {
+        type: Boolean
     },
     comment: {
         type:String
+    },
+    location: {
+        type: ObjectId,
+        ref: "Location",
+        required: true
     },
     items:[
         {

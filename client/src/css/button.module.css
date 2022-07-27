@@ -1,0 +1,42 @@
+.button {
+    width:170px;
+    margin: 10px 10px 50px 10px;
+    padding: 10px 30px;
+    text-align: center;
+    text-transform: uppercase;
+    transition: 0.5s;
+    background-size: 200% auto;
+    border-radius: 10px;
+    display: block;
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+  }
+  
+  .button:hover {
+    background-position: right center;
+    /* change the direction of the change here */
+    color: #fff;
+    text-decoration: none;
+  }
+  
+  .button:active {
+    transform: scale(0.95);
+  }
+
+
+  .positive {
+    color: #31525b;
+    border: 2px solid #31525b;
+    box-shadow: 0px 0px 14px -7px #f09819;
+    background-image: linear-gradient(45deg, #ffa101 20%, #f5f4c4  51%, #ffa101  80%);
+  }
+
+  .negative {
+    color: #f5f4c4;
+    border: 2px solid #31525b;
+    box-shadow: 0px 0px 14px -7px #b3dee5;
+    background-image: linear-gradient(45deg, #b3dee5 20%, #31525b  51%, #b3dee5  80%);
+  }

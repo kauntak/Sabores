@@ -1,0 +1,37 @@
+.login-screen{
+    display:flex;
+    flex-direction: column;
+    -ms-flex-align: center;
+    align-items: center;
+    max-width: 800px;
+    min-width: 400px;
+    min-height: 500px;
+    height: fit-content;
+}
+
+.sabores-logo{
+    max-width: 300px;
+    width: 30em;
+    margin: 40px;
+}
+
+.input-list{
+    display: flex;
+    flex-direction: column;
+}
+
+.login-input {
+    position: relative;
+    font-size: 1em;
+    margin: 5px;
+    width: 170px;
+}
+
+.show-password-div{
+    display:flex;
+    flex-direction: row;
+}
+
+.show-password-div label{
+    color:#31525b;
+}

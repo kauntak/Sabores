@@ -1,0 +1,71 @@
+{
+    "setLanguage": {
+        "title": "es",
+        "language": "Español",
+        "flag_url": "https://flagcdn.com/16x12/es.png"
+    },
+    "idleTimer":{
+        "stillThere":"¿Sigues ahí?",
+        "logout":"Cerrar sesión",
+        "continue":"Continuar sesión"
+    },
+    "loginScreen":{
+        "employeeNamePlaceHolder":"Nombre",
+        "passwordPlaceHolder":"La Contraseña",
+        "showPassword":"Mostrar contraseña",
+        "loginButton":"Acceso",
+        "nameRequiredError":"*Se requiere el nombre.",
+        "nameNotFound":"*Nombre no encontrado.",
+        "passwordRequiredError":"*Se requiere contraseña.",
+        "unknownError":"Un error desconocido ocurrió."
+    },
+    "suggestionsList":{
+
+    },
+    "navList":{
+      "orders":"Orders",
+      "shopping":"Shopping",
+      "employee":"Employees",
+      "location":"Locations",
+      "role":"Roles",
+      "admin":"Admin",
+      "checkOut":"Check Out",
+      "home":"Home"
+    },
+    "homeScreen":{
+        "navBar": ["Página de Inicio", "Administrador", "Reloj de Salida", "Compras", "Ubicaciones"],
+        "title":"¡Sé asombroso, diviértete!",
+        "quote":"\"Las personas rara vez tienen éxito a menos que se diviertan con lo que están haciendo.\" -Dale Carnegie",
+        "yourTaskList":"Tus tareas para hoy:",
+        "checkIn":{
+            "pleaseCheckIn":"Por favor empezar el dia primero.",
+            "checkInButton": "Empezar el dia"
+        },
+        "viewShoppingList":"Shopping List",
+        "viewMessageList":"Messages",
+        "viewLogList":"Logs"
+    },
+    "admin":{
+  
+    },
+    "shopping":{
+  
+    },
+    "checkOut":{
+        "finishDay":"Do you Want to finish the day and log out?",
+        "checkoutButton": "Finish the day"
+    },
+    "warning":{
+        "ok":"OK",
+        "cancel":"Cancel",
+        "delete":"This will PERMANENTLY delete {replace}.",
+        "canNotDelete": "{replace} is being used. Can not delete.",
+        "canNotDeleteSelf": "You can not delete yourself."
+    },
+    "location":{
+        "newOrder": "New Order"
+    },
+    "dataTable":{
+      "searchToolTip":"Use commas to search different columns."
+    }
+}

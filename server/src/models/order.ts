@@ -4,16 +4,18 @@ const ObjectId = Schema.Types.ObjectId;
 
 export interface IOrder {
     location: Types.ObjectId,
-    requestedBy: Types.ObjectId,
     requestDate: Date,
     requestComment? : string,
     fulfilledBy?: Types.ObjectId,
+    isFulfilled?: boolean,
+    deliverByDate:Date,
     fulfillDate?: Date,
     fulfillComment?: string,
     items: [
         {
             item: Types.ObjectId,
-            quantity: Number
+            quantity: Number,
+            employee: Types.ObjectId
         }
     ]
 }
@@ -26,15 +28,14 @@ const orderSchema = new Schema<IOrder>({
         ref: 'Location',
         required: true,
     },
-    requestedBy: {
-        type: ObjectId,
-        ref: "Employee",
-        required: true,
-    },
     requestDate:{
         type:Date,
         default: Date.now,
         required:true
+    },
+    isFulfilled: {
+        type: Boolean,
+        required: false
     },
     requestComment: {
       type: String  
@@ -42,6 +43,9 @@ const orderSchema = new Schema<IOrder>({
     fulfilledBy:{
         type: ObjectId,
         ref: "Employee"
+    },
+    deliverByDate:{
+        type: Date
     },
     fulfillDate:{
         type:Date
@@ -59,6 +63,11 @@ const orderSchema = new Schema<IOrder>({
             quantity:{
                 type:Number,
                 required: true
+            },
+            employee:{
+                type: ObjectId,
+                ref: "Employee",
+                required: true,
             }
         },
     ],

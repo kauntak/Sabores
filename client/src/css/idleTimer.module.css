@@ -1,0 +1,29 @@
+.force-logout-shader{
+    z-index: 100;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0,0,0,0.5);
+    position:fixed;
+    display:flex;
+    flex-direction: column;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+.force-logout-window{
+    display:flex;
+    position: fixed;
+    flex-direction: column;
+    -ms-flex-align: center;
+    align-items: center;
+    top:28%;
+    max-width: 700px;
+    min-width: 400px;
+    max-height: 500px;
+    margin: 40px;
+    border-radius: 20px;
+    background-color: #fae6b1;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    width: fit-content;
+    height: fit-content;
+}

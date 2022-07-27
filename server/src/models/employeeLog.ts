@@ -8,7 +8,10 @@ export interface IEmployeeLog {
     checkInTime?: Date,
     checkOutTime?: Date,
     comment?: string,
-    reminder?: Types.ObjectId
+    reminder?: [{
+        reminderId:Types.ObjectId,
+        isCompleted:boolean
+    }]
 }
 
 export interface IEmployeeLogDoc extends Document, IEmployeeLog {};
@@ -33,10 +36,19 @@ const employeeLogSchema = new Schema<IEmployeeLog>({
     comment: {
         type: String
     },
-    reminder: {
-        type: ObjectId,
-        ref: 'Reminder'
-    }
+    reminder: [
+        {
+        reminderId: {
+            type: ObjectId,
+            ref: 'Reminder',
+            required:true
+        },
+        isCompleted: {
+            type: Boolean,
+            required:true,
+            default:false
+        }
+    }]
 });
 
 export const EmployeeLog = model<IEmployeeLog>('EmployeeLog', employeeLogSchema);

@@ -1,0 +1,8 @@
+.home{
+    margin: 10px;
+}
+
+.managerButtons{
+    display: flex;
+    flex-direction: row;
+}

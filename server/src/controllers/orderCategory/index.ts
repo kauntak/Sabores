@@ -5,7 +5,7 @@ import { IError, returnError } from "../../models/error";
 
 export async function createOrderCategory(req: Request, res: Response): Promise<void>{
     try {
-        const body = req.body;
+        const {body} = req;
         const orderCategory = new OrderCategory(body);
         const newOrderCategory = await orderCategory.save();
         const orderCategories = await OrderCategory.find();
@@ -23,7 +23,7 @@ export async function createOrderCategory(req: Request, res: Response): Promise<
 export async function updateOrderCategory(req: Request, res: Response): Promise<void>{
     try {
         const {params: {id}, body} = req;
-        const orderCategory: IOrderCategory|null = await OrderCategory.findByIdAndUpdate({_id:id}, body);
+        const orderCategory: IOrderCategory|null = await OrderCategory.findByIdAndUpdate({'_id':id}, body);
         const orderCategories: IOrderCategory[] = await OrderCategory.find();
         res.status(200).json({
             orderCategory,
@@ -37,13 +37,10 @@ export async function updateOrderCategory(req: Request, res: Response): Promise<
 }
 
 
-export async function getOrderCategory(req: Request, res:Response):Promise<void>{
+export async function getOrderCategories(req: Request, res:Response):Promise<void>{
     try{
-        const {params: {id}} = req.body;
-        const orderCategory:IOrderCategory|null =  id === 'all' ? null : await OrderCategory.findOne({_id:id}).exec();
-        const orderCategories: IOrderCategory[] = await OrderCategory.find();
+        const orderCategories: IOrderCategory[]|null = await OrderCategory.find();
         res.status(200).json({
-            orderCategory,
             orderCategories
         });
     } catch(error) {
@@ -56,7 +53,7 @@ export async function getOrderCategory(req: Request, res:Response):Promise<void>
 export async function deleteOrderCategory(req: Request, res:Response):Promise<void>{
     try{
         const {params: {id}} = req;
-        await OrderCategory.findByIdAndDelete({_id:id});
+        await OrderCategory.findByIdAndDelete({'_id':id});
         const orderCategories: IOrderCategory[] = await OrderCategory.find();
         res.status(200).json({
             orderCategories

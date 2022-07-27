@@ -1,9 +1,12 @@
 import { Schema, model } from "mongoose";
 
+type accessRoleType = "Administrator"| "Manager" | "Employee";
+
 
 export interface IRole {
     name: string,
-    description?: string
+    description?: string,
+    type: accessRoleType
 }
 
 export interface IRoleDoc extends Document, IRole {};
@@ -15,6 +18,10 @@ const roleSchema = new Schema<IRole>({
     },
     description:{
         type:String
+    },
+    type:{
+        type:String,
+        required: true
     }
 });
 

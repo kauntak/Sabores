@@ -1,0 +1,80 @@
+.language-menu {
+    z-index: 30;
+    width: 100px;
+    text-align: right;
+    margin-top: 25px;
+    position: fixed;
+    right: 1vw;
+}
+.language-menu ul {
+    display: block;
+    overflow: hidden;
+    max-height: 0px;
+    margin: 0;
+    padding: 0;
+    color: #31525b;
+    background-color: #fae6b1;
+    border: 1px solid #31525b;
+    position: absolute;
+    top: 30px;
+    right: 0px;
+    width: 110px;
+    border-radius: 5px;
+    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.2);
+    right: 0px;
+    transition: all 0.25s ease;
+}
+.language-menu ul li {
+    list-style: none;
+    text-align: right;
+    display: flex;
+    justify-content: space-between;
+}
+.language-menu ul li a {
+    width: 125px;
+    display: block;
+    padding: 5px 10px;
+    text-decoration: none;
+}
+.language-menu ul li a:visited {
+    color: #31525b;
+
+}
+.language-menu ul li a::before {
+    content: "";
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    vertical-align: middle;
+    margin-right: 10px;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+.language-menu ul li:hover {
+    background-color: #ffa101;
+}
+.language-menu:hover ul {
+    display: block;
+    max-height: 20vh;
+}
+
+.selected-language {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    line-height: 2;
+    filter: opacity(0.5);
+    transition: all 0.25s ease;
+}
+.language-menu:hover .selected-language {
+    filter: opacity(1);
+}
+.selected-language::before {
+    content: "";
+    display: inline-block;
+    width: 32px;
+    height: 24px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    padding-right: 12px;
+}

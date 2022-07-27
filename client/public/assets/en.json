@@ -1,0 +1,57 @@
+{
+    "setLanguage":{
+        "title": "en",
+        "language": "English",
+        "flag_url": "https://flagcdn.com/16x12/gb.png"
+    },
+    "idleTimer":{
+        "stillThere":"Are you still there?",
+        "logout":"Logout",
+        "continue":"Continue"
+    },
+    "loginScreen":{
+        "employeeNamePlaceHolder":"Name",
+        "passwordPlaceHolder":"Password",
+        "showPassword":"Show Password",
+        "loginButton":"Login",
+        "nameRequiredError":"Name is required.",
+        "nameNotFound":"*Name not found.",
+        "passwordRequiredError":"*Password is required.",
+        "unknownError":"An unknown error occurred."
+    },
+    "suggestionsList":{
+
+    },
+    "homeScreen":{
+        "navBar": ["home", "admin", "check-out", "shopping", "locations"],
+        "title":"Be awesome, have fun!",
+        "quote":"\"People rarely succeed unless they have fun in what they are doing.\" -Dale Carnegie",
+        "yourTaskList":"Your tasks for today:",
+        "checkIn":{
+            "pleaseCheckIn":"Please start day first.",
+            "checkInButton":"Start the day"
+        },
+        "viewShoppingList":"Shopping List",
+        "viewMessageList":"Messages",
+        "viewLogList":"Logs"
+    },
+    "admin":{
+
+    },
+    "shopping":{
+
+    },
+    "checkOut":{
+        "finishDay":"Do you Want to finish the day and log out?",
+        "checkoutButton": "Finish the day"
+    },
+    "warning":{
+        "ok":"OK",
+        "cancel":"Cancel",
+        "delete":"This will PERMANENTLY delete {replace}.",
+        "canNotDelete": "{replace} is being used. Can not delete."
+    },
+    "location":{
+        "newOrder": "New Order"
+    }
+}

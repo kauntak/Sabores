@@ -1,0 +1,57 @@
+.dataTable{
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+    margin-top: -5px;
+}
+
+.dataTable input{
+    width: 70%;
+    margin-left: 5px;
+    margin-bottom: 5px;
+}
+
+.dataTable select{
+    margin-left: 5px;
+    max-width: 120px;
+}
+
+.tableDiv{
+    max-height: 150px;
+    max-width: 450px;
+    overflow: auto;
+}
+
+.table{
+    min-width: 95%;
+    max-width: 95%;
+    margin-left: 5px;
+    background-color: #ecdaa7;
+    
+}
+.header{
+    background-color: #31525b;
+    color: #ffa101;
+    position:sticky;
+    top: 0;
+}
+
+.row{
+    color: #31525b;
+}
+
+.cell{
+    padding-left: 5px;
+    padding-right: 2px;
+    min-width: 120px;
+    vertical-align: top;
+}
+
+.active{
+    background-color: #ffa101;
+}
+
+.hover{
+    background-color: #5f7f88;
+    color: #fae6b1;
+}

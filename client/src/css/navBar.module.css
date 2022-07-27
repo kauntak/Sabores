@@ -1,0 +1,68 @@
+.navBar{
+    position: relative;
+    top: 0;
+    align-items: center;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+
+.navBar ul {
+    padding: 0;
+    margin-left: 0;
+    margin-right: 0;
+    display: flex;
+    flex-direction: row;
+}
+
+.navBar ul li {
+    display:block;
+    float: left;
+    list-style: none;
+    text-align: center;
+    width: auto;
+}
+
+.navBar ul li a {
+    display: block;
+    padding: 5px 10px;
+    text-decoration: none;
+}
+
+.positive{
+    background-color: #ffa101;
+}
+
+.positiveLink:hover{
+    background-color: #ffbb44;
+    color: #31525b;
+}
+.positive a {
+    color: #31525b;
+}
+
+.negative{
+    background-color: #31525b;
+    color: #ffbb44;
+}
+
+.negativeLink:hover{
+    background-color: #5f7f88;
+    color: #ffbb44;
+}
+.negative a {
+    color: #ffbb44;
+    text-decoration: none;
+    color: #ffbb44;
+}
+
+.active {
+    background-color: #fae6b1;
+}
+.active a{
+    color: #31525b !important;
+}
+.active:hover{
+    background-color: #fae6b1;
+    color: #31525b !important;
+}

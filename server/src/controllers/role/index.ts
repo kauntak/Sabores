@@ -5,7 +5,7 @@ import { IError, returnError } from "../../models/error";
 
 export async function createRole(req: Request, res: Response): Promise<void>{
     try {
-        const body = req.body;
+        const {body} = req;
         const role = new Role(body);
         const newRole = await role.save();
         const roles = await Role.find();
@@ -23,7 +23,7 @@ export async function createRole(req: Request, res: Response): Promise<void>{
 export async function updateRole(req: Request, res: Response): Promise<void>{
     try {
         const {params: {id}, body} = req;
-        const role: IRole|null = await Role.findByIdAndUpdate({_id:id}, body);
+        const role: IRole|null = await Role.findByIdAndUpdate({'_id':id}, body);
         const roles: IRole[] = await Role.find();
         res.status(200).json({
             role,
@@ -37,10 +37,24 @@ export async function updateRole(req: Request, res: Response): Promise<void>{
 }
 
 
+export async function getRoles(req: Request, res:Response):Promise<void>{
+    try{
+        const roles: IRole[] = await Role.find();
+        res.status(200).json({
+            roles
+        });
+    } catch(error) {
+        res.status(500).json({
+            error: returnError(error)
+        });
+    }
+}
+
+
 export async function getRole(req: Request, res:Response):Promise<void>{
     try{
-        const {params: {id}} = req.body;
-        const role:IRole|null =  id === 'all' ? null : await Role.findOne({_id:id}).exec();
+        const {params: {id}} = req;
+        const role:IRole|null = await Role.findOne({'_id':id}).exec();
         const roles: IRole[] = await Role.find();
         res.status(200).json({
             role,
@@ -56,7 +70,7 @@ export async function getRole(req: Request, res:Response):Promise<void>{
 export async function deleteRole(req: Request, res:Response):Promise<void>{
     try{
         const {params: {id}} = req;
-        await Role.findByIdAndDelete({_id:id});
+        await Role.findByIdAndDelete({'_id':id});
         const roles: IRole[] = await Role.find();
         res.status(200).json({
             roles

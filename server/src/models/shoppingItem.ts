@@ -5,7 +5,8 @@ const ObjectId = Schema.Types.ObjectId;
 export interface IShoppingItem {
     category: Types.ObjectId,
     name: string,
-    description?: string
+    description?: string,
+    orderItem?: Types.ObjectId
 }
 
 export interface IShoppingItemDoc extends Document, IShoppingItem {};
@@ -23,6 +24,10 @@ const shoppingItemSchema = new Schema<IShoppingItem>({
     description: {
         type: String,
     },
+    orderItem:{
+        type: ObjectId,
+        ref: "OrderItem"
+    }
 });
 
 export const ShoppingItem = model<IShoppingItem>("ShoppingItem", shoppingItemSchema);

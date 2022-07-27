@@ -5,7 +5,8 @@ const ObjectId = Schema.Types.ObjectId;
 export interface IOrderItem {
     name: string,
     description?: string,
-    category: Types.ObjectId
+    category: Types.ObjectId,
+    supplier?: Types.ObjectId
 }
 
 export interface IOrderItemDoc extends Document, IOrderItem {};
@@ -22,6 +23,11 @@ const orderItemSchema = new Schema<IOrderItem>({
         type: ObjectId,
         ref: 'OrderCategory',
         required: true
+    },
+    supplier: {
+        type: ObjectId,
+        ref: 'Supplier',
+        required: false
     }
 });
 

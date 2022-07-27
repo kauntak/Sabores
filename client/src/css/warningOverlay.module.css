@@ -1,0 +1,35 @@
+.overlay {
+    z-index: 100;
+    background: rgba(0, 0, 0, 0.3);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    -ms-flex-align: center;
+    top: 0;
+    left: 0;
+    align-items: center;
+    overflow: hidden;
+    position: absolute;
+}
+
+.warningBox {
+    position: absolute;
+    top: 30%;
+    display: flex;
+    background-color: #ffa101;
+    border-radius: 10px;
+    border: 2px solid #fae6b1;
+    flex-direction: column;
+    -ms-flex-align: center;
+    align-items: center;
+    max-width: 800px;
+    padding: 10px;
+    width: fit-content;
+    height: fit-content;
+}
+
+.buttonsDiv{
+    display: flex;
+    flex-direction: row;
+}
