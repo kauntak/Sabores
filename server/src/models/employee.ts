@@ -42,6 +42,7 @@ const employeeSchema = new Schema<IEmployee>({
         required: true,
     },
     role: {
+        _id: false,
         type: ObjectId,
         ref: "Role",
         required: true,

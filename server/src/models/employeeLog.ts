@@ -3,6 +3,7 @@ import { Schema, model, Types, Document } from "mongoose";
 const ObjectId = Schema.Types.ObjectId;
 
 export interface IEmployeeLog {
+    _id?:Types.ObjectId,
     description: string,
     employee: Types.ObjectId,
     checkInTime?: Date,
@@ -14,7 +15,7 @@ export interface IEmployeeLog {
     }]
 }
 
-export interface IEmployeeLogDoc extends Document, IEmployeeLog {};
+export interface IEmployeeLogDoc extends Document, Omit<IEmployeeLog, "_id"> {};
 
 const employeeLogSchema = new Schema<IEmployeeLog>({
     description: {
@@ -22,6 +23,7 @@ const employeeLogSchema = new Schema<IEmployeeLog>({
         required: true
     },
     employee: {
+        _id: false,
         type: ObjectId,
         ref: 'Employee',
         required: true
@@ -39,6 +41,7 @@ const employeeLogSchema = new Schema<IEmployeeLog>({
     reminder: [
         {
         reminderId: {
+            _id:false,
             type: ObjectId,
             ref: 'Reminder',
             required:true

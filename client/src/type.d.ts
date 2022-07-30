@@ -135,7 +135,8 @@ export interface IOrderItem {
     '_id'?: string,
     name: string,
     description?: string,
-    category: string
+    category: string,
+    supplier?: string
 }
 
 export interface IOrderItemProps {
@@ -166,6 +167,17 @@ export interface IOrderProps {
     order: IOrder 
 }
 
+export interface ISupplier {
+    '_id'?: string,
+    name: string,
+    description?: string
+}
+
+export type SupplierApiDataType = {
+    supplier?:ISupplier,
+    suppliers:ISupplier[]
+}
+
 export type ShoppingCategoryApiDataType = {
     shoppingCategory?: IShoppingCategory,
     shoppingCategories: IShoppingCategory[]
@@ -189,7 +201,8 @@ export interface IShoppingItem {
     '_id'?: string,
     category: string,
     name: string,
-    description?: string
+    description?: string,
+    orderItem?: string
 }
 
 export interface IShoppingListProps {

@@ -24,6 +24,7 @@ export interface IOrderDoc extends Document, IOrder {};
 
 const orderSchema = new Schema<IOrder>({
     location: {
+        _id: false,
         type: ObjectId,
         ref: 'Location',
         required: true,

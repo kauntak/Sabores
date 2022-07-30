@@ -1,7 +1,6 @@
 import {Router} from 'express';
 import bodyParser from 'body-parser';
 const jsonParser = bodyParser.json();
-const urlencodedParser = bodyParser.urlencoded({extended: false});
 
 import { createEmployee, updateEmployee, getEmployees, getEmployee, deleteEmployee, authenticateEmployee } from '../controllers/employee';
 import { createEmployeeLog, updateEmployeeLog, getEmployeeLogs, getEmployeesLog, getEmployeeLogsByDateRange, deleteEmployeeLog } from '../controllers/employeeLog';
@@ -17,6 +16,7 @@ import { createRole, updateRole, getRoles, getRole, deleteRole } from '../contro
 import { createShoppingItem, updateShoppingItem, getShoppingItems, getShoppingItem, deleteShoppingItem } from '../controllers/shoppingItem';
 import { createShoppingList, updateShoppingList, getShoppingLists, getShoppingList, deleteShoppingList } from '../controllers/shoppingList';
 import { createShoppingCategory, updateShoppingCategory, getShoppingCategories, getShoppingCategory, deleteShoppingCategory } from '../controllers/shoppingCategory';
+import { createSupplier, deleteSupplier, getSupplier, getSuppliers, updateSupplier } from '../controllers/supplier';
 
 
 
@@ -101,7 +101,11 @@ router.get('/api/getShoppingCategories', jsonParser, getShoppingCategories);
 router.get('/api/getShoppingCategory/:id', jsonParser, getShoppingCategory);
 router.delete('/api/deleteShoppingCategory/:id', jsonParser, deleteShoppingCategory);
 
-export default router;
+router.post('/api/createSupplier', jsonParser, createSupplier);
+router.put('/api/updateSupplier/:id', jsonParser, updateSupplier);
+router.get('/api/getSuppliers', jsonParser, getSuppliers);
+router.get('/api/getSupplier/:id', jsonParser, getSupplier);
+router.delete('/api/deleteSupplier/:id', jsonParser, deleteSupplier);
 
-//419
-//14, 287
+
+export default router;

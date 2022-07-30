@@ -16,6 +16,7 @@ const messageSchema = new Schema<IMessage>({
         required: true
     },
     employee: {
+        _id: false,
         type: ObjectId,
         ref: 'Employee',
         required: true

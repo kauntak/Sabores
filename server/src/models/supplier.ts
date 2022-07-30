@@ -6,9 +6,9 @@ export interface ISupplier {
     description? : string
 }
 
-export interface IOrderCategoryDoc extends Document, Omit<ISupplier, "_id"> {};
+export interface ISupplierDoc extends Document, Omit<ISupplier, "_id"> {};
 
-const orderCategorySchema = new Schema<ISupplier>({
+const supplierSchema = new Schema<ISupplier>({
     name: {
         type: String,
         required: true
@@ -18,4 +18,4 @@ const orderCategorySchema = new Schema<ISupplier>({
     }
 });
 
-export const OrderCategory = model<ISupplier>('OrderCategory', orderCategorySchema);
+export const Supplier = model<ISupplier>('Supplier', supplierSchema);

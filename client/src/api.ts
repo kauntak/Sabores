@@ -1,7 +1,7 @@
 import axios, {AxiosResponse} from "axios";
 import Module from "module";
 import { IError, returnError } from "./error";
-import { EmployeeApiDataType, EmployeeLogApiDataType, IEmployee, IEmployeeLog, ILocation, IMessage, IOrder, IOrderCategory, IOrderItem, IRole, IShoppingCategory, IShoppingItem, IShoppingList, LocationApiDataType, MessageApiDataType, OrderApiDataType, OrderCategoryApiDataType, OrderItemApiDataType, RoleApiDataType, ShoppingCategoryApiDataType, ShoppingItemApiDataType, ShoppingListApiDataType, IReminder, ReminderApiDataType, LoginApiDataType, ModuleApiDataType, IModule } from "./type";
+import { EmployeeApiDataType, EmployeeLogApiDataType, IEmployee, IEmployeeLog, ILocation, IMessage, IOrder, IOrderCategory, IOrderItem, IRole, IShoppingCategory, IShoppingItem, IShoppingList, LocationApiDataType, MessageApiDataType, OrderApiDataType, OrderCategoryApiDataType, OrderItemApiDataType, RoleApiDataType, ShoppingCategoryApiDataType, ShoppingItemApiDataType, ShoppingListApiDataType, IReminder, ReminderApiDataType, LoginApiDataType, ModuleApiDataType, IModule, ISupplier, SupplierApiDataType } from "./type";
 import { getToken } from "./App";
 
 
@@ -961,5 +961,76 @@ export const deleteShoppingList = async (_id:string):Promise<ShoppingListApiData
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
+    }
+}
+
+export const createSupplier = async (formData:Omit<ISupplier, "_id">): Promise<SupplierApiDataType> => {
+    try {
+        const newSupplier: Omit<ISupplier, "_id"> = formData;
+        const suppliers: AxiosResponse<SupplierApiDataType|IError> = await axios.post(`${url}/createSupplier`, newSupplier, await getHeaders());
+        const error = (suppliers.data as IError).error;
+        if(error !== undefined){
+            throw new Error(error);
+        }
+        return suppliers.data as SupplierApiDataType;
+    } catch(error) {
+        console.log(error);
+        throw new Error(String(error));
+    }
+}
+
+export const updateSupplier = async (supplier:ISupplier): Promise<SupplierApiDataType> => {
+    try {
+        const updatedSuppliers: AxiosResponse<SupplierApiDataType|IError> = await axios.put(`${url}/updateSupplier/${supplier._id}`, supplier, await getHeaders());
+        const error = (updatedSuppliers.data as IError).error;
+        if(error !== undefined){
+            throw new Error(error);
+        }
+        return updatedSuppliers.data as SupplierApiDataType;
+    } catch(error) {
+        console.log(error);
+        throw new Error(String(error));
+    }
+}
+
+export const getSupplier = async (_id:string): Promise<SupplierApiDataType> => {
+    try {
+        const suppliers: AxiosResponse<SupplierApiDataType|IError> = await axios.get(`${url}/getSupplier/${_id}`, await getHeaders());
+        const error = (suppliers.data as IError).error;
+        if(error !== undefined){
+            throw new Error(error);
+        }
+        return suppliers.data as SupplierApiDataType;
+    } catch(error) {
+        console.log(error);
+        throw new Error(String(error));
+    }
+}
+
+export const getSuppliers = async (): Promise<SupplierApiDataType> => {
+    try {
+        const suppliers: AxiosResponse<SupplierApiDataType|IError> = await axios.get(`${url}/getSuppliers`, await getHeaders());
+        const error = (suppliers.data as IError).error;
+        if(error !== undefined){
+            throw new Error(error);
+        }
+        return suppliers.data as SupplierApiDataType;
+    } catch(error) {
+        console.log(error);
+        throw new Error(String(error));
+    }
+}
+
+export const deleteSupplier = async (_id:string): Promise<SupplierApiDataType> => {
+    try {
+        const suppliers: AxiosResponse<SupplierApiDataType|IError> = await axios.delete(`${url}/deleteSupplier/${_id}`, await getHeaders());
+        const error = (suppliers.data as IError).error;
+        if(error !== undefined){
+            throw new Error(error);
+        }
+        return suppliers.data as SupplierApiDataType;
+    } catch(error) {
+        console.log(error);
+        throw new Error(String(error));
     }
 }

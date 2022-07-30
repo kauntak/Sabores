@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import styles from "./../../css/management.module.css";
 
 import { BsPencil, BsPlusLg, BsTrash } from "react-icons/bs";
-import { createOrderCategory, createOrderItem, deleteOrderCategory, getOrderCategories, getOrderItems, updateOrderCategory, updateOrderItem } from "../../api";
+import { createOrderCategory, createOrderItem, deleteOrderCategory, getOrderCategories, getOrderItems, getSuppliers, updateOrderCategory, updateOrderItem } from "../../api";
 import { AddAndEditComponent } from "../../components/AddAndEditComponent";
 import { ButtonComponent } from "../../components/ButtonComponent";
 import { DataTable } from "../../components/DataTable";
 import { WarningOverlayComponent } from "../../components/WarningOverlayComponent";
-import { Field, IOrderCategory, IOrderItem, MultiField, SingleField } from "../../type";
+import { Field, IOrderCategory, IOrderItem, ISupplier, MultiField, SingleField } from "../../type";
 import { useContext } from "react";
 import { LanguageContext } from "../../App";
 
@@ -29,12 +29,17 @@ export const OrderManagement: React.FC<Props> = () => {
     const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
     const [itemList, setItemList] = useState<IOrderItem[]>([]);
     const [selectedItemId, setSelectedItemId] = useState<string>("");
+    const [supplierList, setSupplierList] = useState<ISupplier[]>([]);
 
     useEffect(() => {
         getOrderCategories()
             .then(res => {
                 setCategoryList(res.orderCategories);
             });
+        getSuppliers()
+            .then(res => {
+                setSupplierList(res.suppliers);
+            })
         getOrderItems()
             .then(res => {
                 setItemList(res.orderItems);
