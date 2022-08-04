@@ -4,7 +4,7 @@ const ObjectId = Schema.Types.ObjectId;
 
 export interface IShoppingList {
     createdAt:Date,
-    comment: string,
+    comment?: string,
     isCompleted?: boolean,
     location: Types.ObjectId,
     items: [
@@ -26,7 +26,8 @@ const shoppingListSchema = new Schema<IShoppingList>({
         expires: '30d'
     },
     isCompleted: {
-        type: Boolean
+        type: Boolean,
+        default: false
     },
     comment: {
         type:String

@@ -3,6 +3,7 @@ import styles from "./../css/dataTable.module.css";
 import {MdArrowDropUp, MdArrowDropDown, MdSearch} from "react-icons/md";
 import { useContext } from "react";
 import { LanguageContext } from "../App";
+import { LoadingSpinner } from "./LoadinSpinnerComponent";
 
 type Props = {
     headers: string[],
@@ -23,6 +24,7 @@ export const DataTable:React.FC<Props> = ({headers, rows, currentId, setId}) => 
     const [sortIndex, setSortIndex] = useState<{index:number, prevIndex:number|null}>({index:0, prevIndex:null});
     const [searchTerm, setSearchTerm] = useState<{term:string}>({term:""});
     const [searchColumnIndex, setSearchColumnIndex] = useState<number>(-1);
+    const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
 
     useEffect(()=> {
         setCurrentRows(rows);
@@ -75,7 +77,7 @@ export const DataTable:React.FC<Props> = ({headers, rows, currentId, setId}) => 
                     if(currentSearchTerm==="") return prevRows;
                     const filteredRows = prevRows.filter(row => { 
                         const foundColumn = row.columns.find(column => {
-                            return column.toLowerCase().indexOf(currentSearchTerm.toLowerCase()) > -1
+                            return column.toLowerCase().indexOf(currentSearchTerm.toLowerCase().replace(/\s/g, "")) > -1
                         });
                         if(foundColumn !== undefined && row.id === currentId) idIncluded = true;
                         return foundColumn !== undefined;
@@ -140,7 +142,8 @@ export const DataTable:React.FC<Props> = ({headers, rows, currentId, setId}) => 
     }
     return (
         <div className={styles["dataTable"]}>
-            {searchTerm.term===""?<MdSearch style={
+            <div className={styles["search"]}>
+                {searchTerm.term==="" && !isSearchFocused?<MdSearch style={
                     {
                         marginLeft:"0.5rem",
                         marginTop: "3.5px",
@@ -149,53 +152,69 @@ export const DataTable:React.FC<Props> = ({headers, rows, currentId, setId}) => 
                     }
                 }
                 />:""}
-            <div>
                 <input
                     type="text"
                     title={text.dataTable.searchToolTip}
                     value={searchTerm.term}
                     onChange={onSearchChange}
+                    onFocus={ ()=> setIsSearchFocused(true) }
+                    onBlur={ ()=> setIsSearchFocused(false) }
                 />
                 <select
                     value={searchColumnIndex===-1?"All":headers[searchColumnIndex]}
                     onChange={onSelectChange}
                 >
                     <option value={"All"}>All</option>
-                    {headers.map(header => {
+                    {headers.map((header, headerIndex) => {
                         return (
-                            <option value={header}>{header}</option>
+                            <option 
+                                value={header}
+                                key={header+headerIndex}
+                            >
+                                {header}
+                            </option>
                         );
                     })}
                 </select>
             </div>
             <div className={styles["tableDiv"]}>
                 <table className={styles["table"]} cellSpacing="0">
-                    <tr className={styles["header"]}>
-                        {headers.map((header, headerIndex) => (
-                            <th 
-                                className={styles["cell"]}
-                                onClick={onHeaderClick}
-                                data-index={headerIndex}
+                    <thead>
+                        <tr className={styles["header"]}>
+                            {headers.map((header, headerIndex) => (
+                                <th 
+                                    key={header+headerIndex}
+                                    className={styles["cell"]}
+                                    onClick={onHeaderClick}
+                                    data-index={headerIndex}
+                                >
+                                    {sortIndex.index!==headerIndex?"":sortIndex.index===sortIndex.prevIndex?<MdArrowDropUp />:<MdArrowDropDown />}
+                                    {header}
+                                </th>)
+                            )}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {currentRows.length!==0
+                        ?currentRows.map((row, rowIndex) => (
+                            <tr
+                                className={`${styles["row"]} ${currentId===row.id?styles["active"]:currentRows[rowIndex].isHovering?styles["hover"]:""}`}
+                                key={row.id + rowIndex}
+                                data-id={row.id}
+                                data-index={rowIndex}
+                                onClick={onRowClick}
+                                onMouseEnter={onRowEnter}
+                                onMouseLeave={onRowLeave}
                             >
-                                {sortIndex.index!==headerIndex?"":sortIndex.index===sortIndex.prevIndex?<MdArrowDropUp />:<MdArrowDropDown />}
-                                {header}
-                            </th>)
-                        )}
-                    </tr>
-                    {currentRows.map((row, rowIndex) => (
-                        <tr
-                            className={`${styles["row"]} ${currentId===row.id?styles["active"]:currentRows[rowIndex].isHovering?styles["hover"]:""}`}
-                            key={row.id + rowIndex}
-                            data-id={row.id}
-                            data-index={rowIndex}
-                            onClick={onRowClick}
-                            onMouseEnter={onRowEnter}
-                            onMouseLeave={onRowLeave}
-                        >
-                                {row.columns.map((column, columnIndex) => <td className={styles["cell"]} key={columnIndex}>{column!==undefined?column:""}</td>)}
-                        </tr>)
-                    )}
+                                    {row.columns.map((column, columnIndex) => <td className={styles["cell"]} key={columnIndex}>{column!==undefined?column:""}</td>)}
+                            </tr>)
+                        ):""}
+                    </tbody>
                 </table>
+                {currentRows.length===0
+                    ?<LoadingSpinner />
+                    :""
+                }
             </div>
         </div>
     );

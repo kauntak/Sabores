@@ -3,7 +3,7 @@ import styles from "./../../css/management.module.css";
 
 import { ButtonComponent } from "../../components/ButtonComponent";
 import {BsPencil, BsPersonPlusFill, BsTrash} from "react-icons/bs"
-import { Field, ILocation, SingleField } from "../../type";
+import { Field, ILocation, MultiField, SingleField } from "../../type";
 import { createLocation, deleteLocation, getLocations, updateLocation } from "../../api";
 import { WarningOverlayComponent } from "../../components/WarningOverlayComponent";
 import { AddAndEditComponent, deepCopyFields } from "../../components/AddAndEditComponent";
@@ -36,7 +36,18 @@ export const LocationManagement: React.FC<Props> = () => {
             .then(res => setLocationList(res.locations));
     }, []);
 
-    
+    const booleanList:SingleField[] = [
+        {
+            name:"Yes",
+            display:"Yes",
+            id:"yes"
+        }, {
+            name:"No",
+            display:"No",
+            id:"no"
+        }
+    ]
+
     const defaultLocationFields:Field[] =  [
         {
             name:"name",
@@ -44,8 +55,19 @@ export const LocationManagement: React.FC<Props> = () => {
             fieldType:"Single",
             required: true,
             field:{value:""}
+        }, {
+            name:"main",
+            display:"Is Main?",
+            required: false,
+            fieldType: "Multi",
+            field: {
+                isMultiSelect: false,
+                name:"Is Main?",
+                list:booleanList
+            }
         }
     ];
+    
     
     useEffect(()=> {
         if(addEditFields.length === 0) setShowAddEditComponent(false);
@@ -73,8 +95,10 @@ export const LocationManagement: React.FC<Props> = () => {
         const locationToEdit = locationList.find(location => location._id === activeLocationId);
         if(locationToEdit === undefined) return;
         const editFields:Field[] = deepCopyFields(defaultLocationFields) as Field[];
-
+        console.log(locationList);
         (editFields[0].field as SingleField).value = locationToEdit.name;
+        (editFields[1].field as MultiField).selected = locationToEdit.isMain?booleanList[0]:undefined;
+
         
         setAddEditTitle(`Edit ${locationToEdit.name}`);
         setIsEdit(true);
@@ -104,9 +128,11 @@ export const LocationManagement: React.FC<Props> = () => {
         );
     }
 
-    const saveButton = (e:React.MouseEvent<HTMLButtonElement>, fields:Field[]):void => {
+    const saveButton = (fields:Field[]):void => {
+        console.log(fields);
         const newLocation:ILocation = {
-            name: (fields[0].field as SingleField).value as string
+            name: (fields[0].field as SingleField).value as string,
+            isMain: (fields[1].field as MultiField).selected?.id==="yes"
         };
         if(isEdit){
             newLocation._id = activeLocationId;

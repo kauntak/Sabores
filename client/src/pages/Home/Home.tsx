@@ -1,8 +1,9 @@
-import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
+/* eslint-disable no-fallthrough */
+import React, { Dispatch, SetStateAction, useContext, useEffect, useRef, useState } from "react";
 import styles from "./../../css/home.module.css";
 
-import { getLocations, getRole } from "../../api";
-import { accessRoleType, IEmployee, NavListType, ReminderListType } from "../../type";
+import { getEmployeesMostRecentLog, getLocations, getReminderByRoleId, getRemindersByIds, getRole, updateEmployeeLog } from "../../api";
+import { accessRoleType, IEmployee, IEmployeeLog, NavListType, ReminderListType } from "../../type";
 import { AdminComponent } from "../Admin";
 import { RemindersComponent } from "../../components/RemindersComponent";
 import { CheckOutComponent } from "../CheckOut";
@@ -11,22 +12,26 @@ import { NavBarComponent } from "../../components/NavBarComponent";
 import { ShoppingComponent } from "../Shopping";
 import { WarningOverlayComponent } from "../../components/WarningOverlayComponent";
 import { ButtonComponent } from "../../components/ButtonComponent";
-import { LanguageContext } from "../../App";
+import { defaultEmployee, EmployeeContext, LanguageContext } from "../../App";
 
 type Props = {
     token:string,
     setLoggedIn: Dispatch<SetStateAction<boolean>>,
-    employee:Omit<IEmployee, "password">|undefined,
     setEmployee: Dispatch<SetStateAction<Omit<IEmployee, "password">>>,
     reminderList: ReminderListType[],
     setReminderList: Dispatch<SetStateAction<ReminderListType[]>>
 };
 
-type ModulesType = "home"| "admin" | "check-out" | "shopping" | "location";
+type ModulesType = "home"| "admin" | "check-out" | "ordering";
+
+const defaultLog:IEmployeeLog = {
+    employee: ""
+}
 
 
-
-export const HomeComponent:React.FC<Props> = ({token, setLoggedIn, employee, setEmployee, reminderList, setReminderList}) => {
+export const HomeComponent:React.FC<Props> = ({token, setLoggedIn, setEmployee, reminderList, setReminderList}) => {
+    const firstUpdate = useRef<boolean>(true);
+    const [employeeLog, setEmployeeLog] = useState<IEmployeeLog>(defaultLog);
     const [activeModule, setActiveModule] = useState<ModulesType>("home");
     const [activeListModule, setActiveListModule] = useState<NavListType>({moduleName:"home", displayName:"Home"});
     const [accessRole, setAccessRole] = useState<accessRoleType>("Employee");
@@ -35,32 +40,27 @@ export const HomeComponent:React.FC<Props> = ({token, setLoggedIn, employee, set
     const [showCheckInWarning, setShowCheckInWarning] = useState<boolean>(false);
     const [isManager, setIsManager] = useState<boolean>(false);
     const text = useContext(LanguageContext);
+    const employee = useContext(EmployeeContext);
 
     useEffect(()=> {
-        if(employee===undefined) return;
+        if(employee===undefined || employee===defaultEmployee) return;
         const roleId = employee.role;
         getRole(roleId)
         .then(res => {
             const newRole = res.role;
-            console.log(newRole);
             let accessibleNavigation:NavListType[] = [{moduleName:"home", displayName:text.navList.home}];
             const defaultNavigation:NavListType[]= [
-                {moduleName:"shopping", displayName:text.navList.shopping},
-                {moduleName:"location", displayName:text.navList.location}
+                {moduleName:"ordering", displayName:text.navList.ordering}
             ];
             switch(newRole?.type) {
-                // eslint-disable-next-line no-fallthrough
                 case "Administrator":
                 case "Manager":
                     accessibleNavigation.push({moduleName:"admin", displayName:text.navList.admin});
-                    accessibleNavigation = accessibleNavigation.concat(defaultNavigation);
                     setIsManager(true);
                     break;
-                case "Employee":
-                default:
-                    accessibleNavigation = accessibleNavigation.concat(defaultNavigation);
-                    accessibleNavigation.push({moduleName:"check-out", displayName:text.navList.checkOut});
             };
+            accessibleNavigation = accessibleNavigation.concat(defaultNavigation);
+            accessibleNavigation.push({moduleName:"check-out", displayName:text.navList.checkOut});
             setNavBarList(accessibleNavigation);
             setAccessRole(newRole?.type?newRole.type:"Employee");
             })
@@ -76,17 +76,83 @@ export const HomeComponent:React.FC<Props> = ({token, setLoggedIn, employee, set
                         displayName:foundLocations.name};
                     result.push(newAccessPoint);
                     return result;
-                }, [])
-            )
-        }).catch(err => {
-            console.log(err);
-        })
+                    }, [])
+                )
+            }).catch(err => {
+                console.log(err);
+            });
+        getEmployeesMostRecentLog(employee._id!)
+            .then(logResult => {
+                setEmployeeLog(logResult.employeeLog!);
+                const reminderIds = logResult.employeeLog?.reminder?.map(r => r.reminderId);
+                if(reminderIds){
+                    getRemindersByIds(reminderIds)
+                        .then(employeeReminders => {
+                            setReminderList(employeeReminders.reminders.map(reminder => {
+                                return {
+                                    reminder:reminder,
+                                    completed:logResult.employeeLog?.reminder?.find(r => r.reminderId === reminder._id)?.completed||false
+                                }
+                            })
+                            )
+                        });
+                } else {
+                    setAndReturnRemindersByRole()
+                        .then(res => {
+                            if((logResult.employeeLog?.reminder === undefined || (logResult.employeeLog.reminder.length === 0 && res.length !== 0)) && employee.checkedIn){
+                                setEmployee(oldEmployee => {
+                                    oldEmployee.checkedIn = false;
+                                    return oldEmployee;
+                                });
+                            }
+                        })
+                }
+            })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [employee]);
+
+    useEffect(()=> {
+        if(firstUpdate.current){
+            firstUpdate.current = false;
+            return;
+        }
+        setEmployeeLog(oldLog => {
+            const newLog = {...oldLog};
+            newLog.reminder = reminderList.map(reminder => {
+                return {
+                    reminderId: reminder.reminder._id!,
+                    completed: reminder.completed
+                }
+            });
+            if(newLog._id !== undefined && newLog._id !== "")
+                updateEmployeeLog(newLog);
+            return newLog;
+        });
+    }, [reminderList])
+
+    const setAndReturnRemindersByRole = ():Promise<ReminderListType[]> => {
+        return new Promise((resolve, reject) => {
+            getReminderByRoleId(employee.role)
+            .then(result => {
+                const newReminders = result.reminders.map(reminder => {
+                    return {reminder:reminder, completed:false};
+                });
+                setReminderList(newReminders);
+                resolve(newReminders)
+            }).catch(err => {
+                console.log(err);
+                reject(err);
+            });
+        });
+    }
 
     useEffect(()=> {
         setActiveModule(activeListModule.moduleName);
     }, [activeListModule])
 
+    const onLogoutClick = (e:React.MouseEvent<HTMLButtonElement>) => {
+        setLoggedIn(false);
+    }
     const onNavBarClick = (e:React.MouseEvent<HTMLAnchorElement>):void => {
         e.preventDefault();
         if(!employee || ((employee.checkedIn === undefined || employee.checkedIn === false) && accessRole !== "Administrator")){
@@ -107,6 +173,15 @@ export const HomeComponent:React.FC<Props> = ({token, setLoggedIn, employee, set
                     setShowWarning={setShowCheckInWarning}/>
                 :""
             }
+            <div className={styles["header"]}>
+                <h1>{"Hi " + employee.firstName}</h1>
+                <ButtonComponent
+                    onClick={onLogoutClick}
+                    name={text.homeScreen.logout}
+                    isNegativeColor={true}
+                    bottomMargin={"10px"}
+                />
+            </div>
             <NavBarComponent 
                 list={navBarList}
                 currentActive={activeModule}
@@ -115,8 +190,7 @@ export const HomeComponent:React.FC<Props> = ({token, setLoggedIn, employee, set
                 />
             {
                 {
-                    "home": <HomeScreen 
-                        employee={employee!}
+                    "home": <HomeScreen
                         setEmployee={setEmployee}
                         reminderList={reminderList}
                         setReminderList={setReminderList}
@@ -125,16 +199,14 @@ export const HomeComponent:React.FC<Props> = ({token, setLoggedIn, employee, set
                         isAdmin={accessRole==="Administrator"}
                         currentEmployee={employee!}/>,
                     "shopping":<ShoppingComponent />,
-                    "location":<LocationsComponent
-                        locationList={locationList}
-                        text={text}/>,
-                    "check-out":<CheckOutComponent 
-                        employee={employee!}
+                    "ordering":<LocationsComponent
+                        accessList={locationList}
+                        />,
+                    "check-out":<CheckOutComponent
                         setEmployee={setEmployee}
                         reminderList={reminderList}
                         setReminderList={setReminderList}
-                        setLoggedIn={setLoggedIn}
-                        text={text}/>,
+                        setLoggedIn={setLoggedIn}/>,
                 }[activeModule]
             }
         </>
@@ -143,15 +215,15 @@ export const HomeComponent:React.FC<Props> = ({token, setLoggedIn, employee, set
 
 
 type HomeScreenProps = {
-    employee:Omit<IEmployee, "password">,
     setEmployee: Dispatch<SetStateAction<Omit<IEmployee, "password">>>,
     reminderList: ReminderListType[],
     setReminderList: Dispatch<SetStateAction<ReminderListType[]>>,
     isManager:boolean
 }
-const HomeScreen:React.FC<HomeScreenProps> = ({employee, setEmployee, reminderList, setReminderList, isManager})=> {
+const HomeScreen:React.FC<HomeScreenProps> = ({setEmployee, reminderList, setReminderList, isManager})=> {
     const [currentListView, setCurrentListView] = useState<string>("");
     const text = useContext(LanguageContext);
+    const employee = useContext(EmployeeContext);
     
     const onCheckInClick = (e:React.MouseEvent<HTMLButtonElement>)=>{
         e.preventDefault();
@@ -208,7 +280,6 @@ const HomeScreen:React.FC<HomeScreenProps> = ({employee, setEmployee, reminderLi
             <p>{text?.homeScreen?.title?text.homeScreen.title:"Be awesome, have fun!"}</p>
             <h3>{text?.homeScreen?.yourTaskList?text.homeScreen.yourTaskList:"Your tasks for today:"}</h3>
             <RemindersComponent
-                employee={employee} 
                 reminderList={reminderList} 
                 setReminderList={setReminderList} />
             {employee.checkedIn?"":<ButtonComponent onClick={onCheckInClick} name={text.homeScreen.checkIn.checkInButton}/>}

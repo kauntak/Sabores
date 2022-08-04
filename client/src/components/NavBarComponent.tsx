@@ -21,6 +21,7 @@ export const NavBarComponent:React.FC<Props> = ({list, currentActive, isNegative
             <ul>
                 {list.map(listItem =>
                     <NavBarLink
+                        key={listItem.id+listItem.displayName}
                         displayName={listItem.displayName}
                         moduleName={listItem.moduleName}
                         isNegative={isNegative}

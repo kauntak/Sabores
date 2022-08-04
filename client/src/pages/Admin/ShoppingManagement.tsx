@@ -2,9 +2,9 @@ import React, { useContext, useEffect, useState } from "react";
 import styles from "./../../css/management.module.css";
 
 import { BsPencil, BsPlusLg, BsTrash } from "react-icons/bs";
-import { createShoppingCategory, createShoppingItem, deleteShoppingCategory, getShoppingCategories, getShoppingItems, updateShoppingCategory, updateShoppingItem } from "../../api";
+import { createShoppingCategory, createShoppingItem, deleteShoppingCategory, deleteShoppingItem, getOrderItems, getShoppingCategories, getShoppingItems, updateShoppingCategory, updateShoppingItem } from "../../api";
 import { ButtonComponent } from "../../components/ButtonComponent";
-import { Field, IShoppingCategory, IShoppingItem, MultiField, SingleField } from "../../type";
+import { Field, IOrderItem, IShoppingCategory, IShoppingItem, MultiField, SingleField } from "../../type";
 import { AddAndEditComponent } from "../../components/AddAndEditComponent";
 import { DataTable } from "../../components/DataTable";
 import { WarningOverlayComponent } from "../../components/WarningOverlayComponent";
@@ -25,11 +25,12 @@ export const ShoppingManagement: React.FC<Props> = () => {
     const [showAddEditComponent, setShowAddEditComponent] = useState<boolean>(false);
     const [addEditTitle, setAddEditTitle] = useState<string>("");
     const [addEditFields, setAddEditFields] = useState<Field[]>([]);
-    const [saveButton, setSaveButton] = useState<(e:React.MouseEvent<HTMLButtonElement>, fields:Field[]) => void>(() => defaultButton);
+    const [saveButton, setSaveButton] = useState<(fields:Field[]) => void>(() => defaultButton);
     const [categoryList, setCategoryList] = useState<IShoppingCategory[]>([]);
     const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
     const [itemList, setItemList] = useState<IShoppingItem[]>([]);
     const [selectedItemId, setSelectedItemId] = useState<string>("");
+    const [orderItemList, setOrderItemList] = useState<IOrderItem[]>([]);
 
     useEffect(() => {
         getShoppingCategories()
@@ -39,7 +40,11 @@ export const ShoppingManagement: React.FC<Props> = () => {
         getShoppingItems()
             .then(res => {
                 setItemList(res.shoppingItems);
-            })
+            });
+        getOrderItems()
+            .then(res => {
+                setOrderItemList(res.orderItems);
+            });
     }, [])
 
     useEffect(()=> {
@@ -121,6 +126,7 @@ export const ShoppingManagement: React.FC<Props> = () => {
         setWarningButton(() => defaultButton);
         deleteShoppingCategory(selectedCategoryId).then(res => {
             setCategoryList(res.shoppingCategories);
+            setSelectedCategoryId("");
         }).catch(err => {
             setWarningMessage(err);
             setCanCancel(false);
@@ -129,7 +135,7 @@ export const ShoppingManagement: React.FC<Props> = () => {
         setShowWarning(false);
     }
 
-    const onSaveCategoryButton = (e:React.MouseEvent<HTMLButtonElement>, fields:Field[]):void => {
+    const onSaveCategoryButton = (fields:Field[]):void => {
         const newCategory:IShoppingCategory = {
             _id: selectedCategoryId===""?undefined:selectedCategoryId,
             name: (fields[0]?.field as SingleField)?.value as string,
@@ -178,6 +184,23 @@ export const ShoppingManagement: React.FC<Props> = () => {
                 fieldType:"Single",
                 required:false,
                 field:{value:""}
+            }, {
+                name:"Bulk Item Link",
+                display:"Bulk Item Link",
+                required: false,
+                fieldType:"Multi",
+                field: {
+                    isMultiSelect:false,
+                    name:"Bulk Item Link",
+                    list: orderItemList.map(item => {
+                        return {
+                            id:item._id,
+                            name:item.name,
+                            display:item.name
+                        }
+                    })
+                }
+
             }
         ]
         setAddEditTitle("Add Item");
@@ -188,11 +211,17 @@ export const ShoppingManagement: React.FC<Props> = () => {
     const onEditItemClick = (e:React.MouseEvent<HTMLButtonElement>):void => {
         const itemToEdit = itemList.find(item => item._id === selectedItemId);
         if(itemToEdit === undefined) return;
-        const itemCategory = categoryList.find(category => category._id === itemToEdit._id);
-        const selected = itemCategory === undefined? undefined: {
+        const itemCategory = categoryList.find(category => category._id === itemToEdit.category);
+        const selectedCategory = itemCategory === undefined? undefined: {
             id: itemCategory._id,
             name: itemCategory.name,
             display: itemCategory.name
+        };
+        const bulkItem = orderItemList.find(item => item._id === itemToEdit.orderItem);
+        const selectedItem = bulkItem === undefined? undefined:{
+            id: bulkItem._id,
+            name: bulkItem.name,
+            display: bulkItem.name
         };
         const editFields:Field[] = [
             {
@@ -215,7 +244,7 @@ export const ShoppingManagement: React.FC<Props> = () => {
                             display:category.name
                         }
                     }),
-                    selected
+                    selected: selectedCategory
                 },
 
             },{
@@ -224,6 +253,24 @@ export const ShoppingManagement: React.FC<Props> = () => {
                 fieldType:"Single",
                 required:false,
                 field:{value:itemToEdit.description}
+            }, {
+                name:"Bulk Item Link",
+                display:"Bulk Item Link",
+                required: false,
+                fieldType:"Multi",
+                field: {
+                    isMultiSelect:false,
+                    name:"Bulk Item Link",
+                    list: orderItemList.map(item => {
+                        return {
+                            id:item._id,
+                            name:item.name,
+                            display:item.name
+                        }
+                    }),
+                    selected: selectedItem
+                }
+
             }
         ];
         setAddEditTitle("Edit " + itemToEdit.name);
@@ -232,10 +279,28 @@ export const ShoppingManagement: React.FC<Props> = () => {
     }
     
     const onDeleteItemClick = (e:React.MouseEvent<HTMLButtonElement>):void => {
-
+        const itemToDelete = itemList.find(item => item._id === selectedItemId);
+        if(itemToDelete === undefined) return;
+        setWarningMessage(text.warning.delete.replace("{replace}", itemToDelete.name));
+        setWarningButton(()=> onConfirmDeleteItemClick);
+        setCanCancel(true);
+        setShowWarning(true);
     }
 
-    const onSaveItemButton = (e:React.MouseEvent<HTMLButtonElement>, fields:Field[]):void => {
+    const onConfirmDeleteItemClick = (e:React.MouseEvent<HTMLButtonElement>) => {
+        setWarningButton(() => defaultButton);
+        deleteShoppingItem(selectedItemId).then(res => {
+            setItemList(res.shoppingItems);
+            setSelectedItemId("");
+        }).catch(err => {
+            setWarningMessage(err);
+            setCanCancel(false);
+            setShowWarning(true);
+        });
+        setShowWarning(false);
+    }
+
+    const onSaveItemButton = (fields:Field[]):void => {
         const newItem:IShoppingItem = {
             _id: selectedItemId===""?undefined:selectedItemId,
             name: (fields[0]?.field as SingleField)?.value as string,

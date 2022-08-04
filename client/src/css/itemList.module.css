@@ -20,25 +20,23 @@
 
 .accordion-content{
     overflow-y: hidden;
-    transition: all 2s ease-in-out;
+    transition: max-height 0.5s ease-in-out;
 }
 
 .shown{
-    max-height: fit-content;
-    transition: 2s ease-in-out;
-
+    max-height: none !important;
 }
 
 .hidden{
     max-height: 0px;
-    transition: 2s ease-in-out;
 }
 
 .showIcon{
-    transition: 2s ease-in-out;
+    transition: 0.3s ease-out;
 }
 .rotated{
     transform: rotate(-90deg);
+    transition: 0.3s ease-out;
 }
 
 .listItem{

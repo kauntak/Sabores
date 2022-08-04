@@ -1,4 +1,5 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useContext, useState } from "react";
+import { LanguageContext } from "../App";
 import { ButtonComponent } from "../components/ButtonComponent";
 import { RemindersComponent } from "../components/RemindersComponent";
 import { WarningOverlayComponent } from "../components/WarningOverlayComponent";
@@ -6,15 +7,14 @@ import { IEmployee, ReminderListType } from "../type";
 
 
 type Props = {
-    employee:Omit<IEmployee, "password">,
     setEmployee: Dispatch<SetStateAction<Omit<IEmployee, "password">>>,
     reminderList: ReminderListType[],
     setReminderList: Dispatch<SetStateAction<ReminderListType[]>>,
-    setLoggedIn: Dispatch<SetStateAction<boolean>>,
-    text: any
+    setLoggedIn: Dispatch<SetStateAction<boolean>>
 }
-export const CheckOutComponent:React.FC<Props> = ({employee, reminderList, setReminderList, setLoggedIn, text}) => {
+export const CheckOutComponent:React.FC<Props> = ({reminderList, setReminderList, setLoggedIn}) => {
     const [showCheckoutWarning, setShowCheckOutWarning] = useState<boolean>(false);
+    const text = useContext(LanguageContext);
 
     const onCheckOutClick = (e:React.MouseEvent<HTMLButtonElement>) => {
         setShowCheckOutWarning(true);
@@ -28,19 +28,18 @@ export const CheckOutComponent:React.FC<Props> = ({employee, reminderList, setRe
         <>
             {showCheckoutWarning?
                 <WarningOverlayComponent 
-                    warning={text?.checkOut.finishDay?text.checkOut.finishDay:"Do you Want to finish the day and log out?"} 
+                    warning={text.checkOut.finishDay} 
                     onClick={onFinishDayClick}
                     setShowWarning={setShowCheckOutWarning} 
                     canCancel={true}/>
                 :""}
-            <RemindersComponent 
-                employee={employee}
+            <RemindersComponent
                 reminderList={reminderList}
                 setReminderList={setReminderList}
                 />
             <ButtonComponent
                 onClick={onCheckOutClick}
-                name={text?.checkOut?.checkoutButton?text.checkOut.checkoutButton:"Finish the day"}
+                name={text.checkOut.checkoutButton}
                 isNegativeColor={true}/>
         </>
     );

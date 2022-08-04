@@ -49,14 +49,34 @@ export async function getShoppingLists(req: Request, res:Response):Promise<void>
     }
 }
 
+export async function getActiveShoppingListByLocation(req: Request, res:Response):Promise<void>{
+    try{
+        const {params: {id}} = req;
+        let shoppingList:IShoppingList|null =  await ShoppingList.findOne({location:id, isCompleted:false}).exec();
+        if(shoppingList===null) {
+            shoppingList = await ShoppingList.create({
+                location:id
+            });
+        }
+        res.status(200).json({
+            shoppingList
+        });
+    } catch(error) {
+        res.status(500).json({
+            error: returnError(error)
+        });
+    }
+}
+
+
+
+
 export async function getShoppingList(req: Request, res:Response):Promise<void>{
     try{
         const {params: {id}} = req;
         const shoppingList:IShoppingList|null =  await ShoppingList.findOne({'_id':id}).exec();
-        const shoppingLists: IShoppingList[] = await ShoppingList.find();
         res.status(200).json({
-            shoppingList,
-            shoppingLists
+            shoppingList
         });
     } catch(error) {
         res.status(500).json({

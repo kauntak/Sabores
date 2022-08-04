@@ -15,10 +15,15 @@ type Props = {
 
 export const InputWithSuggestionsComponent:React.FC<Props> =({suggestionsList, input, style, setInput, setId, placeholder, inputRef, nextElementRef}) =>{
     const [keyCode, setKeyCode] = useState<string>("");
+    const [showSuggestions ,setShowSuggestions] = useState<boolean>(false);
 
     const onInputChange = (e:React.ChangeEvent<HTMLInputElement>):void => {
         const userInput = e.target.value;
         setInput(userInput);
+        if(suggestionsList.findIndex(suggestion => suggestion.name === userInput) !== -1)
+            setShowSuggestions(false);
+        else
+            setShowSuggestions(true);
     }
     
     const onKeyDown = (e: React.KeyboardEvent):void => {
@@ -41,14 +46,14 @@ export const InputWithSuggestionsComponent:React.FC<Props> =({suggestionsList, i
                 placeholder={placeholder}
                 ref={inputRef}
             />
-            <SuggestionsListComponent
+            {showSuggestions?<SuggestionsListComponent
                 keyCode={keyCode}
                 suggestionList={suggestionsList}
                 input={input}
                 setInput={setInput}
                 setId={setId}
                 nextInputElement={nextElementRef}
-            />
+            />:""}
         </>
     );
 }

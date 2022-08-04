@@ -54,7 +54,28 @@ export async function getOrders(req: Request, res:Response):Promise<void>{
 export async function getOrder(req: Request, res:Response):Promise<void>{
     try{
         const {params: {id}} = req;
-        const order:IOrder|null =  id === 'all' ? null : await Order.findOne({'_id':id}).exec();
+        const order:IOrder|null = await Order.findOne({'_id':id}).exec();
+        const orders: IOrder[] = await Order.find();
+        res.status(200).json({
+            order,
+            orders
+        });
+    } catch(error) {
+        res.status(500).json({
+            error: returnError(error)
+        });
+    }
+}
+
+export async function getActiveOrderByLocation(req: Request, res:Response):Promise<void>{
+    try{
+        const {params: {id}} = req;
+        let order:IOrder|null =  await Order.findOne({location:id, isFulfilled:false}).exec();
+        console.log(order, id);
+        if(order===null)
+            order = await Order.create({
+                location:id
+            });
         const orders: IOrder[] = await Order.find();
         res.status(200).json({
             order,

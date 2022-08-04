@@ -66,7 +66,8 @@ export type LocationApiDataType = {
 
 export interface ILocation {
     '_id'?: string
-    name: string
+    name: string,
+    isMain?:boolean
 }
 
 export interface ILocationProps {
@@ -95,16 +96,15 @@ export type EmployeeLogApiDataType = {
     employeeLogs?: IEmployeeLog[]
 }
 export interface IEmployeeLog {
-    '_id': string,
-    description: string,
+    '_id'?: string,
     employee: string,
     checkInTime?: Date,
     checkOutTime?: Date,
     comment?: string,
-    reminder?: [{
+    reminder?: {
         reminderId:string,
         completed:boolean
-    }]
+    }[]
 }
 
 export interface IEmployeeLogProps {
@@ -126,16 +126,19 @@ export interface IOrderCategoryProps {
     orderCategory : IOrderCategory
 }
 
+interface IItem {
+    '_id'?:string,
+    name: string,
+    category: string
+}
+
 export type OrderItemApiDataType = {
     orderItem?: IOrderItem,
     orderItems: IOrderItem[]
 }
 
-export interface IOrderItem {
-    '_id'?: string,
-    name: string,
+export interface IOrderItem extends IItem {
     description?: string,
-    category: string,
     supplier?: string
 }
 
@@ -197,10 +200,7 @@ export type ShoppingItemApiDataType = {
     shoppingItem?: IShoppingItem,
     shoppingItems: IShoppingItem[]
 }
-export interface IShoppingItem {
-    '_id'?: string,
-    category: string,
-    name: string,
+export interface IShoppingItem extends IItem{
     description?: string,
     orderItem?: string
 }
@@ -266,6 +266,7 @@ export type ItemObjectType = {
 }
 
 export type CategoryListType = {
+    id:string,
     name:string,
     items: ItemListType[]
 }

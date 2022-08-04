@@ -210,7 +210,7 @@ export const EmployeeManagement: React.FC<Props> = ({isAdmin, currentEmployee}) 
         );
     }
 
-    const saveButton = (e:React.MouseEvent<HTMLButtonElement>, fields:Field[]):void => {
+    const saveButton = (fields:Field[]):void => {
         const newEmployee:IEmployee = {
             firstName: (fields[0].field as SingleField).value as string,
             middleName: (fields[1].field as SingleField).value as string,

@@ -45,7 +45,7 @@ export const ShoppingComponent:React.FC<Props> = ({}) => {
         }).map(category => {
             return {
                 name: category.name,
-                id:category._id,
+                id:category._id!,
                 items: itemList.filter(item => item.category === category._id).map(item => {
                     return {
                         id:item._id!,
@@ -73,25 +73,11 @@ export const ShoppingComponent:React.FC<Props> = ({}) => {
         setItemObject(newItems);
     }, [activeShoppingList])
 
-    const onNavClick = (e:React.MouseEvent<HTMLAnchorElement>) => {
-
-    }
-
-
     return (
-        <>
-            <NavBarComponent
-                list={[]}
-                currentActive={""}
-                isNegative={true}
-                onClick={onNavClick}                
-            />
-            <EditItemListComponent 
-                categories={categories}
-                currentList={itemObject}
-                setCurrentList={setItemObject}
-
-            />
-        </>
+        <EditItemListComponent 
+            categories={categories}
+            currentList={itemObject}
+            setCurrentList={setItemObject}
+        />
     );
 }

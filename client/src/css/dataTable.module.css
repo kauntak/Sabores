@@ -5,6 +5,10 @@
     margin-top: -5px;
 }
 
+.search{
+    position: relative;
+}
+
 .dataTable input{
     width: 70%;
     margin-left: 5px;

@@ -1,7 +1,12 @@
 .home{
     margin: 10px;
 }
-
+.header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 10px 10px 0px 10px;
+}
 .managerButtons{
     display: flex;
     flex-direction: row;

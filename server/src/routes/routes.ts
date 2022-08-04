@@ -3,18 +3,18 @@ import bodyParser from 'body-parser';
 const jsonParser = bodyParser.json();
 
 import { createEmployee, updateEmployee, getEmployees, getEmployee, deleteEmployee, authenticateEmployee } from '../controllers/employee';
-import { createEmployeeLog, updateEmployeeLog, getEmployeeLogs, getEmployeesLog, getEmployeeLogsByDateRange, deleteEmployeeLog } from '../controllers/employeeLog';
+import { createEmployeeLog, updateEmployeeLog, getEmployeeLogs, getEmployeesLog, getEmployeeLogsByDateRange, deleteEmployeeLog, getEmployeesMostRecentLog } from '../controllers/employeeLog';
 import { createLocation, updateLocation, getLocations, deleteLocation } from '../controllers/location';
 import { createMessage, updateMessage,getMessagesByDateRange, getMessagesByEmployee, getMessage, deleteMessage } from '../controllers/message';
 import { createModule, updateModule, getModules, deleteModule } from '../controllers/module';
-import { createOrder, updateOrder, getOrders, getOrder, deleteOrder } from '../controllers/order';
+import { createOrder, updateOrder, getOrders, getOrder, deleteOrder, getActiveOrderByLocation } from '../controllers/order';
 import { createOrderItem, updateOrderItem, getOrderItems, deleteOrderItem, getOrderItem } from '../controllers/orderItem';
 import { createOrderCategory, updateOrderCategory, getOrderCategories, deleteOrderCategory } from '../controllers/orderCategory';
 
 import { createReminder, updateReminder, getReminders, getReminderByRoleId, deleteReminder, getRemindersByIds } from '../controllers/reminder';
 import { createRole, updateRole, getRoles, getRole, deleteRole } from '../controllers/role';
 import { createShoppingItem, updateShoppingItem, getShoppingItems, getShoppingItem, deleteShoppingItem } from '../controllers/shoppingItem';
-import { createShoppingList, updateShoppingList, getShoppingLists, getShoppingList, deleteShoppingList } from '../controllers/shoppingList';
+import { createShoppingList, updateShoppingList, getShoppingLists, getShoppingList, deleteShoppingList, getActiveShoppingListByLocation } from '../controllers/shoppingList';
 import { createShoppingCategory, updateShoppingCategory, getShoppingCategories, getShoppingCategory, deleteShoppingCategory } from '../controllers/shoppingCategory';
 import { createSupplier, deleteSupplier, getSupplier, getSuppliers, updateSupplier } from '../controllers/supplier';
 
@@ -34,6 +34,7 @@ router.put('/api/updateEmployeeLog/:id', jsonParser, updateEmployeeLog);
 router.get('/api/getEmployeeLogs', jsonParser, getEmployeeLogs);
 router.get('/api/getEmployeesLog/:id', jsonParser, getEmployeesLog);
 router.get('/api/getEmployeeLogsByDateRange/start/:startDate/end/:endDate', jsonParser, getEmployeeLogsByDateRange);
+router.get('/api/getEmployeesMostRecentLog/:id', jsonParser, getEmployeesMostRecentLog);
 router.delete('/api/deleteEmployeeLog/:id', jsonParser, deleteEmployeeLog);
 
 router.post('/api/createLocation', jsonParser, createLocation);
@@ -57,6 +58,7 @@ router.post('/api/createOrder', jsonParser, createOrder);
 router.put('/api/updateOrder/:id', jsonParser, updateOrder);
 router.get('/api/getOrders', jsonParser, getOrders);
 router.get('/api/getOrder/:id', jsonParser, getOrder);
+router.get('/api/getActiveOrderByLocation/:id', jsonParser, getActiveOrderByLocation);
 router.delete('/api/deleteOrder/:id', jsonParser, deleteOrder);
 
 router.post('/api/createOrderItem', jsonParser, createOrderItem);
@@ -93,6 +95,7 @@ router.post('/api/createShoppingList', jsonParser, createShoppingList);
 router.put('/api/updateShoppingList/:id', jsonParser, updateShoppingList);
 router.get('/api/getShoppingLists', jsonParser, getShoppingLists);
 router.get('/api/getShoppingList/:id', jsonParser, getShoppingList);
+router.get('/api/getActiveShoppingListByLocation/:id', jsonParser, getActiveShoppingListByLocation);
 router.delete('/api/deleteShoppingList/:id', jsonParser, deleteShoppingList);
 
 router.post('/api/createShoppingCategory', jsonParser, createShoppingCategory);

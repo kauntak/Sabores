@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BsCheckLg, BsXLg } from "react-icons/bs";
 import { Field, MultiField, SingleField } from "../type";
 import styles from "./../css/addAndEdit.module.css";
@@ -8,7 +8,7 @@ type Props = {
     title: string,
     propFields: Field[],
     isEdit?: boolean,
-    save: (e:React.MouseEvent<HTMLButtonElement>, fields:Field[]) => void,
+    save: (fields:Field[]) => void,
     cancel: (e:React.MouseEvent<HTMLButtonElement>) => void
 }
 
@@ -55,9 +55,11 @@ export const deepCopyFields:(fieldsToCopy:Field[])=>Field[] = (fieldsToCopy) => 
 
 export const AddAndEditComponent:React.FC<Props> = ({title, propFields, isEdit, save, cancel}) => {
     const [fields, setFields] = useState<Field[]>([]);
+    const refs = useRef<Array<HTMLSelectElement|HTMLInputElement>>([]);
 
     useEffect(()=> {
         setFields(propFields);
+        refs.current = new Array(propFields.length);
     }, [propFields]);
 
     const onMultiChange = (e:React.ChangeEvent<HTMLInputElement>, {index, innerIndex}:onFormChangeIndex) => {
@@ -101,7 +103,7 @@ export const AddAndEditComponent:React.FC<Props> = ({title, propFields, isEdit, 
         })
     }
 
-    const saveClicked = (e:React.MouseEvent<HTMLButtonElement>):void => {
+    const saveClicked = ():void => {
         let errorExists:boolean = false;
         let match:string = "";
         for(let i = 0; i < fields.length; i++){
@@ -152,7 +154,28 @@ export const AddAndEditComponent:React.FC<Props> = ({title, propFields, isEdit, 
             }
         };
         if(errorExists) return;
-        save(e, fields);
+        save(fields);
+    }
+    
+    const onItemKeyDown = (e:React.KeyboardEvent<HTMLSelectElement|HTMLInputElement>, index:number, innerIndex?:number) => {
+        if(e.key !== "Enter") return;
+        if(innerIndex !== undefined) {
+            setFields(oldFields =>{
+                const newFields = [...oldFields];
+                (newFields[index].field as MultiField).list[innerIndex].value = !((e.target as HTMLInputElement).checked);
+                if(!(e.target as HTMLInputElement).checked) newFields[index].field.isError = false;
+                return newFields;
+            });
+            return;
+        }
+        if(index < (refs.current.length - 1)) {
+            if(fields[index].fieldType === "Multi") {
+                onSelectChange(e as any as React.ChangeEvent<HTMLSelectElement>, index);
+            }
+            refs.current[index+1].focus();
+            return;
+        }
+        saveClicked();
     }
 
     return (
@@ -172,7 +195,10 @@ export const AddAndEditComponent:React.FC<Props> = ({title, propFields, isEdit, 
                                             id={field.name+index}
                                             value={(field.field as SingleField).value as string}
                                             required={field.required}
-                                            onChange={(e)=>onSingleChange(e, index)}/>
+                                            onChange={(e)=>onSingleChange(e, index)}
+                                            ref={element => refs.current[index] = element!}
+                                            onKeyDown={(e)=>onItemKeyDown(e, index)}    
+                                            />
                                         {(field.field as SingleField).isError?
                                             <p>{field.display} is required.</p>:""}
                                         {field.notMatching?
@@ -196,6 +222,10 @@ export const AddAndEditComponent:React.FC<Props> = ({title, propFields, isEdit, 
                                                                 type="checkbox"
                                                                 checked={item.value as boolean}
                                                                 onChange={(e)=> {onMultiChange(e, {index, innerIndex})}}
+                                                                onKeyDown={(e) => onItemKeyDown(e, index, innerIndex)}
+                                                                ref = {element => {
+                                                                    if(innerIndex===0) refs.current[index] = element!
+                                                                }}
                                                             />
                                                             <label htmlFor={item.id}>{item.display}</label>
                                                         </li>
@@ -206,9 +236,11 @@ export const AddAndEditComponent:React.FC<Props> = ({title, propFields, isEdit, 
                                         <div className={styles["fieldInputAndError"]}>
                                             <select
                                                 name={field.name}
-                                                value={(field.field as MultiField).selected?(field.field as MultiField).selected!.display:"Select..."}
+                                                value={(field.field as MultiField).selected?(field.field as MultiField).selected!.name:"Select..."}
                                                 onChange={(e)=> {onSelectChange(e, index)}}
                                                 required={field.required}
+                                                ref={element => refs.current[index] = element!}
+                                                onKeyDown={(e)=>onItemKeyDown(e, index)}
                                             >
                                                 <option value="Select...">Select...</option>
                                                 {(field.field as MultiField).list.map((item, innerIndex) => (

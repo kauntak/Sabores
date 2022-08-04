@@ -4,7 +4,6 @@ const ObjectId = Schema.Types.ObjectId;
 
 export interface IEmployeeLog {
     _id?:Types.ObjectId,
-    description: string,
     employee: Types.ObjectId,
     checkInTime?: Date,
     checkOutTime?: Date,
@@ -18,10 +17,6 @@ export interface IEmployeeLog {
 export interface IEmployeeLogDoc extends Document, Omit<IEmployeeLog, "_id"> {};
 
 const employeeLogSchema = new Schema<IEmployeeLog>({
-    description: {
-        type: String,
-        required: true
-    },
     employee: {
         _id: false,
         type: ObjectId,
@@ -29,8 +24,7 @@ const employeeLogSchema = new Schema<IEmployeeLog>({
         required: true
     },
     checkInTime: {
-        type: Date,
-        default: Date.now
+        type: Date
     },
     checkOutTime: {
         type: Date

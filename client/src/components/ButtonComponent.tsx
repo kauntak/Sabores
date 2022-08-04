@@ -9,11 +9,12 @@ type Props = {
     isNegativeColor?:boolean,
     ref?:RefObject<HTMLButtonElement>,
     id?:string,
-    width?:string
+    width?:string,
+    bottomMargin?:string
 }
 
 
-export const ButtonComponent:React.FC<Props> = ({onClick, name, title,isNegativeColor, ref, id, width})=>{
+export const ButtonComponent:React.FC<Props> = ({onClick, name, title,isNegativeColor, ref, id, width, bottomMargin})=>{
 
     return (
         <>
@@ -23,7 +24,7 @@ export const ButtonComponent:React.FC<Props> = ({onClick, name, title,isNegative
                     title={title?title:""}
                     ref={ref}
                     data-id={id}
-                    style={{width:width}}
+                    style={{width:width, marginBottom:bottomMargin}}
                     >
                 {name}
             </button>

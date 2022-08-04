@@ -29,7 +29,7 @@ export const RoleManagement: React.FC<Props> = () => {
     const [canCancel, setCanCancel] = useState<boolean>(true);
     const [warningMessage, setWarningMessage] = useState<string>("");
     const [showAddEditComponent, setShowAddEditComponent] = useState<boolean>(false);
-    const [saveButton, setSaveButton] = useState<(e:React.MouseEvent<HTMLButtonElement>, fields:Field[]) => void>(() => defaultButton);
+    const [saveButton, setSaveButton] = useState<(fields:Field[]) => void>(() => defaultButton);
     const [isEdit, setIsEdit] = useState<boolean>(false);
     const [addEditTitle, setAddEditTitle] = useState<string>("");
     const [addEditFields, setAddEditFields] = useState<Field[]>([]);
@@ -180,7 +180,7 @@ export const RoleManagement: React.FC<Props> = () => {
         );
     }
 
-    const saveRoleButton = (e:React.MouseEvent<HTMLButtonElement>, fields:Field[]):void => {
+    const saveRoleButton = (fields:Field[]):void => {
         const newRole:IRole = {
             name: (fields[0].field as SingleField).value as string,
             type: (fields[1].field as MultiField).selected!.display! as accessRoleType,
@@ -245,7 +245,7 @@ export const RoleManagement: React.FC<Props> = () => {
         );
     }
 
-    const saveReminderButton = (e:React.MouseEvent<HTMLButtonElement>, fields:Field[]):void => {
+    const saveReminderButton = (fields:Field[]):void => {
         const newReminder:IReminder = {
             role: (fields[0].field as MultiField).selected!.id!,
             description: (fields[1].field as SingleField).value as string

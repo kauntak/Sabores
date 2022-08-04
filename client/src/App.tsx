@@ -5,7 +5,7 @@ import './App.css';
 import { SetLanguageComponent } from './components/SetLanguageComponent';
 
 import {LoginScreenComponent} from './components/LoginScreenComponent'
-import { getEmployees } from './api';
+import { getEmployees, updateEmployee } from './api';
 import { IEmployee, ReminderListType } from './type';
 import { HomeComponent } from './pages/Home/Home';
 
@@ -46,13 +46,14 @@ const defaultText = {
     "orders":"Orders",
     "shopping":"Shopping",
     "employee":"Employees",
-    "location":"Locations",
+    "ordering":"Orders",
     "role":"Roles",
     "admin":"Admin",
     "checkOut":"Check Out",
     "home":"Home"
   },
   "homeScreen":{
+      "logout": "Logout",
       "navBar": ["home", "admin", "check-out", "shopping", "locations"],
       "title":"Be awesome, have fun!",
       "quote":"\"People rarely succeed unless they have fun in what they are doing.\" -Dale Carnegie",
@@ -83,26 +84,28 @@ const defaultText = {
       "canNotDeleteSelf": "You can not delete yourself."
   },
   "location":{
-      "newOrder": "New Order"
+      "save": "Save Order"
   },
   "dataTable":{
     "searchToolTip":"Use commas to search different columns."
   }
 };
 
-export const LanguageContext = createContext(defaultText);
-export const EmployeeContext = createContext<IEmployee>({
+export const defaultEmployee = {
   firstName:"",
   lastName:"",
   role:"",
   access: []
-});
+};
+
+export const LanguageContext = createContext(defaultText);
+export const EmployeeContext = createContext<IEmployee>(defaultEmployee);
 
 const App:React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [loginId, setLoginId] = useState("");
   const [employees, setEmployees] = useState<IEmployee[]>([]);
-  const [loggedInEmployee, setLoggedInEmployee] = useState<Omit<IEmployee, "password">>();
+  const [loggedInEmployee, setLoggedInEmployee] = useState<Omit<IEmployee, "password">>(defaultEmployee);
   const [reminderList, setReminderList] = useState<ReminderListType[]>([]);
   const [language, setLanguage] = useState<string>("en");
   const [token, setToken] = useState<string>("");
@@ -140,7 +143,7 @@ const App:React.FC = () => {
     currentToken = token;
     if(token !== "") {
       setLoginTimer(setTimeout(()=> {
-        setToken("");
+        setIsLoggedIn(false);
       }, 600000))
       setIsLoggedIn(true);
     } else {
@@ -152,15 +155,14 @@ const App:React.FC = () => {
 
   useEffect(()=> {
     if(!isLoggedIn && token !=="") {
-      setToken("");
+      updateEmployee(loggedInEmployee)
+        .then(()=> {
+          setToken("");
+        })
       return;
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn]);
-
-  useEffect(()=> {
-    
-  }, [loggedInEmployee])
 
   return (
     <>
@@ -168,26 +170,29 @@ const App:React.FC = () => {
       <LanguageContext.Provider value={textTranslations}>
         <SetLanguageComponent
           setLanguage={setLanguage}
-          languages={languages}/>
-          <div className="main-window">
-            {isLoggedIn? 
-              <EmployeeContext.Provider value={loggedInEmployee!}>
-                  <HomeComponent
-                    token={token}
-                    setLoggedIn={setIsLoggedIn}
-                    employee={loggedInEmployee}
-                    setEmployee={setLoggedInEmployee as Dispatch<SetStateAction<Omit<IEmployee, "password">>>}
-                    reminderList={reminderList}
-                    setReminderList={setReminderList}/>
-                </EmployeeContext.Provider>:
-              <LoginScreenComponent
-                employeeList={employees}
-                id={loginId}
-                setId={setLoginId}
-                setToken={setToken}
-                setIsLoggedIn={setIsLoggedIn}
-                setEmployee={setLoggedInEmployee}/>}
-          </div>
+          languages={languages}
+        />
+        <div className="main-window">
+          {isLoggedIn
+            ?<EmployeeContext.Provider value={loggedInEmployee!}>
+                <HomeComponent
+                  token={token}
+                  setLoggedIn={setIsLoggedIn}
+                  setEmployee={setLoggedInEmployee as Dispatch<SetStateAction<Omit<IEmployee, "password">>>}
+                  reminderList={reminderList}
+                  setReminderList={setReminderList}
+                />
+              </EmployeeContext.Provider>
+            :<LoginScreenComponent
+              employeeList={employees}
+              id={loginId}
+              setId={setLoginId}
+              setToken={setToken}
+              setIsLoggedIn={setIsLoggedIn}
+              setEmployee={setLoggedInEmployee}
+            />
+          }
+        </div>
       </LanguageContext.Provider>
     </>
   )

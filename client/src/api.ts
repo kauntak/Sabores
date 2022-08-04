@@ -245,7 +245,11 @@ export const updateLocation = async(location: ILocation): Promise<LocationApiDat
 
 export const getLocations = async():Promise<LocationApiDataType> => {
     try {
-        const location: AxiosResponse<LocationApiDataType|IError> = await axios.get(`${url}/getLocations`, await getHeaders());
+        let headers = await getHeaders();
+        while(headers.headers["x-access-token"] === ""){
+            headers = await getHeaders();
+        }
+        const location: AxiosResponse<LocationApiDataType|IError> = await axios.get(`${url}/getLocations`, headers);
         const error = (location.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
@@ -434,6 +438,20 @@ export const getOrders = async(_id:string):Promise<OrderApiDataType> => {
 export const getOrder = async(_id:string):Promise<OrderApiDataType> => {
     try {
         const order: AxiosResponse<OrderApiDataType|IError> = await axios.get(`${url}/getOrder/${_id}`, await getHeaders());
+        const error = (order.data as IError).error;
+        if(error !== undefined){
+            throw new Error(error);
+        }
+        return order.data as OrderApiDataType;
+    } catch(error) {
+        console.log(error);
+		throw new Error(String(error));
+    }
+}
+
+export const getActiveOrderByLocation = async(_id:string):Promise<OrderApiDataType> => {
+    try {
+        const order: AxiosResponse<OrderApiDataType|IError> = await axios.get(`${url}/getActiveOrderByLocation/${_id}`, await getHeaders());
         const error = (order.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
@@ -651,6 +669,10 @@ export const getRemindersByIds = async(ids:string[]):Promise<ReminderApiDataType
 
 export const getReminderByRoleId = async(_id:string):Promise<ReminderApiDataType> => {
     try {
+        let headers = await getHeaders();
+        while(headers.headers["x-access-token"] === ""){
+            headers = await getHeaders();
+        }
         const reminder: AxiosResponse<ReminderApiDataType|IError> = await axios.get(`${url}/getReminderByRoleId/${_id}`, await getHeaders());
         const error = (reminder.data as IError).error;
         if(error !== undefined){
@@ -709,6 +731,10 @@ export const updateRole = async(role: IRole): Promise<RoleApiDataType> => {
 
 export const getRole = async (_id: string): Promise<RoleApiDataType> => {
     try {
+        let headers = await getHeaders();
+        while(headers.headers["x-access-token"] === ""){
+            headers = await getHeaders();
+        }
         const roles: AxiosResponse<RoleApiDataType|IError> = await axios.get(`${url}/getRole/${_id}`, await getHeaders());
         const error = (roles.data as IError).error;
         if(error !== undefined){
@@ -911,6 +937,20 @@ export const createShoppingList = async(formData:Omit<IShoppingList, "_id">):Pro
 export const getShoppingList = async(_id:string):Promise<ShoppingListApiDataType> => {
     try {
         const list: AxiosResponse<ShoppingListApiDataType|IError> = await axios.get(`${url}/getShoppingList/${_id}`, await getHeaders());
+        const error = (list.data as IError).error;
+        if(error !== undefined){
+            throw new Error(error);
+        }
+        return list.data as ShoppingListApiDataType;
+    } catch(error) {
+        console.log(error);
+		throw new Error(String(error));
+    }
+}
+
+export const getActiveShoppingListByLocation = async (_id:string):Promise<ShoppingListApiDataType> => {
+    try {
+        const list: AxiosResponse<ShoppingListApiDataType|IError> = await axios.get(`${url}/getActiveShoppingListByLocation/${_id}`, await getHeaders());
         const error = (list.data as IError).error;
         if(error !== undefined){
             throw new Error(error);

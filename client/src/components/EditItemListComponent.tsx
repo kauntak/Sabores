@@ -18,11 +18,13 @@ export const EditItemListComponent:React.FC<Props> = ({categories, currentList, 
     const itemRefs = useRef<HTMLLIElement[][]>([]);
     const [searchTerm, setSearchTerm] = useState<{term:string}>({term:""});
     const [searchIndex, setSearchIndex] = useState<number>(-1);
+    const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
     const searchRefs = useRef<HTMLLIElement[]>([]);
     const [activeItemId, setActiveItemId] = useState<string>("");
 
     useEffect(()=> {
         setCategoryList(() => {
+
             const newCategories:CategoryListType[] = categories.map((category, index) => {
                 itemRefs.current[index] = new Array(category.items.length);
                 return {
@@ -43,6 +45,7 @@ export const EditItemListComponent:React.FC<Props> = ({categories, currentList, 
             const foundRefs = array.filter(ref => ref.dataset.name?.toLowerCase()===searchTerm.term.toLowerCase());
             return newRefs.concat(foundRefs);
         }, []);
+        console.log(newSearchRefs);
         searchRefs.current = newSearchRefs;
         if(newSearchRefs.length !== 0) {
             setSearchIndex(0);
@@ -91,9 +94,9 @@ export const EditItemListComponent:React.FC<Props> = ({categories, currentList, 
     return (
         <>
             <div className={styles["searchBar"]}>
-                {searchTerm.term===""?<MdSearch style={
+                {searchTerm.term==="" && !isSearchFocused?<MdSearch style={
                         {
-                            marginLeft:"0.5rem",
+                            marginLeft:"0.3rem",
                             marginTop: "3.5px",
                             position: "absolute",
                             color: "#5f7f88"
@@ -102,6 +105,8 @@ export const EditItemListComponent:React.FC<Props> = ({categories, currentList, 
                     />:""}
                 <input
                     onChange={onSearchChange}
+                    onFocus={ ()=> setIsSearchFocused(true) }
+                    onBlur={ ()=> setIsSearchFocused(false) }
                     type="text"
                     value={searchTerm.term}
                 />
@@ -186,11 +191,12 @@ const AccordionComponent:React.FC<AccordionProps> = ({title, categoryIndex, list
                     />
                     {title}
                 </div>
-                <div className={`${styles["accordion-content"]} ${isShown?styles["shown"]:styles["hidden"]}`}>
+                <div className={`${isShown?styles["shown"]:styles["hidden"]} ${styles["accordion-content"]}`}>
                     <ul>
                         {list.map((item, index) => {
                             return (
-                                <ItemComponent 
+                                <ItemComponent
+                                    key={item.id+index}
                                     activeItemId={activeItemId}
                                     item={item}
                                     refArray={refArray}
@@ -241,7 +247,6 @@ const ItemComponent:React.FC<ItemProps> = ({activeItemId, setActiveItemId, item,
     return (
         <li
             className={`${styles["listItem"]} ${activeItemId===item.id?styles["active"]: isHovering ? styles["hovering"]:""}`}
-            key={item.id}
             data-id={item.id}
             ref={el => {
                 if(refArray.current == null) return;

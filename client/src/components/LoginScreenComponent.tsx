@@ -63,7 +63,6 @@ export const LoginScreenComponent: React.FC<Props> = ({employeeList, id, setId, 
             if(name !== "") userPasswordInputRef.current?.focus();
         }
         if(! (name !== "" && password !== "")) return;
-        console.log(id);
         if(id===""){
             const foundSuggestion = suggestionsList.find(suggestion => 
                 suggestion.name.toLowerCase() === name.toLowerCase()
@@ -89,7 +88,6 @@ export const LoginScreenComponent: React.FC<Props> = ({employeeList, id, setId, 
         authenticateEmployee(id, password)
             .then(token => {
                 setToken(token.token);
-                setIsLoggedIn(true);                
                 setNameInput("");
                 setPasswordInput("");
                 setEmployee(token.employee);
@@ -105,7 +103,6 @@ export const LoginScreenComponent: React.FC<Props> = ({employeeList, id, setId, 
 
     const togglePassword = (e:React.MouseEvent<HTMLInputElement>):void => {
         const checkBoxState = e.currentTarget.checked;
-        console.log(checkBoxState);
         setShowPassword(checkBoxState);
     }
     

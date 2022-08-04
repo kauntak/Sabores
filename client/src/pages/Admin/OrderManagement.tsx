@@ -24,7 +24,7 @@ export const OrderManagement: React.FC<Props> = () => {
     const [showAddEditComponent, setShowAddEditComponent] = useState<boolean>(false);
     const [addEditTitle, setAddEditTitle] = useState<string>("");
     const [addEditFields, setAddEditFields] = useState<Field[]>([]);
-    const [saveButton, setSaveButton] = useState<(e:React.MouseEvent<HTMLButtonElement>, fields:Field[]) => void>(() => defaultButton);
+    const [saveButton, setSaveButton] = useState<(fields:Field[]) => void>(() => defaultButton);
     const [categoryList, setCategoryList] = useState<IOrderCategory[]>([]);
     const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
     const [itemList, setItemList] = useState<IOrderItem[]>([]);
@@ -126,6 +126,7 @@ export const OrderManagement: React.FC<Props> = () => {
         setWarningButton(() => defaultButton);
         deleteOrderCategory(selectedCategoryId).then(res => {
             setCategoryList(res.orderCategories);
+            setSelectedCategoryId("");
         }).catch(err => {
             setWarningMessage(err);
             setCanCancel(false);
@@ -134,7 +135,7 @@ export const OrderManagement: React.FC<Props> = () => {
         setShowWarning(false);
     }
 
-    const onSaveCategoryButton = (e:React.MouseEvent<HTMLButtonElement>, fields:Field[]):void => {
+    const onSaveCategoryButton = (fields:Field[]):void => {
         const newCategory:IOrderCategory = {
             _id: selectedCategoryId===""?undefined:selectedCategoryId,
             name: (fields[0]?.field as SingleField)?.value as string,
@@ -288,6 +289,7 @@ export const OrderManagement: React.FC<Props> = () => {
         setWarningButton(() => defaultButton);
         deleteOrderItem(selectedItemId).then(res => {
             setItemList(res.orderItems);
+            setSelectedItemId("");
         }).catch(err => {
             setWarningMessage(err);
             setCanCancel(false);
@@ -296,7 +298,7 @@ export const OrderManagement: React.FC<Props> = () => {
         setShowWarning(false);
     }
 
-    const onSaveItemButton = (e:React.MouseEvent<HTMLButtonElement>, fields:Field[]):void => {
+    const onSaveItemButton = (fields:Field[]):void => {
         const newItem:IOrderItem = {
             _id: selectedItemId===""?undefined:selectedItemId,
             name: (fields[0]?.field as SingleField)?.value as string,
@@ -316,7 +318,7 @@ export const OrderManagement: React.FC<Props> = () => {
         setShowAddEditComponent(false);
     }
 
-    const onSaveSupplierButton = (e:React.MouseEvent<HTMLButtonElement>, fields:Field[]):void => {
+    const onSaveSupplierButton = (fields:Field[]):void => {
         const newSupplier:ISupplier = {
             _id: selectedItemId===""?undefined:selectedItemId,
             name: (fields[0]?.field as SingleField)?.value as string,
@@ -397,6 +399,7 @@ export const OrderManagement: React.FC<Props> = () => {
         setWarningButton(() => defaultButton);
         deleteSupplier(selectedSupplierId).then(res => {
             setSupplierList(res.suppliers);
+            setSelectedSupplierId("");
         }).catch(err => {
             setWarningMessage(err);
             setCanCancel(false);
