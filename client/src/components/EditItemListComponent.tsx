@@ -1,9 +1,10 @@
 import React, { Dispatch, RefObject, SetStateAction, useContext, useEffect, useRef, useState } from "react";
 import styles from "./../css/itemList.module.css";
-import { BsCaretDown, BsCaretUp, BsChevronDown } from "react-icons/bs";
-import { MdSearch } from "react-icons/md";
+import { BiPlusCircle, BiMinusCircle } from "react-icons/bi";
 import { CategoryListType, ItemListType, ItemObjectType } from "../type";
 import { EmployeeContext } from "../App";
+import { SearchBar } from "./SearchBarComponent";
+import { BsChevronDown } from "react-icons/bs";
 
 type Props = {
     categories:CategoryListType[],
@@ -16,15 +17,13 @@ type Props = {
 export const EditItemListComponent:React.FC<Props> = ({categories, currentList, setCurrentList}) => {
     const [categoryList, setCategoryList] = useState<CategoryListType[]>([]);
     const itemRefs = useRef<HTMLLIElement[][]>([]);
-    const [searchTerm, setSearchTerm] = useState<{term:string}>({term:""});
-    const [searchIndex, setSearchIndex] = useState<number>(-1);
-    const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
+    const [searchTerm, setSearchTerm] = useState<{term:string, prevTerm:string}>({term:"", prevTerm:""});
+    const [searchIndex, setSearchIndex] = useState<{index:number}>({index:-1});
     const searchRefs = useRef<HTMLLIElement[]>([]);
     const [activeItemId, setActiveItemId] = useState<string>("");
 
     useEffect(()=> {
         setCategoryList(() => {
-
             const newCategories:CategoryListType[] = categories.map((category, index) => {
                 itemRefs.current[index] = new Array(category.items.length);
                 return {
@@ -37,84 +36,70 @@ export const EditItemListComponent:React.FC<Props> = ({categories, currentList, 
             }
             return newCategories;
         })
-        setSearchTerm({term:""});
+        setSearchTerm(prevSearch => {
+            return {
+                term:"",
+                prevTerm:prevSearch.term 
+            };
+        });
     }, [categories])
 
-    const setSearchRefs = (refArray:HTMLLIElement[][]) => {
-        const newSearchRefs = refArray.reduce((newRefs, array, index) => {
-            const foundRefs = array.filter(ref => ref.dataset.name?.toLowerCase()===searchTerm.term.toLowerCase());
+    const filterAndSetSearchRefs = (refArray:HTMLLIElement[][]) => {
+        const newSearchRefs = refArray.reduce((newRefs, array) => {
+            const foundRefs = array.filter(ref => ref && ref.dataset.name!.toLowerCase().indexOf(searchTerm.term.toLowerCase()) > -1);
             return newRefs.concat(foundRefs);
         }, []);
-        console.log(newSearchRefs);
         searchRefs.current = newSearchRefs;
         if(newSearchRefs.length !== 0) {
-            setSearchIndex(0);
-        } else setSearchIndex(-1);
+            setSearchIndex({index:0});
+        } else setSearchIndex({index:-1});
     }
     
     useEffect(()=> {
         if(searchTerm.term === "") {
             searchRefs.current = [];
-            setSearchIndex(-1);
-        } else if(searchRefs.current.length===0){
-            setSearchRefs(itemRefs.current);
+            setSearchIndex({index:-1});
+        } else if(searchTerm.prevTerm === "" || searchTerm.term.length < searchTerm.prevTerm.length){
+            filterAndSetSearchRefs(itemRefs.current);
         } else {
-            setSearchRefs([[...searchRefs.current]]);
+            filterAndSetSearchRefs([searchRefs.current]);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchTerm.term]);
+    }, [searchTerm]);
 
     useEffect(()=> {
-        if(searchIndex === -1) return;
-        searchRefs.current[searchIndex].scrollIntoView({ behavior: "smooth" });
-        setActiveItemId(searchRefs.current[searchIndex].dataset.id || "");
+        if(searchIndex.index === -1 || !searchRefs.current || !searchRefs.current[searchIndex.index]) return;
+        setActiveItemId(searchRefs.current[searchIndex.index].dataset.id || "");
+        searchRefs.current[searchIndex.index].scrollIntoView({ behavior: "smooth", block:"nearest" });
     }, [searchIndex])
 
-    const onSearchChange = (e:React.ChangeEvent<HTMLInputElement>) => {
-        setSearchTerm({term:e.currentTarget.value});
-    }
-
-    const onArrowClick = (e:React.MouseEvent<SVGElement>, direction:"+"|"-") => {
+    const onArrowClick = (direction:"+"|"-") => {
         const length = searchRefs.current.length;
+        if(length <= 1) return;
         if(direction==="+") {
             setSearchIndex(prevIndex => {
-                const newIndex = prevIndex + 1;
-                if(newIndex < length) return newIndex;
-                return 0;
+                const newIndex = prevIndex.index + 1;
+                if(newIndex < length) return {index:newIndex};
+                return {index:0};
             });
         } else {
             setSearchIndex(prevIndex => {
-                const newIndex = prevIndex - 1;
-                if(newIndex >= 0) return newIndex;
-                return length - 1;
+                const newIndex = prevIndex.index - 1;
+                if(newIndex >= 0) return {index:newIndex};
+                return {index:length - 1};
             });
         }
     };
 
     return (
         <>
-            <div className={styles["searchBar"]}>
-                {searchTerm.term==="" && !isSearchFocused?<MdSearch style={
-                        {
-                            marginLeft:"0.3rem",
-                            marginTop: "3.5px",
-                            position: "absolute",
-                            color: "#5f7f88"
-                        }
-                    }
-                    />:""}
-                <input
-                    onChange={onSearchChange}
-                    onFocus={ ()=> setIsSearchFocused(true) }
-                    onBlur={ ()=> setIsSearchFocused(false) }
-                    type="text"
-                    value={searchTerm.term}
-                />
-                {searchRefs.current.length > 0?<>
-                    <BsCaretUp onClick={(e) => onArrowClick(e, "+")}/>
-                    <BsCaretDown onClick={(e) => onArrowClick(e, "-")}/>
-                </>:""}
-            </div>
+            <SearchBar 
+                searchTerm={searchTerm.term}
+                setSearchTerm={setSearchTerm}
+                searchIndex={searchIndex.index}
+                searchLength={searchRefs.current.length}
+                onArrowClick={onArrowClick}
+            />
             <div className={styles["itemContainer"]}>
                 {categoryList.map((category, index) => {
                     return (
@@ -142,15 +127,21 @@ type AccordionProps = {
     list: ItemListType[],
     currentItems: ItemObjectType,
     setCurrentItems: Dispatch<SetStateAction<ItemObjectType>>,
-    searchIndex: number,
+    searchIndex: {index:number},
     refArray: RefObject<Array<HTMLLIElement[]>>,
     activeItemId: string,
     setActiveItemId: Dispatch<SetStateAction<string>>
 }
 
-const AccordionComponent:React.FC<AccordionProps> = ({title, categoryIndex, list, currentItems, setCurrentItems, refArray, activeItemId, setActiveItemId}) => {
-    const [isShown, setIsShown] = useState<boolean>(false);
-    const loggedInEmployee = useContext(EmployeeContext);
+const AccordionComponent:React.FC<AccordionProps> = ({title, categoryIndex, list, currentItems, setCurrentItems, searchIndex, refArray, activeItemId, setActiveItemId}) => {
+    const INITIAL_MAX_HEIGHT = 100000;
+    const [isShown, setIsShown] = useState<boolean>(true);
+    const maxHeightRef = useRef(INITIAL_MAX_HEIGHT);
+    const accordionRef = useRef<HTMLDivElement>(null);
+
+    useEffect(()=> {
+        setIsShown(false);
+    }, []);
 
     useEffect(() => {
         if(!isShown){
@@ -158,22 +149,12 @@ const AccordionComponent:React.FC<AccordionProps> = ({title, categoryIndex, list
                 setIsShown(true);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeItemId])
+    }, [activeItemId, searchIndex]);
 
-    const onQuantityChange = (e:React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = parseInt(e.currentTarget.value);
-        const id = e.currentTarget.parentElement?.dataset.id;
-        if(isNaN(newValue) || id === undefined) return;
-        setCurrentItems(oldItems => {
-            if(oldItems[id]=== undefined){
-                oldItems[id] = {
-                    quantity: newValue,
-                    employee: loggedInEmployee._id!
-                }
-            } else oldItems[id].quantity = newValue;
-            return oldItems;
-        })
-    }
+    useEffect(()=> {
+        if(accordionRef.current && maxHeightRef.current === INITIAL_MAX_HEIGHT)
+            maxHeightRef.current = accordionRef.current.offsetHeight;
+    }, [isShown])
 
     const onTitleClick = (e:React.MouseEvent<HTMLDivElement>) => {
         setIsShown(prevVal => !prevVal);
@@ -191,7 +172,19 @@ const AccordionComponent:React.FC<AccordionProps> = ({title, categoryIndex, list
                     />
                     {title}
                 </div>
-                <div className={`${isShown?styles["shown"]:styles["hidden"]} ${styles["accordion-content"]}`}>
+                <div
+                    className={styles["accordion-content"]}
+                    style={
+                        isShown
+                            ?{
+                                maxHeight:maxHeightRef.current
+                            }
+                            :{
+                                maxHeight:0
+                            }
+                    }
+                    ref={accordionRef}
+                >
                     <ul>
                         {list.map((item, index) => {
                             return (
@@ -203,7 +196,7 @@ const AccordionComponent:React.FC<AccordionProps> = ({title, categoryIndex, list
                                     categoryIndex={categoryIndex}
                                     index={index}
                                     quantity={currentItems[item.id]?.quantity}
-                                    onQuantityChange={onQuantityChange}
+                                    setCurrentItems={setCurrentItems}
                                     setActiveItemId={setActiveItemId}
                                 />
                             );
@@ -223,20 +216,14 @@ type ItemProps = {
     refArray: RefObject<Array<HTMLLIElement[]>>,
     categoryIndex:number,
     index:number,
-    quantity: string | number,
-    onQuantityChange: (e:React.ChangeEvent<HTMLInputElement>) => void
+    quantity: string | number | undefined,
+    setCurrentItems: Dispatch<SetStateAction<ItemObjectType>>
 }
 
-const ItemComponent:React.FC<ItemProps> = ({activeItemId, setActiveItemId, item, refArray, categoryIndex, index, quantity, onQuantityChange}) => {
-    const [isHovering, setIsHovering] = useState<boolean>(false);
+const ItemComponent:React.FC<ItemProps> = ({activeItemId, setActiveItemId, item, refArray, categoryIndex, index, quantity, setCurrentItems}) => {
+    const loggedInEmployee = useContext(EmployeeContext);
 
-    const onMouseEnter = (e:React.MouseEvent<HTMLLIElement>) => {
-        setIsHovering(true);
-    }
 
-    const onMouseLeave = (e:React.MouseEvent<HTMLLIElement>) => {
-        setIsHovering(false);
-    }
     const onClick = (e:React.MouseEvent<HTMLLIElement>) => {
         const id = e.currentTarget.dataset.id!;
         if(id===activeItemId && e.currentTarget === e.target)
@@ -244,25 +231,69 @@ const ItemComponent:React.FC<ItemProps> = ({activeItemId, setActiveItemId, item,
         else setActiveItemId(id)
     }
     
+
+    const onQuantityChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = e.currentTarget.value.replace(/[^0-9]/g, "");
+        setCurrentItems(oldItems => {
+            const newItems = {...oldItems};
+            newItems[item.id] = {
+                quantity: newValue === ""?undefined:parseInt(newValue),
+                employee: loggedInEmployee._id!
+            }
+            return newItems;
+        })
+    }
+
+    const onArrowClick = (direction:"+"|"-") => {
+        const valueToAdd:number = direction === "+"? 1 : -1
+        setCurrentItems(oldItems => {
+            const newItems = {...oldItems};
+            const newQuantity = (oldItems[item.id]?.quantity || 0) + valueToAdd;
+            newItems[item.id] = {
+                quantity: newQuantity >= 0 ? newQuantity : undefined,
+                employee: loggedInEmployee._id!
+            };
+            return newItems;
+        })
+    }
+    
     return (
         <li
-            className={`${styles["listItem"]} ${activeItemId===item.id?styles["active"]: isHovering ? styles["hovering"]:""}`}
+            className={`${styles["listItem"]} ${activeItemId===item.id?styles["active"]:styles["inActive"]}`}
             data-id={item.id}
+            data-name={item.name}
             ref={el => {
                 if(refArray.current == null) return;
                 refArray.current[categoryIndex][index] = el as HTMLLIElement}
             }
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}
             onClick={onClick}
         >
-            <input
-                key={quantity}
-                type="number"
-                min="0"
-                value={quantity}
-                onChange={onQuantityChange}
-            />
+            <div className={styles["inputPart"]}>
+                <BiMinusCircle
+                    className={styles["icon"]} 
+                    style={
+                        {
+                            opacity: activeItemId===item.id?1:0
+                        }
+                    }
+                    onClick={() => activeItemId===item.id?onArrowClick("-"):()=>{}}
+                />
+                <input
+                    type="tel"
+                    min="0"
+                    value={quantity===undefined?"":quantity}
+                    onChange={onQuantityChange}
+                />
+                <BiPlusCircle
+                    className={styles["icon"]} 
+                    style={
+                        {
+                            opacity: activeItemId===item.id?1:0
+                        }
+                    }
+                    onClick={() => activeItemId===item.id?onArrowClick("+"):()=>{}}
+                />
+            </div>
             {item.display}
         </li>
     )

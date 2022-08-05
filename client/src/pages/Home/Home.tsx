@@ -28,14 +28,16 @@ const defaultLog:IEmployeeLog = {
     employee: ""
 }
 
+const homeNavigation:NavListType[] = [{moduleName:"home", displayName:"Home"}]
 
 export const HomeComponent:React.FC<Props> = ({token, setLoggedIn, setEmployee, reminderList, setReminderList}) => {
     const firstUpdate = useRef<boolean>(true);
+    const employeeUpdated = useRef<boolean>(false);
     const [employeeLog, setEmployeeLog] = useState<IEmployeeLog>(defaultLog);
     const [activeModule, setActiveModule] = useState<ModulesType>("home");
     const [activeListModule, setActiveListModule] = useState<NavListType>({moduleName:"home", displayName:"Home"});
     const [accessRole, setAccessRole] = useState<accessRoleType>("Employee");
-    const [navBarList, setNavBarList] = useState<NavListType[]>([{moduleName:"home", displayName:"Home"}]);
+    const [navBarList, setNavBarList] = useState<NavListType[]>(homeNavigation);
     const [locationList, setLocationList] = useState<NavListType[]>([]);
     const [showCheckInWarning, setShowCheckInWarning] = useState<boolean>(false);
     const [isManager, setIsManager] = useState<boolean>(false);
@@ -43,44 +45,49 @@ export const HomeComponent:React.FC<Props> = ({token, setLoggedIn, setEmployee, 
     const employee = useContext(EmployeeContext);
 
     useEffect(()=> {
-        if(employee===undefined || employee===defaultEmployee) return;
+        if(employee===undefined || employee===defaultEmployee || employeeUpdated.current) return;
         const roleId = employee.role;
-        getRole(roleId)
-        .then(res => {
-            const newRole = res.role;
-            let accessibleNavigation:NavListType[] = [{moduleName:"home", displayName:text.navList.home}];
-            const defaultNavigation:NavListType[]= [
-                {moduleName:"ordering", displayName:text.navList.ordering}
-            ];
-            switch(newRole?.type) {
-                case "Administrator":
-                case "Manager":
-                    accessibleNavigation.push({moduleName:"admin", displayName:text.navList.admin});
-                    setIsManager(true);
-                    break;
-            };
-            accessibleNavigation = accessibleNavigation.concat(defaultNavigation);
-            accessibleNavigation.push({moduleName:"check-out", displayName:text.navList.checkOut});
-            setNavBarList(accessibleNavigation);
-            setAccessRole(newRole?.type?newRole.type:"Employee");
+        if(navBarList===homeNavigation){
+            getRole(roleId)
+            .then(res => {
+                const newRole = res.role;
+                let accessibleNavigation:NavListType[] = [{moduleName:"home", displayName:text.navList.home}];
+                const defaultNavigation:NavListType[]= [
+                    {moduleName:"ordering", displayName:text.navList.ordering}
+                ];
+                switch(newRole?.type) {
+                    case "Administrator":
+                    case "Manager":
+                        accessibleNavigation.push({moduleName:"admin", displayName:text.navList.admin});
+                        setIsManager(true);
+                        break;
+                };
+                accessibleNavigation = accessibleNavigation.concat(defaultNavigation);
+                accessibleNavigation.push({moduleName:"check-out", displayName:text.navList.checkOut});
+                setNavBarList(accessibleNavigation);
+                setAccessRole(newRole?.type?newRole.type:"Employee");
             })
-        
-        getLocations().then(locationsList => {
-            setLocationList(
-                employee.access.reduce<NavListType[]>((result, element) => {
-                    const foundLocations = locationsList.locations.find((mod) => {return (mod._id === element.locationId)});
-                    if(foundLocations === undefined) return result;
-                    const newAccessPoint = {
-                        id:foundLocations._id,
-                        moduleName:foundLocations.name,
-                        displayName:foundLocations.name};
-                    result.push(newAccessPoint);
-                    return result;
-                    }, [])
-                )
-            }).catch(err => {
+        }
+        if(locationList.length === 0){
+            getLocations()
+            .then(locationsList => {
+                setLocationList(
+                    employee.access.reduce<NavListType[]>((result, element) => {
+                        const foundLocations = locationsList.locations.find((mod) => {return (mod._id === element.locationId)});
+                        if(foundLocations === undefined) return result;
+                        const newAccessPoint = {
+                            id:foundLocations._id,
+                            moduleName:foundLocations.name,
+                            displayName:foundLocations.name};
+                        result.push(newAccessPoint);
+                        return result;
+                        }, [])
+                    )
+                })
+            .catch(err => {
                 console.log(err);
             });
+        }
         getEmployeesMostRecentLog(employee._id!)
             .then(logResult => {
                 setEmployeeLog(logResult.employeeLog!);
@@ -99,17 +106,18 @@ export const HomeComponent:React.FC<Props> = ({token, setLoggedIn, setEmployee, 
                 } else {
                     setAndReturnRemindersByRole()
                         .then(res => {
-                            if((logResult.employeeLog?.reminder === undefined || (logResult.employeeLog.reminder.length === 0 && res.length !== 0)) && employee.checkedIn){
+                            if((logResult.employeeLog?.reminder === undefined || (logResult.employeeLog.reminder.length === 0 && res.length !== 0)) && (employee.checkedIn === undefined || employee.checkedIn)){
                                 setEmployee(oldEmployee => {
-                                    oldEmployee.checkedIn = false;
-                                    return oldEmployee;
+                                    const updatedEmployee = {...oldEmployee};
+                                    updatedEmployee.checkedIn = false;
+                                    return updatedEmployee;
                                 });
                             }
                         })
                 }
             })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [employee]);
+    }, []);
 
     useEffect(()=> {
         if(firstUpdate.current){

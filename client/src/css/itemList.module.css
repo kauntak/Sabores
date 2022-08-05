@@ -1,12 +1,6 @@
-.searchBar{
-    display: flex;
-    flex-direction: row;
-    margin-left: 10px;
-}
-
 .itemContainer{
     margin: 10px;
-    max-height: 500px;
+    max-height: 50vh;
     overflow-y: auto;
 }
 
@@ -15,19 +9,18 @@
 }
 
 .accordion-title{
-
+    display: inline-block;
+    padding: 4px;
+    width: 80%;
+    background-color: #ffa101;
+    vertical-align: middle;
 }
 
 .accordion-content{
     overflow-y: hidden;
-    transition: max-height 0.5s ease-in-out;
-}
-
-.shown{
-    max-height: none !important;
-}
-
-.hidden{
+    transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
+    background-color: #ecd9a8;
+    width: 75%;
     max-height: 0px;
 }
 
@@ -39,11 +32,20 @@
     transition: 0.3s ease-out;
 }
 
+.accordion-content ul {
+    margin: 0;
+    padding-left: 10px;
+}
 .listItem{
+    padding: 10px 5px 10px 5px;
     list-style: none;
     display: flex;
     flex-direction: row;
-    padding: 5px;
+}
+
+.inActive:hover{
+    background-color: #5f7f88;
+    color: #fae6b1;
 }
 
 .hovering{
@@ -51,11 +53,22 @@
     color: #fae6b1;
 }
 
-.listItem input{
-    width: 50px;
+.inputPart{
     margin-right: 10px;
+    display: flex;
+    flex-direction: row;
 }
 
+.icon{
+    margin: 5px;
+}
+
+.inputPart input{
+    width: 25px;
+}
+
+
 .active{
-    background-color: #ffa101;
+    background-color: #31525b;
+    color:#fae6b1;
 }

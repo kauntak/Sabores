@@ -159,20 +159,26 @@ const LocationComponent:React.FC<LocationComponentProp> = ({locationName, id }) 
     const onSaveButtonClick = (e:React.MouseEvent<HTMLButtonElement>) => {
         const newItems:ItemType[]  = [];
         for(const itemId in itemList) {
-            newItems.push({
-                item:itemId,
-                quantity: itemList[itemId].quantity,
-                employee: employee._id!
-            })
+            if(itemList[itemId].quantity !== undefined && itemList[itemId].quantity !== 0) {
+                newItems.push({
+                    item:itemId,
+                    quantity: itemList[itemId].quantity!,
+                    employee: employee._id!
+                })
+            }
         }
         if(isMain) {
             const updatedOrder:IOrder = {...(list as IOrder)};
             updatedOrder.items = newItems;
-            updateOrder(updatedOrder);
+            console.log(updatedOrder);
+            updateOrder(updatedOrder)
+                .then(res => console.log(res.order));
         } else {
             const updatedShoppingList:IShoppingList = {...(list as IShoppingList)};
             updatedShoppingList.items = newItems;
+            console.log(updatedShoppingList);
             updateShoppingList(updatedShoppingList)
+                .then(res => console.log(res.shoppingList))
         }
     }
 

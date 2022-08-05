@@ -42,6 +42,7 @@ export async function getEmployeesMostRecentLog(req: Request, res:Response):Prom
     try{
         const {params: {id}} = req;
         let log:IEmployeeLog|null =  await EmployeeLog.findOne({employee:id, checkOutTime:{$exists:false}},{}, {sort:{checkInTime:-1}}).exec();
+        console.log(log);
         let createNewLog:boolean = false;
         if(log !== null && log.checkInTime!== undefined && (log.checkInTime.getTime() - Date.now()) > 54000000){
             log.checkOutTime = new Date(log.checkInTime.getTime() + 54000000);

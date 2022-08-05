@@ -260,7 +260,7 @@ export type ItemListType = {
 
 export type ItemObjectType = {
     [key:string]:{
-        quantity:number,
+        quantity?:number,
         employee:string
     }
 }

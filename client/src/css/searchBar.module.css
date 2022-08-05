@@ -1,0 +1,29 @@
+.searchBar{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    margin-left: 10px;
+}
+
+.searchBar input{
+    height: 1.5em;
+    width: 250px;
+}
+
+.searchIndex{
+    margin-left: -85px;
+    color: #5f7f88;
+    display: flex;
+    flex-direction: row;
+}
+
+.arrows{
+    margin: 3px;
+    margin-top: 5px;
+}
+
+.searchIndex p{
+    display: inline;
+    vertical-align: middle;
+    margin: 0;
+}
