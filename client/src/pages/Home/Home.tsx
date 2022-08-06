@@ -2,7 +2,7 @@
 import React, { Dispatch, SetStateAction, useContext, useEffect, useRef, useState } from "react";
 import styles from "./../../css/home.module.css";
 
-import { getEmployeesMostRecentLog, getLocations, getReminderByRoleId, getRemindersByIds, getRole, updateEmployeeLog } from "../../api";
+import { getEmployeesMostRecentLog, getLocations, getReminderByRoleId, getRemindersByIds, getRole, updateEmployee, updateEmployeeLog } from "../../api";
 import { accessRoleType, IEmployee, IEmployeeLog, NavListType, ReminderListType } from "../../type";
 import { AdminComponent } from "../Admin";
 import { RemindersComponent } from "../../components/RemindersComponent";
@@ -31,7 +31,7 @@ const defaultLog:IEmployeeLog = {
 const homeNavigation:NavListType[] = [{moduleName:"home", displayName:"Home"}]
 
 export const HomeComponent:React.FC<Props> = ({token, setLoggedIn, setEmployee, reminderList, setReminderList}) => {
-    const firstUpdate = useRef<boolean>(true);
+    const hasRendered = useRef<{[key:string]:boolean}>({});
     const employeeUpdated = useRef<boolean>(false);
     const [employeeLog, setEmployeeLog] = useState<IEmployeeLog>(defaultLog);
     const [activeModule, setActiveModule] = useState<ModulesType>("home");
@@ -90,9 +90,10 @@ export const HomeComponent:React.FC<Props> = ({token, setLoggedIn, setEmployee, 
         }
         getEmployeesMostRecentLog(employee._id!)
             .then(logResult => {
+                console.log(employeeLog, logResult);
                 setEmployeeLog(logResult.employeeLog!);
                 const reminderIds = logResult.employeeLog?.reminder?.map(r => r.reminderId);
-                if(reminderIds){
+                if(reminderIds && reminderIds.length > 0){
                     getRemindersByIds(reminderIds)
                         .then(employeeReminders => {
                             setReminderList(employeeReminders.reminders.map(reminder => {
@@ -104,7 +105,7 @@ export const HomeComponent:React.FC<Props> = ({token, setLoggedIn, setEmployee, 
                             )
                         });
                 } else {
-                    setAndReturnRemindersByRole()
+                    setAndReturnDefaultRemindersByRole()
                         .then(res => {
                             if((logResult.employeeLog?.reminder === undefined || (logResult.employeeLog.reminder.length === 0 && res.length !== 0)) && (employee.checkedIn === undefined || employee.checkedIn)){
                                 setEmployee(oldEmployee => {
@@ -119,9 +120,10 @@ export const HomeComponent:React.FC<Props> = ({token, setLoggedIn, setEmployee, 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+
     useEffect(()=> {
-        if(firstUpdate.current){
-            firstUpdate.current = false;
+        if(!(hasRendered.current["reminderList"])){
+            hasRendered.current["reminderList"] = true;
             return;
         }
         setEmployeeLog(oldLog => {
@@ -132,13 +134,28 @@ export const HomeComponent:React.FC<Props> = ({token, setLoggedIn, setEmployee, 
                     completed: reminder.completed
                 }
             });
-            if(newLog._id !== undefined && newLog._id !== "")
-                updateEmployeeLog(newLog);
             return newLog;
         });
-    }, [reminderList])
+    }, [reminderList]);
 
-    const setAndReturnRemindersByRole = ():Promise<ReminderListType[]> => {
+    useEffect(()=> {
+        if(!(hasRendered.current["employeeLog"])) {
+            hasRendered.current["employeeLog"] = true;
+            return;
+        }
+        if(employeeLog?._id !== undefined && employeeLog._id !== "")
+            updateEmployeeLog(employeeLog);
+    }, [employeeLog]);
+
+    useEffect(()=> {
+        if(employee?._id !== undefined && employee._id !== "")
+            updateEmployee(employee);
+        if(employeeLog?._id !== undefined && employeeLog._id !== "")
+            updateEmployeeLog(employeeLog);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [employee.checkedIn])
+
+    const setAndReturnDefaultRemindersByRole = ():Promise<ReminderListType[]> => {
         return new Promise((resolve, reject) => {
             getReminderByRoleId(employee.role)
             .then(result => {
