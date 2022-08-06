@@ -8,6 +8,7 @@ import {LoginScreenComponent} from './components/LoginScreenComponent'
 import { getEmployees, updateEmployee } from './api';
 import { IEmployee, ReminderListType } from './type';
 import { HomeComponent } from './pages/Home/Home';
+import { IdleTimerComponent } from './components/IdleTimerComponent';
 
 
 var currentToken:string = "";
@@ -109,7 +110,7 @@ const App:React.FC = () => {
   const [reminderList, setReminderList] = useState<ReminderListType[]>([]);
   const [language, setLanguage] = useState<string>("en");
   const [token, setToken] = useState<string>("");
-  const [loginTimer, setLoginTimer] = useState<ReturnType<typeof setTimeout>>();
+  // const [loginTimer, setLoginTimer] = useState<ReturnType<typeof setTimeout>>();
   
   const [textTranslations, setTextTranslations] = useState<any>(defaultText);
 
@@ -142,12 +143,12 @@ const App:React.FC = () => {
   useEffect(()=> {
     currentToken = token;
     if(token !== "") {
-      setLoginTimer(setTimeout(()=> {
-        setIsLoggedIn(false);
-      }, 600000))
+      // setLoginTimer(setTimeout(()=> {
+      //   setIsLoggedIn(false);
+      // }, 600000))
       setIsLoggedIn(true);
     } else {
-      clearTimeout(loginTimer);
+      // clearTimeout(loginTimer);
       setIsLoggedIn(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -171,6 +172,10 @@ const App:React.FC = () => {
         <SetLanguageComponent
           setLanguage={setLanguage}
           languages={languages}
+        />
+        <IdleTimerComponent 
+          isLoggedIn={isLoggedIn}
+          setIsLoggedIn={setIsLoggedIn}
         />
         <div className="main-window">
           {isLoggedIn

@@ -1,22 +1,23 @@
-import React, { Dispatch, useEffect, useRef, useState } from "react";
+import React, { Dispatch, SetStateAction, useContext, useEffect, useRef, useState } from "react";
+import { LanguageContext } from "../App";
 import styles from "./../css/idleTimer.module.css";
 import { ButtonComponent } from "./ButtonComponent";
 import { ExitComponent } from "./ExitComponent";
 
 type Props = {
     isLoggedIn: boolean,
-    setIsLoggedIn: Dispatch<boolean>,
-    text:any
+    setIsLoggedIn: Dispatch<SetStateAction<boolean>>
 };
 
 const warningTimeoutSeconds:number = 120;
 const logoutTimeoutSeconds:number = 30;
 
 
-export const IdleTimerComponent:React.FC<Props> = ({isLoggedIn, setIsLoggedIn, text}) => {
+export const IdleTimerComponent:React.FC<Props> = ({isLoggedIn, setIsLoggedIn}) => {
     const [isTimeout, setIsTimeout] = useState<boolean>(false);
     const [currentTimer, setCurrentTimer] = useState<ReturnType<typeof setInterval>>();
     const exitSpan = useRef<HTMLSpanElement>(null);
+    const text = useContext(LanguageContext);
     
     const warningTimer:IdleTimer = new IdleTimer({
         timerName:"warningTimer",
@@ -62,16 +63,16 @@ export const IdleTimerComponent:React.FC<Props> = ({isLoggedIn, setIsLoggedIn, t
                 <div className={styles["force-logout-shader"]}>
                     <div className={styles["force-logout-window"]}>
                         <ExitComponent onClick={continueClick} ref={exitSpan}/>
-                        <h1>{text?.stillThere?text.stillThere:"Are you still there?"}</h1>
+                        <h1>{text.idleTimer.stillThere}</h1>
                         <div style={{display:"flex"}}>
                             <ButtonComponent
-                                name={text?.logout?text.logout:"Logout"}
+                                name={text.idleTimer.logout}
                                 onClick={()=>{setIsLoggedIn(false)}}
                                 title="Logout"
                                 isNegativeColor={true}
                                 />
                             <ButtonComponent
-                                name={text?.continue?text.continue:"Continue"}
+                                name={text.idleTimer.continue}
                                 onClick={continueClick}
                                 title="Continue"/>
                             
