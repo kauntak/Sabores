@@ -50,25 +50,29 @@ export const SetLanguageComponent: React.FC<Props> = ({setLanguage, languages}) 
 
     return (
         <>
-            <div className={styles["language-menu"]}>
-                <div className={styles[`${text.setLanguage.title}-list`]} id={styles["selected-language"]}>
-                    {text.setLanguage.language}
+            {
+                languageList.length > 1
+                ?<div className={styles["language-menu"]}>
+                    <div className={styles[`${text.setLanguage.title}-list`]} id={styles["selected-language"]}>
+                        {text.setLanguage.language}
+                    </div>
+                    <ul>
+                        {languageList.map((language, index) => {
+                            return (
+                                <li  key={language.title+index}>
+                                    <a
+                                        href="/#"
+                                        onClick={onClick}
+                                        data-language={language.title}>
+                                        {language.language}
+                                    </a>
+                                </li>
+                            )
+                        })}
+                    </ul>
                 </div>
-                <ul>
-                    {languageList.map((language, index) => {
-                        return (
-                            <li  key={language.title+index}>
-                                <a
-                                    href="/#"
-                                    onClick={onClick}
-                                    data-language={language.title}>
-                                    {language.language}
-                                </a>
-                            </li>
-                        )
-                    })}
-                </ul>
-            </div>
+                :""
+            }
         </>
     );
 }
