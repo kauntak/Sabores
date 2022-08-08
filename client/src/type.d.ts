@@ -80,10 +80,13 @@ export type MessageApiDataType = {
 }
 
 export interface IMessage {
-    '_id': string,
+    '_id'?: string,
+    to: string,
+    subject:string,
     message: string,
     employee: string,
-    date: Date
+    date: Date,
+    isRead?: boolean
 }
 
 export interface IMessageProps {
@@ -92,8 +95,8 @@ export interface IMessageProps {
 
 
 export type EmployeeLogApiDataType = {
-    employeeLog?: IEmployeeLog,
-    employeeLogs?: IEmployeeLog[]
+    log?: IEmployeeLog,
+    logs?: IEmployeeLog[]
 }
 export interface IEmployeeLog {
     '_id'?: string,
@@ -103,7 +106,7 @@ export interface IEmployeeLog {
     comment?: string,
     reminder?: {
         reminderId:string,
-        completed:boolean
+        isCompleted:boolean
     }[]
 }
 
@@ -244,12 +247,13 @@ export type SuggestionListType = {
 export type NavListType = {
     id?:string,
     moduleName:ModulesType,
-    displayName:string
+    displayName:string,
+    isNotification?:boolean
 }
 
 export type ReminderListType = {
     reminder:IReminder,
-    completed:boolean
+    isCompleted:boolean
 };
 
 export type ItemListType = {

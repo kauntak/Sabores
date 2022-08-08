@@ -962,6 +962,21 @@ export const getActiveShoppingListByLocation = async (_id:string):Promise<Shoppi
     }
 }
 
+export const getShoppingListsByLocation = async(_id:string):Promise<ShoppingListApiDataType> => {
+    try {
+        const lists: AxiosResponse<ShoppingListApiDataType|IError> = await axios.get(`${url}/getShoppingListsByLocation/${_id}`, await getHeaders());
+        const error = (lists.data as IError).error;
+        if(error !== undefined){
+            throw new Error(error);
+        }
+        return lists.data as ShoppingListApiDataType;
+    } catch(error) {
+        console.log(error);
+		throw new Error(String(error));
+    }
+}
+
+
 export const getShoppingLists = async():Promise<ShoppingListApiDataType> => {
     try {
         const lists: AxiosResponse<ShoppingListApiDataType|IError> = await axios.get(`${url}/getShoppingLists`, await getHeaders());

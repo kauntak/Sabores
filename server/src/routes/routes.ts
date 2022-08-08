@@ -14,7 +14,7 @@ import { createOrderCategory, updateOrderCategory, getOrderCategories, deleteOrd
 import { createReminder, updateReminder, getReminders, getReminderByRoleId, deleteReminder, getRemindersByIds } from '../controllers/reminder';
 import { createRole, updateRole, getRoles, getRole, deleteRole } from '../controllers/role';
 import { createShoppingItem, updateShoppingItem, getShoppingItems, getShoppingItem, deleteShoppingItem } from '../controllers/shoppingItem';
-import { createShoppingList, updateShoppingList, getShoppingLists, getShoppingList, deleteShoppingList, getActiveShoppingListByLocation } from '../controllers/shoppingList';
+import { createShoppingList, updateShoppingList, getShoppingLists, getShoppingList, deleteShoppingList, getActiveShoppingListByLocation, getShoppingListsByLocation } from '../controllers/shoppingList';
 import { createShoppingCategory, updateShoppingCategory, getShoppingCategories, getShoppingCategory, deleteShoppingCategory } from '../controllers/shoppingCategory';
 import { createSupplier, deleteSupplier, getSupplier, getSuppliers, updateSupplier } from '../controllers/supplier';
 
@@ -75,7 +75,7 @@ router.delete('/api/deleteOrderCategory/:id', jsonParser, deleteOrderCategory);
 router.post('/api/createReminder', jsonParser, createReminder);
 router.put('/api/updateReminder/:id', jsonParser, updateReminder);
 router.get('/api/getReminders', jsonParser, getReminders);
-router.get('/api/getRemindersByIds', jsonParser, getRemindersByIds);
+router.get('/api/getRemindersByIds/:idString', jsonParser, getRemindersByIds);
 router.get('/api/getReminderByRoleId/:id', jsonParser, getReminderByRoleId);
 router.delete('/api/deleteReminder/:id', jsonParser, deleteReminder);
 
@@ -95,6 +95,7 @@ router.post('/api/createShoppingList', jsonParser, createShoppingList);
 router.put('/api/updateShoppingList/:id', jsonParser, updateShoppingList);
 router.get('/api/getShoppingLists', jsonParser, getShoppingLists);
 router.get('/api/getShoppingList/:id', jsonParser, getShoppingList);
+router.get('/api/getShoppingListsByLocation/:id', jsonParser, getShoppingListsByLocation);
 router.get('/api/getActiveShoppingListByLocation/:id', jsonParser, getActiveShoppingListByLocation);
 router.delete('/api/deleteShoppingList/:id', jsonParser, deleteShoppingList);
 

@@ -46,6 +46,10 @@
     color: #ffbb44;
 }
 
+.link{
+    position: relative;
+}
+
 .negativeLink:hover{
     background-color: #5f7f88;
     color: #ffbb44;
@@ -65,4 +69,15 @@
 .active:hover{
     background-color: #fae6b1;
     color: #31525b !important;
+}
+
+.notification{
+    position: absolute;
+    top: 5px;
+    right: 1px;
+    background-color:crimson;
+    border-radius: 50px;
+    width: 12px;
+    height: 12px;
+    font-size: 0.45em;
 }

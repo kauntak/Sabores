@@ -28,8 +28,9 @@ export const NavBarComponent:React.FC<Props> = ({list, currentActive, isNegative
                         id={listItem.id}
                         isActive={currentActive===listItem.moduleName}
                         onClick={onClick}
-                        />
-                    )}
+                        isNotification={listItem.isNotification}
+                    />
+                )}
             </ul>
         </div>
     );
@@ -42,11 +43,12 @@ type LinkProps = {
     isNegative:boolean,
     isActive:boolean,
     onClick: (e:React.MouseEvent<HTMLAnchorElement>)=>void,
+    isNotification?: boolean
 }
 
-const NavBarLink:React.FC<LinkProps> = ({displayName, moduleName, id, isNegative, isActive, onClick}) => {
+const NavBarLink:React.FC<LinkProps> = ({displayName, moduleName, id, isNegative, isActive, onClick, isNotification}) => {
     return (
-        <li className={`${isNegative? styles["negativeLink"]:styles["positiveLink"]} ${isActive?styles["active"]:""}`}>
+        <li className={`${styles["link"]} ${isNegative? styles["negativeLink"]:styles["positiveLink"]} ${isActive?styles["active"]:""}`}>
             <a
                 href={moduleName}
                 onClick={onClick}
@@ -54,6 +56,11 @@ const NavBarLink:React.FC<LinkProps> = ({displayName, moduleName, id, isNegative
                 data-link={moduleName}
                 data-display={displayName}
             >{displayName}</a>
+            {
+                isNotification
+                ?<div className={styles["notification"]}>!</div>
+                :""
+            }
         </li>
     );
 }
