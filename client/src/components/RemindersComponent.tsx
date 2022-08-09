@@ -18,7 +18,7 @@ export const RemindersComponent:React.FC<Props> = ({reminderList, setReminderLis
                 if(reminder.reminder._id === id){
                     return {
                         reminder:reminder.reminder,
-                        completed: isCompleted
+                        isCompleted: isCompleted
                     }
                 } else return reminder;
             })
@@ -30,10 +30,10 @@ export const RemindersComponent:React.FC<Props> = ({reminderList, setReminderLis
                 {reminderList.map((reminderItem, index) => {
                     return (
                         <li
-                            key={reminderItem.reminder._id! + index+ reminderItem.completed}
+                            key={reminderItem.reminder._id! + index+ reminderItem.isCompleted}
                         >
                             <input type="checkBox"
-                                checked={reminderItem.completed}
+                                checked={reminderItem.isCompleted}
                                 id={reminderItem.reminder._id}
                                 data-id={reminderItem.reminder._id}
                                 onChange={onChange}/>

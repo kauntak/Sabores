@@ -2,8 +2,8 @@
 import React, { Dispatch, SetStateAction, useContext, useEffect, useRef, useState } from "react";
 import styles from "./../../css/home.module.css";
 
-import { getEmployeesMostRecentLog, getLocations, getReminderByRoleId, getRemindersByIds, getRole, updateEmployee, updateEmployeeLog } from "../../api";
-import { accessRoleType, IEmployee, IEmployeeLog, NavListType, ReminderListType } from "../../type";
+import { getEmployeesMostRecentLog, getLocations, getMessagesByEmployee, getReminderByRoleId, getRemindersByIds, getRole, updateEmployee, updateEmployeeLog } from "../../api";
+import { accessRoleType, IEmployee, IEmployeeLog, IMessage, NavListType, ReminderListType } from "../../type";
 import { AdminComponent } from "../Admin";
 import { RemindersComponent } from "../../components/RemindersComponent";
 import { CheckOutComponent } from "../CheckOut";
@@ -13,16 +13,20 @@ import { ShoppingComponent } from "../Shopping";
 import { WarningOverlayComponent } from "../../components/WarningOverlayComponent";
 import { ButtonComponent } from "../../components/ButtonComponent";
 import { defaultEmployee, EmployeeContext, LanguageContext } from "../../App";
+import { ViewLogs } from "./ViewLogsComponent";
+import { ViewShoppingList } from "./ViewShoppingListComponent";
+import { ViewMessages } from "./ViewMessagesComponent";
+import { Messages } from "../Messages";
 
 type Props = {
     token:string,
+    isLoggedIn:boolean,
     setLoggedIn: Dispatch<SetStateAction<boolean>>,
-    setEmployee: Dispatch<SetStateAction<Omit<IEmployee, "password">>>,
-    reminderList: ReminderListType[],
-    setReminderList: Dispatch<SetStateAction<ReminderListType[]>>
+    setEmployee: Dispatch<SetStateAction<Omit<IEmployee, "password">>>
+    setCanClearToken: Dispatch<SetStateAction<boolean>>
 };
 
-type ModulesType = "home"| "admin" | "check-out" | "ordering";
+type ModulesType = "home"| "admin" | "check-out" | "ordering" | "timeSheet" | "messages";
 
 const defaultLog:IEmployeeLog = {
     employee: ""
@@ -30,10 +34,9 @@ const defaultLog:IEmployeeLog = {
 
 const homeNavigation:NavListType[] = [{moduleName:"home", displayName:"Home"}]
 
-export const HomeComponent:React.FC<Props> = ({token, setLoggedIn, setEmployee, reminderList, setReminderList}) => {
-    const hasRendered = useRef<{[key:string]:boolean}>({});
-    const employeeUpdated = useRef<boolean>(false);
+export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, setEmployee, setCanClearToken}) => {
     const [employeeLog, setEmployeeLog] = useState<IEmployeeLog>(defaultLog);
+    const [reminderList, setReminderList] = useState<ReminderListType[]>([]);
     const [activeModule, setActiveModule] = useState<ModulesType>("home");
     const [activeListModule, setActiveListModule] = useState<NavListType>({moduleName:"home", displayName:"Home"});
     const [accessRole, setAccessRole] = useState<accessRoleType>("Employee");
@@ -41,17 +44,18 @@ export const HomeComponent:React.FC<Props> = ({token, setLoggedIn, setEmployee, 
     const [locationList, setLocationList] = useState<NavListType[]>([]);
     const [showCheckInWarning, setShowCheckInWarning] = useState<boolean>(false);
     const [isManager, setIsManager] = useState<boolean>(false);
+    const [messageList, setMessageList] = useState<IMessage[]>([]);
     const text = useContext(LanguageContext);
     const employee = useContext(EmployeeContext);
 
     useEffect(()=> {
-        if(employee===undefined || employee===defaultEmployee || employeeUpdated.current) return;
-        const roleId = employee.role;
-        if(navBarList===homeNavigation){
+        if(isLoggedIn){
+            if(employee===undefined || employee===defaultEmployee || employee._id===undefined) return;
+            const roleId = employee.role;
             getRole(roleId)
             .then(res => {
                 const newRole = res.role;
-                let accessibleNavigation:NavListType[] = [{moduleName:"home", displayName:text.navList.home}];
+                let accessibleNavigation:NavListType[] = [{moduleName:"home", displayName:text.navList.home}, {moduleName:"message", displayName:text.navList.messages}];
                 const defaultNavigation:NavListType[]= [
                     {moduleName:"ordering", displayName:text.navList.ordering}
                 ];
@@ -66,101 +70,69 @@ export const HomeComponent:React.FC<Props> = ({token, setLoggedIn, setEmployee, 
                 accessibleNavigation.push({moduleName:"check-out", displayName:text.navList.checkOut});
                 setNavBarList(accessibleNavigation);
                 setAccessRole(newRole?.type?newRole.type:"Employee");
-            })
-        }
-        if(locationList.length === 0){
-            getLocations()
-            .then(locationsList => {
-                setLocationList(
-                    employee.access.reduce<NavListType[]>((result, element) => {
-                        const foundLocations = locationsList.locations.find((mod) => {return (mod._id === element.locationId)});
-                        if(foundLocations === undefined) return result;
-                        const newAccessPoint = {
-                            id:foundLocations._id,
-                            moduleName:foundLocations.name,
-                            displayName:foundLocations.name};
-                        result.push(newAccessPoint);
-                        return result;
-                        }, [])
-                    )
-                })
-            .catch(err => {
-                console.log(err);
             });
-        }
-        getEmployeesMostRecentLog(employee._id!)
+            if(locationList.length === 0){
+                getLocations()
+                .then(locationsList => {
+                    setLocationList(
+                        employee.access.reduce<NavListType[]>((result, element) => {
+                            const foundLocations = locationsList.locations.find((mod) => {return (mod._id === element.locationId)});
+                            if(foundLocations === undefined) return result;
+                            const newAccessPoint = {
+                                id:foundLocations._id,
+                                moduleName:foundLocations.name,
+                                displayName:foundLocations.name};
+                            result.push(newAccessPoint);
+                            return result;
+                            }, [])
+                        )
+                    })
+                .catch(err => {
+                    console.log(err);
+                });
+            }
+            getEmployeesMostRecentLog(employee._id)
             .then(logResult => {
-                console.log(employeeLog, logResult);
-                setEmployeeLog(logResult.employeeLog!);
-                const reminderIds = logResult.employeeLog?.reminder?.map(r => r.reminderId);
+                setEmployeeLog(logResult.log!);
+                const reminderIds = logResult.log?.reminder?.map(r => r.reminderId);
                 if(reminderIds && reminderIds.length > 0){
                     getRemindersByIds(reminderIds)
-                        .then(employeeReminders => {
-                            setReminderList(employeeReminders.reminders.map(reminder => {
-                                return {
-                                    reminder:reminder,
-                                    completed:logResult.employeeLog?.reminder?.find(r => r.reminderId === reminder._id)?.completed||false
-                                }
-                            })
-                            )
-                        });
-                } else {
-                    setAndReturnDefaultRemindersByRole()
-                        .then(res => {
-                            if((logResult.employeeLog?.reminder === undefined || (logResult.employeeLog.reminder.length === 0 && res.length !== 0)) && (employee.checkedIn === undefined || employee.checkedIn)){
-                                setEmployee(oldEmployee => {
-                                    const updatedEmployee = {...oldEmployee};
-                                    updatedEmployee.checkedIn = false;
-                                    return updatedEmployee;
-                                });
+                    .then(employeeReminders => {
+                        setReminderList(employeeReminders.reminders.map(reminder => {
+                            return {
+                                reminder:reminder,
+                                isCompleted:logResult.log?.reminder?.find(r => r.reminderId === reminder._id)?.isCompleted||false
                             }
                         })
-                }
-            })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-
-    useEffect(()=> {
-        if(!(hasRendered.current["reminderList"])){
-            hasRendered.current["reminderList"] = true;
-            return;
-        }
-        setEmployeeLog(oldLog => {
-            const newLog = {...oldLog};
-            newLog.reminder = reminderList.map(reminder => {
-                return {
-                    reminderId: reminder.reminder._id!,
-                    completed: reminder.completed
+                        )
+                    });
+                } else {
+                    setAndReturnDefaultRemindersByRole()
+                    .then(res => {
+                        if((logResult.log?.reminder === undefined || (logResult.log.reminder.length === 0 && res.length !== 0)) && (employee.checkedIn === undefined || employee.checkedIn)){
+                            setEmployee(oldEmployee => {
+                                const updatedEmployee = {...oldEmployee};
+                                updatedEmployee.checkedIn = false;
+                                return updatedEmployee;
+                            });
+                        }
+                    })
                 }
             });
-            return newLog;
-        });
-    }, [reminderList]);
-
-    useEffect(()=> {
-        if(!(hasRendered.current["employeeLog"])) {
-            hasRendered.current["employeeLog"] = true;
-            return;
+            getMessagesByEmployee(employee._id)
+            .then(res => {
+                setMessageList(res.messages);
+            })
         }
-        if(employeeLog?._id !== undefined && employeeLog._id !== "")
-            updateEmployeeLog(employeeLog);
-    }, [employeeLog]);
-
-    useEffect(()=> {
-        if(employee?._id !== undefined && employee._id !== "")
-            updateEmployee(employee);
-        if(employeeLog?._id !== undefined && employeeLog._id !== "")
-            updateEmployeeLog(employeeLog);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [employee.checkedIn])
+    }, [isLoggedIn]);
 
     const setAndReturnDefaultRemindersByRole = ():Promise<ReminderListType[]> => {
         return new Promise((resolve, reject) => {
             getReminderByRoleId(employee.role)
             .then(result => {
                 const newReminders = result.reminders.map(reminder => {
-                    return {reminder:reminder, completed:false};
+                    return {reminder:reminder, isCompleted:false};
                 });
                 setReminderList(newReminders);
                 resolve(newReminders)
@@ -171,6 +143,62 @@ export const HomeComponent:React.FC<Props> = ({token, setLoggedIn, setEmployee, 
         });
     }
 
+
+    useEffect(()=> {
+        setEmployeeLog(oldLog => {
+            const newLog = {...oldLog};
+            newLog.reminder = reminderList.map(reminder => {
+                return {
+                    reminderId: reminder.reminder._id!,
+                    isCompleted: reminder.isCompleted
+                }
+            });
+            return newLog;
+        });
+    }, [reminderList]);
+
+    useEffect(()=> {
+        if(employeeLog?._id !== undefined && employeeLog._id !== "")
+            updateEmployeeLog(employeeLog);
+    }, [employeeLog]);
+
+    useEffect(()=> {
+        if(employee?._id !== undefined && employee._id !== "")
+            updateEmployee(employee);
+        if(employeeLog?._id !== undefined && employeeLog._id !== ""){
+            setEmployeeLog(oldLog => {
+                const updatedLog = {...oldLog};
+                if(employee.checkedIn) {
+                    updatedLog.checkInTime = new Date();
+                } else if(employee.checkedIn !== undefined && (employeeLog.checkInTime !== undefined || employeeLog.checkInTime !== null)) {
+                    updatedLog.checkOutTime = new Date();
+                }
+                updateEmployeeLog(updatedLog);
+                return updatedLog;
+            })
+        }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [employee.checkedIn])
+
+    useEffect(()=> {
+        if(messageList.filter(message => !message.isRead).length > 0){
+            setNavBarList(oldNavBar => {
+                if(oldNavBar.length === 1) return oldNavBar;
+                const newNavBar = [...oldNavBar];
+                newNavBar[1].isNotification = true;
+                return newNavBar;
+            })
+        } else {
+            setNavBarList(oldNavBar => {
+                if(oldNavBar.length === 1) return oldNavBar;
+                const newNavBar = [...oldNavBar];
+                newNavBar[1].isNotification = false;
+                return newNavBar;
+            })
+        }
+    }, [messageList]);
+    
     useEffect(()=> {
         setActiveModule(activeListModule.moduleName);
     }, [activeListModule])
@@ -232,6 +260,8 @@ export const HomeComponent:React.FC<Props> = ({token, setLoggedIn, setEmployee, 
                         reminderList={reminderList}
                         setReminderList={setReminderList}
                         setLoggedIn={setLoggedIn}/>,
+                    "timeSheet":<></>,
+                    "messages":<Messages messages={messageList}/>
                 }[activeModule]
             }
         </>
@@ -256,16 +286,17 @@ const HomeScreen:React.FC<HomeScreenProps> = ({setEmployee, reminderList, setRem
             const newEmployee = {...prevEmployee};
             newEmployee.checkedIn = true;
             return newEmployee;
-        })
+        });
     }
     
     const onButtonClick = (e:React.MouseEvent<HTMLButtonElement>) => {
-        if(e.currentTarget.dataset.id === currentListView) {
+        const id = e.currentTarget.dataset.id;
+        if(id === currentListView) {
             setCurrentListView("");
             return;
         }
-        if(e.currentTarget.dataset.id === undefined) return;
-        setCurrentListView(e.currentTarget.dataset.id);
+        if(id === undefined) return;
+        setCurrentListView(id);
     }
 
     return (
@@ -294,16 +325,16 @@ const HomeScreen:React.FC<HomeScreenProps> = ({setEmployee, reminderList, setRem
                         </div>
                         {
                             {
-                                "shopping":<></>,
-                                "messages":<></>,
-                                "logs":<></>
+                                "shopping":<ViewShoppingList/>,
+                                "messages":<ViewMessages/>,
+                                "logs":<ViewLogs/>
                             }[currentListView]
                         }
                     </>
                 :""}
-            <p>{text?.homeScreen?.quote?text.homeScreen.quote:"\"People rarely succeed unless they have fun in what they are doing.\" -Dale Carnegie"}</p>
-            <p>{text?.homeScreen?.title?text.homeScreen.title:"Be awesome, have fun!"}</p>
-            <h3>{text?.homeScreen?.yourTaskList?text.homeScreen.yourTaskList:"Your tasks for today:"}</h3>
+            <p>{text.homeScreen.quote}</p>
+            <p>{text.homeScreen.title}</p>
+            <h3>{text.homeScreen.yourTaskList}</h3>
             <RemindersComponent
                 reminderList={reminderList} 
                 setReminderList={setReminderList} />

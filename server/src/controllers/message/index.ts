@@ -56,7 +56,7 @@ export async function getMessagesByDateRange(req:Request, res:Response):Promise<
 export async function getMessagesByEmployee(req: Request, res:Response):Promise<void>{
     try{
         const {params: {id}} = req;
-        const messages: IMessage[] = await Message.find({employee:id}, {sort: {date:'desc'}, limit:50});
+        const messages: IMessage[] = await Message.find({to:id}, {sort: {date:'desc'}, limit:50});
         res.status(200).json({
             messages
         });

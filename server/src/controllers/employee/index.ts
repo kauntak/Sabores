@@ -112,7 +112,8 @@ export async function authenticateEmployee(req: Request, res:Response):Promise<v
                                 firstName:employee.firstName,
                                 lastName:employee.lastName,
                                 role:employee.role,
-                                access:employee.access
+                                access:employee.access,
+                                checkedIn: employee.checkedIn
                             };
                             return res.status(200).json({
                                 token: `Bearer ${token}`,
@@ -154,7 +155,8 @@ function filterEmployeesData(employees:IEmployee[]):Omit<IEmployee, "password"|"
             firstName: employee.firstName,
             middleName: employee.middleName,
             lastName: employee.lastName,
-            _id:employee._id
+            _id:employee._id,
+            access: employee.access
         };
     });
     return filteredEmployeeList;

@@ -49,6 +49,20 @@ export async function getShoppingLists(req: Request, res:Response):Promise<void>
     }
 }
 
+export async function getShoppingListsByLocation(req: Request, res:Response):Promise<void>{
+    try{
+        const {params: {id}} = req;
+        const shoppingLists: IShoppingList[] = await ShoppingList.find({location:id}, {sort:{createdAt:'desc'}});
+        res.status(200).json({
+            shoppingLists
+        });
+    } catch(error) {
+        res.status(500).json({
+            error: returnError(error)
+        });
+    }
+}
+
 export async function getActiveShoppingListByLocation(req: Request, res:Response):Promise<void>{
     try{
         const {params: {id}} = req;

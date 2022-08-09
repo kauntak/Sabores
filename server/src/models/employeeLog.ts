@@ -34,18 +34,20 @@ const employeeLogSchema = new Schema<IEmployeeLog>({
     },
     reminder: [
         {
-        reminderId: {
-            _id:false,
-            type: ObjectId,
-            ref: 'Reminder',
-            required:true
-        },
-        isCompleted: {
-            type: Boolean,
-            required:true,
-            default:false
+            _id: false,
+            reminderId: {
+                _id:false,
+                type: ObjectId,
+                ref: 'Reminder',
+                required:true
+            },
+            isCompleted: {
+                type: Boolean,
+                required:true,
+                default:false
+            }
         }
-    }]
+    ]
 });
 
 export const EmployeeLog = model<IEmployeeLog>('EmployeeLog', employeeLogSchema);

@@ -6,15 +6,30 @@ import { SetLanguageComponent } from './components/SetLanguageComponent';
 
 import {LoginScreenComponent} from './components/LoginScreenComponent'
 import { getEmployees, updateEmployee } from './api';
-import { IEmployee, ReminderListType } from './type';
+import { IEmployee } from './type';
 import { HomeComponent } from './pages/Home/Home';
 import { IdleTimerComponent } from './components/IdleTimerComponent';
 
 
 var currentToken:string = "";
 
-export function getToken(){
-  return currentToken;
+export function getToken():Promise<string>|string{
+  if(currentToken===""){
+    return new Promise(resolve => {
+      let timerCount = 0;
+      const tokenTimer = setTimeout(()=> {
+        if(currentToken !== ""){
+          clearInterval(tokenTimer);
+          resolve(currentToken)
+        }else if(timerCount >= 50){
+          clearInterval(tokenTimer)
+          resolve("");
+        }
+        timerCount++;
+      }, 5)
+
+    });
+  } else return currentToken;
 }
 
 const languages = ["es"];
@@ -51,7 +66,8 @@ const defaultText = {
     "role":"Roles",
     "admin":"Admin",
     "checkOut":"Check Out",
-    "home":"Home"
+    "home":"Home",
+    "messages":"Messages"
   },
   "homeScreen":{
       "logout": "Logout",
@@ -104,10 +120,10 @@ export const EmployeeContext = createContext<IEmployee>(defaultEmployee);
 
 const App:React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [canClearToken, setCanClearToken] = useState<boolean>(false);
   const [loginId, setLoginId] = useState("");
   const [employees, setEmployees] = useState<IEmployee[]>([]);
   const [loggedInEmployee, setLoggedInEmployee] = useState<Omit<IEmployee, "password">>(defaultEmployee);
-  const [reminderList, setReminderList] = useState<ReminderListType[]>([]);
   const [language, setLanguage] = useState<string>("en");
   const [token, setToken] = useState<string>("");
   // const [loginTimer, setLoginTimer] = useState<ReturnType<typeof setTimeout>>();
@@ -147,6 +163,7 @@ const App:React.FC = () => {
       //   setIsLoggedIn(false);
       // }, 600000))
       setIsLoggedIn(true);
+      setCanClearToken(false);
     } else {
       // clearTimeout(loginTimer);
       setIsLoggedIn(false);
@@ -182,10 +199,10 @@ const App:React.FC = () => {
             ?<EmployeeContext.Provider value={loggedInEmployee!}>
                 <HomeComponent
                   token={token}
+                  isLoggedIn={isLoggedIn}
                   setLoggedIn={setIsLoggedIn}
                   setEmployee={setLoggedInEmployee as Dispatch<SetStateAction<Omit<IEmployee, "password">>>}
-                  reminderList={reminderList}
-                  setReminderList={setReminderList}
+                  setCanClearToken={setCanClearToken}
                 />
               </EmployeeContext.Provider>
             :<LoginScreenComponent

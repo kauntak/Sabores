@@ -1,4 +1,5 @@
 import { Response, Request } from "express";
+import mongoose from "mongoose";
 
 import { EmployeeLog, IEmployeeLog, IEmployeeLogDoc } from "../../models/employeeLog";
 import { IError, returnError } from "../../models/error";
@@ -25,7 +26,7 @@ export async function createEmployeeLog(req: Request, res: Response): Promise<vo
 export async function updateEmployeeLog(req: Request, res: Response): Promise<void>{
     try {
         const {params: {id}, body} = req;
-        const log: IEmployeeLog|null = await EmployeeLog.findByIdAndUpdate({'_id':id}, body);
+        const log: IEmployeeLogDoc|null = await EmployeeLog.findByIdAndUpdate({'_id':id}, body , {new: true, runValidators:true});
         const logs: IEmployeeLog[] = await EmployeeLog.find();
         res.status(200).json({
             log,
@@ -42,7 +43,6 @@ export async function getEmployeesMostRecentLog(req: Request, res:Response):Prom
     try{
         const {params: {id}} = req;
         let log:IEmployeeLog|null =  await EmployeeLog.findOne({employee:id, checkOutTime:{$exists:false}},{}, {sort:{checkInTime:-1}}).exec();
-        console.log(log);
         let createNewLog:boolean = false;
         if(log !== null && log.checkInTime!== undefined && (log.checkInTime.getTime() - Date.now()) > 54000000){
             log.checkOutTime = new Date(log.checkInTime.getTime() + 54000000);

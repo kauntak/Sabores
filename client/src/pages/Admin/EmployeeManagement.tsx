@@ -287,11 +287,23 @@ export const EmployeeManagement: React.FC<Props> = ({isAdmin, currentEmployee}) 
                 }
             </div>
             <DataTable 
-                headers={["First Name", "Last Name"]}
+                headers={[
+                    "First Name",
+                    "Last Name",
+                    "Location"
+                ]}
                 rows={employeeList.map(employee => {
                     return {
                         id:employee._id!,
-                        columns: [`${employee.firstName}${employee.middleName?" " + employee.middleName:""}`, employee.lastName]
+                        columns: [
+                            `${employee.firstName}${employee.middleName?" " + employee.middleName:""}`,
+                             employee.lastName,
+                             employee?.access !== undefined? employee.access.map(a => {
+                                const foundLocation = locationList.find(location => location._id === a.locationId);
+                                if(foundLocation===undefined) return "---";
+                                return foundLocation.name;
+                             }).join(", "):""
+                        ]
                     }
                 })}
                 currentId={activeEmployeeId}
