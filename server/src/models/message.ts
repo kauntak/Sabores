@@ -8,7 +8,9 @@ export interface IMessage {
     message: string,
     employee: Types.ObjectId,
     date: Date,
-    isRead: boolean
+    isRead: boolean,
+    isLocked: boolean,
+    expire_at?:Date
 }
 
 export interface IMessageDoc extends Document, IMessage {};
@@ -34,12 +36,19 @@ const messageSchema = new Schema<IMessage>({
     },
     date: {
         type: Date,
-        default: Date.now,
-        expires: "14d"
+        default: Date.now
     },
     isRead: {
         type: Boolean,
         default: false
+    },
+    isLocked: {
+        type: Boolean,
+        default: false
+    },
+    expire_at:{
+        type:Date,
+        expires: "30d"
     }
 });
 

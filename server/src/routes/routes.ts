@@ -5,7 +5,7 @@ const jsonParser = bodyParser.json();
 import { createEmployee, updateEmployee, getEmployees, getEmployee, deleteEmployee, authenticateEmployee } from '../controllers/employee';
 import { createEmployeeLog, updateEmployeeLog, getEmployeeLogs, getEmployeesLog, getEmployeeLogsByDateRange, deleteEmployeeLog, getEmployeesMostRecentLog } from '../controllers/employeeLog';
 import { createLocation, updateLocation, getLocations, deleteLocation } from '../controllers/location';
-import { createMessage, updateMessage,getMessagesByDateRange, getMessagesByEmployee, getMessage, deleteMessage } from '../controllers/message';
+import { createMessage, updateMessage,getMessagesByDateRange, getMessagesByEmployee, getMessage, deleteMessage, readMessage, lockMessage, unlockMessage } from '../controllers/message';
 import { createModule, updateModule, getModules, deleteModule } from '../controllers/module';
 import { createOrder, updateOrder, getOrders, getOrder, deleteOrder, getActiveOrderByLocation } from '../controllers/order';
 import { createOrderItem, updateOrderItem, getOrderItems, deleteOrderItem, getOrderItem } from '../controllers/orderItem';
@@ -44,6 +44,9 @@ router.delete('/api/deleteLocation/:id', jsonParser, deleteLocation);
 
 router.post('/api/createMessage', jsonParser, createMessage);
 router.put('/api/updateMessage/:id', jsonParser, updateMessage);
+router.put('/api/readMessage/:id', jsonParser, readMessage);
+router.put('/api/lockMessage/:id', jsonParser, lockMessage);
+router.put('/api/unlockMessage/:id', jsonParser, unlockMessage);
 router.get('/api/getMessagesByEmployee/:id', jsonParser, getMessagesByEmployee);
 router.get('/api/getMessagesByDateRange/start/:startDate/end/:endDate', jsonParser, getMessagesByDateRange);
 router.get('/api/getMessage/:id', jsonParser, getMessage);

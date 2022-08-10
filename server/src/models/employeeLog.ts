@@ -11,7 +11,8 @@ export interface IEmployeeLog {
     reminder?: [{
         reminderId:Types.ObjectId,
         isCompleted:boolean
-    }]
+    }],
+    expire_at?: Date
 }
 
 export interface IEmployeeLogDoc extends Document, Omit<IEmployeeLog, "_id"> {};
@@ -47,7 +48,12 @@ const employeeLogSchema = new Schema<IEmployeeLog>({
                 default:false
             }
         }
-    ]
+    ],
+    expire_at:{
+        type: Date,
+        required: false,
+        expires: "120d"
+    }
 });
 
 export const EmployeeLog = model<IEmployeeLog>('EmployeeLog', employeeLogSchema);

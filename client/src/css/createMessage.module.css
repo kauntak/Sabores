@@ -1,0 +1,36 @@
+.form{
+    display: flex;
+    flex-direction: column;
+}
+
+.formInput{
+    display: flex;
+    flex-direction: row;
+    margin: 8px;
+}
+
+.label{
+    width: 90px;
+}
+
+.form input{
+    width: 200px;
+}
+
+.form textarea{
+    min-width: 200px;
+    max-width: 350px;
+}
+
+.input-and-error{
+    display: flex;
+    flex-direction: column;
+}
+
+.input-and-error p{
+    color: red;
+    margin: 0;
+}
+.error{
+    border: 1px solid red;
+}

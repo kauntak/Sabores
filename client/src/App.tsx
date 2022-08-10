@@ -105,6 +105,21 @@ const defaultText = {
   },
   "dataTable":{
     "searchToolTip":"Use commas to search different columns."
+  },
+  "createMessage":{
+    "send":"Send",
+    "to":"To",
+    "subject":"Subject",
+    "message":"Message",
+    "newMessage":"New Message",
+    "sending":"Sending...",
+    "sent":"Message Sent!",
+    "sendError":"Hmm...something went wrong...Please try again later.",
+    "required":"{replace} is required.",
+    "notFound":"{replace} not found."
+  },
+  "message":{
+    "messages":"Messages"
   }
 };
 

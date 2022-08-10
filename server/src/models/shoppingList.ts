@@ -13,7 +13,8 @@ export interface IShoppingList {
             quantity: Number,
             employee: Types.ObjectId
         }
-    ]
+    ],
+    expire_at?: Date
 }
 
 export interface IShoppingListDoc extends Document, IShoppingList {};
@@ -22,8 +23,7 @@ const shoppingListSchema = new Schema<IShoppingList>({
     createdAt: {
         type: Date,
         default: Date.now,
-        required: true,
-        expires: '30d'
+        required: true
     },
     isCompleted: {
         type: Boolean,
@@ -54,7 +54,12 @@ const shoppingListSchema = new Schema<IShoppingList>({
                 required: true
             }
         }
-    ]
+    ],
+    expire_at:{
+        type:Date,
+        default: Date.now,
+        expires: "60d"
+    }
 });
 
 export const ShoppingList = model<IShoppingList>('ShoppingList', shoppingListSchema);

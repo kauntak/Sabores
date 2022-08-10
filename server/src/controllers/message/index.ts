@@ -36,6 +36,54 @@ export async function updateMessage(req: Request, res: Response): Promise<void>{
     }
 }
 
+export async function readMessage(req:Request, res: Response): Promise<void>{
+    try {
+        const {params: {id} } = req;
+        const message: IMessage|null = await Message.findByIdAndUpdate({'_id':id}, {isRead:true, expire_at:Date.now()});
+        const messages: IMessage[] = await Message.find();
+        res.status(200).json({
+            message,
+            messages
+        });
+    } catch (error) {
+        res.status(500).json({
+            error: returnError(error)
+        });
+    }
+}
+
+export async function lockMessage(req:Request, res: Response): Promise<void>{
+    try {
+        const {params: {id} } = req;
+        const message: IMessage|null = await Message.findByIdAndUpdate({'_id':id}, {$unset:{expire_at:undefined}, $set:{isLocked:true}}, {new: true});
+        const messages: IMessage[] = await Message.find();
+        res.status(200).json({
+            message,
+            messages
+        });
+    } catch (error) {
+        res.status(500).json({
+            error: returnError(error)
+        });
+    }
+}
+
+export async function unlockMessage(req:Request, res: Response): Promise<void>{
+    try {
+        const {params: {id} } = req;
+        const message: IMessage|null = await Message.findByIdAndUpdate({'_id':id}, {$set:{isLocked:true, expire_at:Date.now()}}, {new: true});
+        const messages: IMessage[] = await Message.find();
+        res.status(200).json({
+            message,
+            messages
+        });
+    } catch (error) {
+        res.status(500).json({
+            error: returnError(error)
+        });
+    }
+}
+
 export async function getMessagesByDateRange(req:Request, res:Response):Promise<void>{
     try {
         const {params: {startDate, endDate}} = req;
@@ -56,7 +104,8 @@ export async function getMessagesByDateRange(req:Request, res:Response):Promise<
 export async function getMessagesByEmployee(req: Request, res:Response):Promise<void>{
     try{
         const {params: {id}} = req;
-        const messages: IMessage[] = await Message.find({to:id}, {sort: {date:'desc'}, limit:50});
+        const messages: IMessage[] = await Message.find({to:id});
+        console.log(messages);
         res.status(200).json({
             messages
         });

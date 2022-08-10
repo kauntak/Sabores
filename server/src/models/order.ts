@@ -17,7 +17,8 @@ export interface IOrder {
             quantity: Number,
             employee: Types.ObjectId
         }?
-    ]
+    ],
+    expire_at?: Date
 }
 
 export interface IOrderDoc extends Document, IOrder {};
@@ -32,8 +33,7 @@ const orderSchema = new Schema<IOrder>({
     createdAt:{
         type:Date,
         default: Date.now,
-        required:true,
-        expires: "60d"
+        required:true
     },
     isFulfilled: {
         type: Boolean,
@@ -75,6 +75,11 @@ const orderSchema = new Schema<IOrder>({
             }
         },
     ],
+    expire_at:{
+        type:Date,
+        default: Date.now,
+        expires: "30d"
+    }
 });
 
 export const Order = model<IOrder>("Order", orderSchema);

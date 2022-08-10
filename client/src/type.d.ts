@@ -86,7 +86,8 @@ export interface IMessage {
     message: string,
     employee: string,
     date: Date,
-    isRead?: boolean
+    isRead?: boolean,
+    isLocked?: boolean,
 }
 
 export interface IMessageProps {

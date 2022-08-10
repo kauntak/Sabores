@@ -55,7 +55,7 @@ export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, s
             getRole(roleId)
             .then(res => {
                 const newRole = res.role;
-                let accessibleNavigation:NavListType[] = [{moduleName:"home", displayName:text.navList.home}, {moduleName:"message", displayName:text.navList.messages}];
+                let accessibleNavigation:NavListType[] = [{moduleName:"home", displayName:text.navList.home}, {moduleName:"messages", displayName:text.navList.messages}];
                 const defaultNavigation:NavListType[]= [
                     {moduleName:"ordering", displayName:text.navList.ordering}
                 ];
@@ -121,7 +121,11 @@ export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, s
             });
             getMessagesByEmployee(employee._id)
             .then(res => {
-                setMessageList(res.messages);
+                setMessageList(res.messages.sort((a,b)=> {
+                    if(a.date < b.date) return 1;
+                    else if(a.date > b.date) return -1;
+                    else return 0;
+                }));
             })
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -182,7 +186,8 @@ export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, s
     }, [employee.checkedIn])
 
     useEffect(()=> {
-        if(messageList.filter(message => !message.isRead).length > 0){
+        console.log(messageList);
+        if(messageList.filter(message => !(message.isRead)).length > 0){
             setNavBarList(oldNavBar => {
                 if(oldNavBar.length === 1) return oldNavBar;
                 const newNavBar = [...oldNavBar];
@@ -261,7 +266,10 @@ export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, s
                         setReminderList={setReminderList}
                         setLoggedIn={setLoggedIn}/>,
                     "timeSheet":<></>,
-                    "messages":<Messages messages={messageList}/>
+                    "messages":<Messages 
+                        messages={messageList}
+                        setMessages={setMessageList}
+                    />
                 }[activeModule]
             }
         </>

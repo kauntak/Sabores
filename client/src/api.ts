@@ -305,6 +305,48 @@ export const updateMessage = async(message: IMessage): Promise<MessageApiDataTyp
     }
 }
 
+export const readMessage = async(_id:string): Promise<MessageApiDataType> => {
+    try{
+        const updatedMessage: AxiosResponse<MessageApiDataType|IError> = await axios.put(`${url}/readMessage/${_id}`, await getHeaders());
+        const error = (updatedMessage.data as IError).error;
+        if(error !== undefined){
+            throw new Error(error);
+        }
+        return updatedMessage.data as MessageApiDataType;
+    } catch(error) {
+        console.log(error);
+		throw new Error(String(error));
+    }
+}
+
+export const lockMessage = async(_id:string): Promise<MessageApiDataType> => {
+    try{
+        const updatedMessage: AxiosResponse<MessageApiDataType|IError> = await axios.put(`${url}/lockMessage/${_id}`, await getHeaders());
+        const error = (updatedMessage.data as IError).error;
+        if(error !== undefined){
+            throw new Error(error);
+        }
+        return updatedMessage.data as MessageApiDataType;
+    } catch(error) {
+        console.log(error);
+		throw new Error(String(error));
+    }
+}
+
+export const unlockMessage = async(_id:string): Promise<MessageApiDataType> => {
+    try{
+        const updatedMessage: AxiosResponse<MessageApiDataType|IError> = await axios.put(`${url}/unlockMessage/${_id}`, await getHeaders());
+        const error = (updatedMessage.data as IError).error;
+        if(error !== undefined){
+            throw new Error(error);
+        }
+        return updatedMessage.data as MessageApiDataType;
+    } catch(error) {
+        console.log(error);
+		throw new Error(String(error));
+    }
+}
+
 export const getMessage = async(_id:string):Promise<MessageApiDataType> => {
     try {
         const message: AxiosResponse<MessageApiDataType|IError> = await axios.get(`${url}/getMessage/${_id}`, await getHeaders());

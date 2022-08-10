@@ -1,0 +1,10 @@
+.messages{
+    margin: 10px;
+}
+
+
+.accordionHeader{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;   
+}
