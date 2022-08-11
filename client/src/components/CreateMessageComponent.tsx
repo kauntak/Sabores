@@ -6,6 +6,7 @@ import { IMessage, SuggestionListType } from "../type";
 import { ButtonComponent } from "./ButtonComponent";
 import { InputWithSuggestionsComponent } from "./InputWithSuggestionsComponent";
 import { LoadingSpinner } from "./LoadinSpinnerComponent";
+import { BsXLg } from "react-icons/bs";
 
 type Props = {
     employeeList:SuggestionListType[],
@@ -35,8 +36,9 @@ export const CreateMessageComponent:React.FC<Props> = ({employeeList, replyTo, s
         setSendToId(replyTo.employee);
         const employee = employeeList.find(employee => employee.id === replyTo.employee)!;
         setSendTo(employee.name);
-        setSubject("Re:" + replyTo.subject);
-        setMessage("\r\n=========================================\r\n" + replyTo.message);
+        if(replyTo.subject.indexOf("Re:") !== 0)
+            setSubject("Re:" + replyTo.subject);
+        setMessage("\r\n============================\r\n" + replyTo.message);
         setSendState("creating");
         setIsSent(false);
         if(messageRef.current === null){
@@ -52,6 +54,7 @@ export const CreateMessageComponent:React.FC<Props> = ({employeeList, replyTo, s
             messageRef.current.setSelectionRange(0,0);
         }
         setReplyTo(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [replyTo])
     
 
@@ -61,10 +64,10 @@ export const CreateMessageComponent:React.FC<Props> = ({employeeList, replyTo, s
 
     const onSubjectChange = (e:React.ChangeEvent<HTMLInputElement>) => {
         const newValue = e.currentTarget.value;
+        setSubject(newValue.slice(0, 30));
         if(newValue !== "") {
             setSubjectError(false);
         }
-        setSubject(newValue);
     }
 
     const onSubjectKeyPress = (e:React.KeyboardEvent<HTMLInputElement>) => {
@@ -94,8 +97,7 @@ export const CreateMessageComponent:React.FC<Props> = ({employeeList, replyTo, s
         if(sendTo === ""){
             setSendToErrorMessage(text.createMessage.required.replace("{replace}", text.createMessage.to));
             errorExists = true;
-        }
-        if(sendToId==="") {
+        } else if(sendToId==="") {
             const foundEmployee = employeeList.find(employee => employee.name === sendTo);
             if(foundEmployee === undefined){
                 setSendToErrorMessage(text.createMessage.notFound.replace("{replace}", sendTo));
@@ -134,6 +136,16 @@ export const CreateMessageComponent:React.FC<Props> = ({employeeList, replyTo, s
     const messageSent = () => {
         setIsSent(true);
         setSendState("");
+    }
+
+    const onCancelClick = (e:React.MouseEvent<HTMLButtonElement>) => {
+        setIsSent(false);
+        setSendState("");
+        setErrorMessage("");
+        setSubject("");
+        setMessage("");
+        setSendToId("");
+        setSendTo("");
     }
 
     return (
@@ -214,10 +226,19 @@ export const CreateMessageComponent:React.FC<Props> = ({employeeList, replyTo, s
                         onClick={onNewMessageClick}
                         name={text.createMessage.newMessage}
                     />,
-                    "creating":<ButtonComponent 
-                        onClick={onSendClick}
-                        name={text.createMessage.send}
-                    />,
+                    "creating":
+                        <div className={styles["buttonContainer"]}>
+                            <ButtonComponent 
+                                onClick={onSendClick}
+                                name={text.createMessage.send}
+                            />
+                            <ButtonComponent
+                                onClick={onCancelClick}
+                                name={<BsXLg/>}
+                                isNegativeColor={true}
+                                width={"90px"}
+                            />
+                        </div>,
                     "sending":<ButtonComponent
                         onClick={()=>{}}
                         name={text.createMessage.sending}

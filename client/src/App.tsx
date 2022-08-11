@@ -119,7 +119,9 @@ const defaultText = {
     "notFound":"{replace} not found."
   },
   "message":{
-    "messages":"Messages"
+    "messages":"Messages",
+    "messageExplanation":"Messages will automatically be deleted after 14 days unless locked.",
+    "noMessages":"You don't have any messages yet!"
   }
 };
 

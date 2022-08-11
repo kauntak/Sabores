@@ -10,7 +10,7 @@ export interface IMessage {
     date: Date,
     isRead: boolean,
     isLocked: boolean,
-    expire_at?:Date
+    expireAt?:Date
 }
 
 export interface IMessageDoc extends Document, IMessage {};
@@ -46,9 +46,9 @@ const messageSchema = new Schema<IMessage>({
         type: Boolean,
         default: false
     },
-    expire_at:{
+    expireAt:{
         type:Date,
-        expires: "30d"
+        index: {expires: "14d"}
     }
 });
 

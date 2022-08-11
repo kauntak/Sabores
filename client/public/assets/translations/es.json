@@ -68,5 +68,22 @@
     },
     "dataTable":{
       "searchToolTip":"Use commas to search different columns.!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    }
+    },
+    "createMessage":{
+        "send":"Send",
+        "to":"To",
+        "subject":"Subject",
+        "message":"Message",
+        "newMessage":"New Message",
+        "sending":"Sending...",
+        "sent":"Message Sent!",
+        "sendError":"Hmm...something went wrong...Please try again later.",
+        "required":"{replace} is required.",
+        "notFound":"{replace} not found."
+      },
+      "message":{
+        "messages":"Messages",
+        "messageExplanation":"Messages will automatically be deleted after 14 days unless locked.",
+        "noMessages":"You don't have any messages yet!"
+      }
 }

@@ -79,6 +79,22 @@ export type MessageApiDataType = {
     messages: IMessage[]
 }
 
+export type AxiosMessageApiType = {
+    message? : IAxiosMessage,
+    messages: IAxiosMessage[]
+}
+
+interface IAxiosMessage  {
+    '_id': string,
+    to: string,
+    subject:string,
+    message: string,
+    employee: string,
+    date: string,
+    isRead: boolean,
+    isLocked: boolean,
+}
+
 export interface IMessage {
     '_id'?: string,
     to: string,
@@ -99,6 +115,24 @@ export type EmployeeLogApiDataType = {
     log?: IEmployeeLog,
     logs?: IEmployeeLog[]
 }
+
+export type AxiosEmployeeLogApiDataType = {
+    log?: IAxiosEmployeeLog,
+    logs?: IAxiosEmployeeLog[]
+}
+
+interface IAxiosEmployeeLog {
+    '_id': string,
+    employee: string,
+    checkInTime?: string,
+    checkOutTime?: string,
+    comment?: string,
+    reminder: {
+        reminderId:string,
+        isCompleted:boolean
+    }[]
+}
+
 export interface IEmployeeLog {
     '_id'?: string,
     employee: string,
@@ -153,6 +187,27 @@ export interface IOrderItemProps {
 export type OrderApiDataType = {
     order?: IOrder,
     orders: IOrder[]
+}
+
+
+export type AxiosOrderApiDataType = {
+    order?: IAxiosOrder,
+    orders: IAxiosOrder[]
+}
+
+interface IAxiosOrder {
+    '_id': string,
+    location: string,
+    requestDate: string,
+    requestComment? : string,
+    fulfilledBy?: string,
+    fulfillDate?: string,
+    fulfillComment?: string,
+    items: {
+        item: string,
+        quantity: number,
+        employee: string
+    }[]
 }
 
 export interface IOrder {
@@ -216,6 +271,22 @@ export interface IShoppingListProps {
 export type ShoppingListApiDataType = {
     shoppingList?: IShoppingList,
     shoppingLists: IShoppingList[]
+}
+
+export type AxiosShoppingListApiDataType = {
+    shoppingList?: IAxiosShoppingList,
+    shoppingLists: IAxiosShoppingList[]
+}
+
+interface IAxiosShoppingList {
+    '_id': string,
+    createdAt:string,
+    comment?: string,
+    items: {
+        item: string,
+        quantity: number,
+        employee: string
+    }[]
 }
 
 export interface IShoppingList {

@@ -1,14 +1,10 @@
-import React, { Dispatch, RefObject, SetStateAction, useContext, useEffect, useRef, useState } from "react";
+import React, { Dispatch, SetStateAction, useContext, useEffect, useRef, useState } from "react";
 import styles from "./../css/messages.module.css";
-import { createMessage, getEmployees, lockMessage, readMessage, unlockMessage, updateMessage } from "../api";
-import { EmployeeContext, LanguageContext } from "../App";
-import { ButtonComponent } from "../components/ButtonComponent";
-import { InputWithSuggestionsComponent } from "../components/InputWithSuggestionsComponent";
-import { LoadingSpinner } from "../components/LoadinSpinnerComponent";
-import { IEmployee, IMessage, SuggestionListType } from "../type";
+import { getEmployees, lockMessage, readMessage, unlockMessage } from "../api";
+import { LanguageContext } from "../App";
+import { IMessage, SuggestionListType } from "../type";
 import { CreateMessageComponent } from "../components/CreateMessageComponent";
 import { BsFillLockFill, BsFillReplyFill, BsFillUnlockFill } from "react-icons/bs";
-import { text } from "@fortawesome/fontawesome-svg-core";
 
 type Props = {
     messages: IMessage[],
@@ -19,7 +15,6 @@ export const Messages:React.FC<Props> = ({messages, setMessages}) => {
     const [activeMessageId, setActiveMessageId] = useState<string>("");
     const [employeeList, setEmployeeList] = useState<SuggestionListType[]>([]);
     const [replyTo, setReplyTo] = useState<IMessage|null>(null);
-    const refArray = useRef<HTMLLIElement[]>([]);
     const text = useContext(LanguageContext);
 
     useEffect(()=> {
@@ -35,40 +30,8 @@ export const Messages:React.FC<Props> = ({messages, setMessages}) => {
     }, []);
 
 
-    const onHeaderClick = (id:string, index:number) => {
-        if(id === undefined) return;
-        if(id === activeMessageId) {
-            setActiveMessageId("")
-            return;
-        }
-        setActiveMessageId(id);
-
-        if( !(messages[index].isRead) ){
-            setMessages(oldMessages => {
-                const newMessages = [...oldMessages];
-                newMessages[index].isRead = true;
-                readMessage(id);
-                return newMessages;
-            });
-        }
-    }
-
-    const onLockClick = (id:string, index:number) => {
-        if(id === undefined) return;
-        setMessages(oldMessages => {
-            const newMessages = [...oldMessages];
-            const isLocked = !oldMessages[index].isLocked;
-            newMessages[index].isLocked = isLocked;
-            if(isLocked){
-                lockMessage(id);
-            } else {
-                unlockMessage(id);
-            }
-            return newMessages;
-        });
-    }
-
-    const onReplyClick = (message:IMessage) => {
+    const onReplyClick = (e:React.MouseEvent<SVGElement>, message:IMessage) => {
+        e.stopPropagation();
         setReplyTo(message);
     }
 
@@ -80,22 +43,27 @@ export const Messages:React.FC<Props> = ({messages, setMessages}) => {
                 setReplyTo={setReplyTo}
             />
             <h2>{text.message.messages}</h2>
-            <div>
-                {messages.map((message, index) => {
-                    const from = employeeList.find(employee=> employee.id === message.employee);
-                    return (
-                        <MessageAccordion
-                            message={message}
-                            accordionRef={refArray.current[index]}
-                            from={from!==undefined?from.name:"---"}
-                            index={index}
-                            activeId={activeMessageId}
-                            onHeaderClick={onHeaderClick}
-                            onLockClick={onLockClick}
-                            onReplyClick={onReplyClick}
-                        />
-                    )
-                })}
+            <h6>{text.message.messageExplanation}</h6>
+            <div className={styles["messageList"]}>
+                {
+                    messages.length > 0
+                    ?messages.map((message, index) => {
+                        const from = employeeList.find(employee=> employee.id === message.employee);
+                        return (
+                            <MessageAccordion
+                                key={message._id}
+                                messages={messages}
+                                setMessages={setMessages}
+                                from={from!==undefined?from.name:"---"}
+                                index={index}
+                                activeId={activeMessageId}
+                                setActiveMessageId={setActiveMessageId}
+                                onReplyClick={onReplyClick}
+                            />
+                        )
+                    })
+                    :<h4>{text.message.noMessages}</h4>
+                }
             </div>
 
         </div>
@@ -103,17 +71,73 @@ export const Messages:React.FC<Props> = ({messages, setMessages}) => {
 }
 
 type AccordionProps = {
-    message: IMessage,
-    accordionRef: HTMLLIElement,
+    messages: IMessage[],
     from: string,
     index: number,
     activeId:string,
-    onHeaderClick:(id:string, index:number) => void,
-    onLockClick:(id:string, index:number) => void,
-    onReplyClick:(message:IMessage) => void
+    setActiveMessageId:Dispatch<SetStateAction<string>>,
+    setMessages: Dispatch<SetStateAction<IMessage[]>>,
+    onReplyClick:(e:React.MouseEvent<SVGElement>, message:IMessage) => void
 }
-const MessageAccordion:React.FC<AccordionProps> = ({message, from, index, activeId, onHeaderClick, onLockClick, onReplyClick}) => {
+const MessageAccordion:React.FC<AccordionProps> = ({messages, from, index, activeId, setActiveMessageId, setMessages, onReplyClick}) => {
+    const [isLocking, setIsLocking] = useState<boolean>(false);
+    const [message, setMessage] = useState<IMessage>(messages[index]);
+    const accordionRef = useRef<HTMLDivElement>(null);
+    const INITIAL_MAX_HEIGHT = 1000;
+    const maxHeightRef = useRef<number>(INITIAL_MAX_HEIGHT);
 
+    useEffect(()=> {
+        setMessage(messages[index]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [messages[index], index])
+
+    useEffect(()=> {
+        if(activeId !== message._id) return;
+        if(accordionRef.current && maxHeightRef.current === INITIAL_MAX_HEIGHT)
+            maxHeightRef.current = accordionRef.current.offsetHeight;
+    }, [activeId])
+
+    const onHeaderClick = (id:string, index:number) => {
+        if(id === undefined) return;
+        if(id === activeId) {
+            setActiveMessageId("")
+            return;
+        }
+        setActiveMessageId(id);
+
+        if( !(message.isRead) ){
+            setMessages(oldMessages => {
+                const newMessages = [...oldMessages];
+                newMessages[index].isRead = true;
+                readMessage(id);
+                return newMessages;
+            });
+        }
+    }
+
+    const onLockClick = (e:React.MouseEvent<SVGElement>, id:string, index:number) => {
+        e.stopPropagation();
+        if(id === undefined || isLocking) return;
+        setIsLocking(true);
+        const isLocked = !message.isLocked;
+        if(isLocked){
+            lockMessage(id)
+            .then(res => {
+                setIsLocking(false);
+                setMessages(res.messages);
+            }).catch(()=> {
+                setIsLocking(false);
+            });
+        } else {
+            unlockMessage(id)
+            .then(res => {
+                setIsLocking(false);
+                setMessages(res.messages);
+            }).catch(()=> {
+                setIsLocking(false);
+            })
+        }
+    }
     return (
         <div className={styles["accordion"]}>
             <div 
@@ -122,30 +146,66 @@ const MessageAccordion:React.FC<AccordionProps> = ({message, from, index, active
                     ${
                         activeId!==message._id
                         ?message.isRead
-                            ?styles["unread"]
-                            :""
+                            ?styles["read"]
+                            :styles["unread"]
                         :styles["active"]}`
                 }
-                onClick={()=> onHeaderClick(message._id!, index)}
+                onClick={(e)=> onHeaderClick(message._id!, index)}
+                data-id={"header"}
             >
-                <h5>{from}</h5>
-                <h5>{message.subject}</h5>
-                <div className={styles["icons"]}>
-                    <BsFillReplyFill
-                        onClick={()=> onReplyClick(message)}
-                    />
-                    {
-                        message.isLocked
-                        ?<BsFillLockFill
-                            onClick={()=>onLockClick(message._id!, index)}
-                        />
-                        :<BsFillUnlockFill
-                            onClick={(e)=>onLockClick(message._id!, index)}
-                        />
-                    }
+                <div className={styles["messageInfo"]}>
+                    <h5>{from}</h5>
+                    <h6>{message.date.toLocaleString(["en-Us"], {year:"numeric", month:"numeric", day:"numeric",hour12: true, hour:"numeric", minute:"2-digit"})}</h6>
                 </div>
+                <h5 className={styles["subject"]}>{message.subject}</h5>
+                {
+                    activeId===message._id
+                    ?<div className={styles["icons"]}>
+                        <BsFillReplyFill
+                            onClick={(e)=> onReplyClick(e, message)}
+                            className={styles["icon"]}
+                        />
+                        {
+                            message.isLocked
+                            ?<BsFillLockFill
+                                key={message.isLocked + ""}
+                                onClick={(e)=>onLockClick(e, message._id!, index)}
+                                className={isLocking?styles["locking"]:styles["icon"]}
+                                data-id={"icon"}
+                            />
+                            :<BsFillUnlockFill
+                                key={message.isLocked + ""}
+                                onClick={(e)=>onLockClick(e, message._id!, index)}
+                                className={isLocking?styles["locking"]:styles["icon"]}
+                                data-id={"icon"}
+                            />
+                        }
+                    </div>
+                    :<div className={styles["icons"]}>
+                        {
+                            message.isLocked
+                            ?<BsFillLockFill
+                                className={styles["icon"]}
+                                data-id={"icon"}
+                            />
+                            :""
+                        }
+                    </div>
+                }
             </div>
-            <div className={styles["accordionContent"]}>
+            <div
+                className={styles["accordionContent"]}
+                style={
+                    activeId===message._id
+                    ?{
+                        maxHeight: "500px"
+                    }
+                    :{
+                        maxHeight: "0px"
+                    }
+                }
+                ref={accordionRef}
+            >
                 <h6>{message.message}</h6>
             </div>
         </div>

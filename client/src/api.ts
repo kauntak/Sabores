@@ -1,7 +1,7 @@
 import axios, {AxiosResponse} from "axios";
 import Module from "module";
 import { IError, returnError } from "./error";
-import { EmployeeApiDataType, EmployeeLogApiDataType, IEmployee, IEmployeeLog, ILocation, IMessage, IOrder, IOrderCategory, IOrderItem, IRole, IShoppingCategory, IShoppingItem, IShoppingList, LocationApiDataType, MessageApiDataType, OrderApiDataType, OrderCategoryApiDataType, OrderItemApiDataType, RoleApiDataType, ShoppingCategoryApiDataType, ShoppingItemApiDataType, ShoppingListApiDataType, IReminder, ReminderApiDataType, LoginApiDataType, ModuleApiDataType, IModule, ISupplier, SupplierApiDataType } from "./type";
+import { EmployeeApiDataType, EmployeeLogApiDataType, IEmployee, IEmployeeLog, ILocation, IMessage, IOrder, IOrderCategory, IOrderItem, IRole, IShoppingCategory, IShoppingItem, IShoppingList, LocationApiDataType, MessageApiDataType, OrderApiDataType, OrderCategoryApiDataType, OrderItemApiDataType, RoleApiDataType, ShoppingCategoryApiDataType, ShoppingItemApiDataType, ShoppingListApiDataType, IReminder, ReminderApiDataType, LoginApiDataType, ModuleApiDataType, IModule, ISupplier, SupplierApiDataType, IAxiosMessage, AxiosOrderApiDataType, AxiosMessageApiType, AxiosShoppingListApiDataType } from "./type";
 import { getToken } from "./App";
 
 
@@ -279,12 +279,19 @@ export const deleteLocation = async (_id:string):Promise<LocationApiDataType> =>
 export const createMessage = async(formData:Omit<IMessage, "_id">):Promise<MessageApiDataType> => {
     try {
         const newMessage: Omit<IMessage, "_id"> = formData;
-        const message: AxiosResponse<MessageApiDataType|IError> = await axios.post(`${url}/createMessage`, newMessage, await getHeaders());
+        const message: AxiosResponse<AxiosMessageApiType|IError> = await axios.post(`${url}/createMessage`, newMessage, await getHeaders());
         const error = (message.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return message.data as MessageApiDataType;
+        const singleMessage = (message.data as AxiosMessageApiType).message;
+        const returnMessage:MessageApiDataType = {
+            messages:(message.data as AxiosMessageApiType).messages.map(message=> {
+                return {...message, date:new Date(message.date)};
+            }),
+            message:singleMessage!==undefined?{...singleMessage, date:new Date(singleMessage.date)}:undefined
+        }
+        return returnMessage;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
@@ -293,12 +300,19 @@ export const createMessage = async(formData:Omit<IMessage, "_id">):Promise<Messa
 
 export const updateMessage = async(message: IMessage): Promise<MessageApiDataType> => {
     try{
-        const updatedMessage: AxiosResponse<MessageApiDataType|IError> = await axios.put(`${url}/updateMessage/${message._id}`, message, await getHeaders());
+        const updatedMessage: AxiosResponse<AxiosMessageApiType|IError> = await axios.put(`${url}/updateMessage/${message._id}`, message, await getHeaders());
         const error = (updatedMessage.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return updatedMessage.data as MessageApiDataType;
+        const singleMessage = (updatedMessage.data as AxiosMessageApiType).message;
+        const returnMessage:MessageApiDataType = {
+            messages:(updatedMessage.data as AxiosMessageApiType).messages.map(message=> {
+                return {...message, date:new Date(message.date)};
+            }),
+            message:singleMessage!==undefined?{...singleMessage, date:new Date(singleMessage.date)}:undefined
+        }
+        return returnMessage;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
@@ -307,12 +321,19 @@ export const updateMessage = async(message: IMessage): Promise<MessageApiDataTyp
 
 export const readMessage = async(_id:string): Promise<MessageApiDataType> => {
     try{
-        const updatedMessage: AxiosResponse<MessageApiDataType|IError> = await axios.put(`${url}/readMessage/${_id}`, await getHeaders());
+        const updatedMessage: AxiosResponse<AxiosMessageApiType|IError> = await axios.put(`${url}/readMessage/${_id}`, {}, await getHeaders());
         const error = (updatedMessage.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return updatedMessage.data as MessageApiDataType;
+        const singleMessage = (updatedMessage.data as AxiosMessageApiType).message;
+        const returnMessage:MessageApiDataType = {
+            messages:(updatedMessage.data as AxiosMessageApiType).messages.map(message=> {
+                return {...message, date:new Date(message.date)};
+            }),
+            message:singleMessage!==undefined?{...singleMessage, date:new Date(singleMessage.date)}:undefined
+        }
+        return returnMessage;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
@@ -321,12 +342,19 @@ export const readMessage = async(_id:string): Promise<MessageApiDataType> => {
 
 export const lockMessage = async(_id:string): Promise<MessageApiDataType> => {
     try{
-        const updatedMessage: AxiosResponse<MessageApiDataType|IError> = await axios.put(`${url}/lockMessage/${_id}`, await getHeaders());
+        const updatedMessage: AxiosResponse<AxiosMessageApiType|IError> = await axios.put(`${url}/lockMessage/${_id}`,{}, await getHeaders());
         const error = (updatedMessage.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return updatedMessage.data as MessageApiDataType;
+        const singleMessage = (updatedMessage.data as AxiosMessageApiType).message;
+        const returnMessage:MessageApiDataType = {
+            messages:(updatedMessage.data as AxiosMessageApiType).messages.map(message=> {
+                return {...message, date:new Date(message.date)};
+            }),
+            message:singleMessage!==undefined?{...singleMessage, date:new Date(singleMessage.date)}:undefined
+        }
+        return returnMessage;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
@@ -335,12 +363,19 @@ export const lockMessage = async(_id:string): Promise<MessageApiDataType> => {
 
 export const unlockMessage = async(_id:string): Promise<MessageApiDataType> => {
     try{
-        const updatedMessage: AxiosResponse<MessageApiDataType|IError> = await axios.put(`${url}/unlockMessage/${_id}`, await getHeaders());
+        const updatedMessage: AxiosResponse<AxiosMessageApiType|IError> = await axios.put(`${url}/unlockMessage/${_id}`, {}, await getHeaders());
         const error = (updatedMessage.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return updatedMessage.data as MessageApiDataType;
+        const singleMessage = (updatedMessage.data as AxiosMessageApiType).message;
+        const returnMessage:MessageApiDataType = {
+            messages:(updatedMessage.data as AxiosMessageApiType).messages.map(message=> {
+                return {...message, date:new Date(message.date)};
+            }),
+            message:singleMessage!==undefined?{...singleMessage, date:new Date(singleMessage.date)}:undefined
+        }
+        return returnMessage;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
@@ -349,12 +384,19 @@ export const unlockMessage = async(_id:string): Promise<MessageApiDataType> => {
 
 export const getMessage = async(_id:string):Promise<MessageApiDataType> => {
     try {
-        const message: AxiosResponse<MessageApiDataType|IError> = await axios.get(`${url}/getMessage/${_id}`, await getHeaders());
+        const message: AxiosResponse<AxiosMessageApiType|IError> = await axios.get(`${url}/getMessage/${_id}`, await getHeaders());
         const error = (message.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return message.data as MessageApiDataType;
+        const singleMessage = (message.data as AxiosMessageApiType).message;
+        const returnMessage:MessageApiDataType = {
+            messages:(message.data as AxiosMessageApiType).messages.map(message=> {
+                return {...message, date:new Date(message.date)};
+            }),
+            message:singleMessage!==undefined?{...singleMessage, date:new Date(singleMessage.date)}:undefined
+        }
+        return returnMessage;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
@@ -363,12 +405,19 @@ export const getMessage = async(_id:string):Promise<MessageApiDataType> => {
 
 export const getMessagesByEmployee = async(_id:string):Promise<MessageApiDataType> => {
     try {
-        const message: AxiosResponse<MessageApiDataType|IError> = await axios.get(`${url}/getMessagesByEmployee/${_id}`, await getHeaders());
+        const message: AxiosResponse<AxiosMessageApiType|IError> = await axios.get(`${url}/getMessagesByEmployee/${_id}`, await getHeaders());
         const error = (message.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return message.data as MessageApiDataType;
+        const singleMessage = (message.data as AxiosMessageApiType).message;
+        const returnMessage:MessageApiDataType = {
+            messages:(message.data as AxiosMessageApiType).messages.map(message=> {
+                return {...message, date:new Date(message.date)};
+            }),
+            message:singleMessage!==undefined?{...singleMessage, date:new Date(singleMessage.date)}:undefined
+        }
+        return returnMessage;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
@@ -377,12 +426,19 @@ export const getMessagesByEmployee = async(_id:string):Promise<MessageApiDataTyp
 
 export const getMessagesByDateRange = async(start:Date|null, end:Date|null):Promise<MessageApiDataType> => {
     try {
-        const message: AxiosResponse<MessageApiDataType|IError> = await axios.get(`${url}/getMessagesByDateRange/start/${start?start.getTime():0}/end/${end?end.getTime():0}`, await getHeaders());
+        const message: AxiosResponse<AxiosMessageApiType|IError> = await axios.get(`${url}/getMessagesByDateRange/start/${start?start.getTime():0}/end/${end?end.getTime():0}`, await getHeaders());
         const error = (message.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return message.data as MessageApiDataType;
+        const singleMessage = (message.data as AxiosMessageApiType).message;
+        const returnMessage:MessageApiDataType = {
+            messages:(message.data as AxiosMessageApiType).messages.map(message=> {
+                return {...message, date:new Date(message.date)};
+            }),
+            message:singleMessage!==undefined?{...singleMessage, date:new Date(singleMessage.date)}:undefined
+        }
+        return returnMessage;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
@@ -391,12 +447,19 @@ export const getMessagesByDateRange = async(start:Date|null, end:Date|null):Prom
 
 export const deleteMessage = async (_id:string):Promise<MessageApiDataType> => {
     try {
-        const deleted: AxiosResponse<MessageApiDataType|IError> = await axios.delete(`${url}/deleteMessage/${_id}`, await getHeaders());
+        const deleted: AxiosResponse<AxiosMessageApiType|IError> = await axios.delete(`${url}/deleteMessage/${_id}`, await getHeaders());
         const error = (deleted.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return deleted.data as MessageApiDataType;
+        const singleMessage = (deleted.data as AxiosMessageApiType).message;
+        const returnMessage:MessageApiDataType = {
+            messages:(deleted.data as AxiosMessageApiType).messages.map(message=> {
+                return {...message, date:new Date(message.date)};
+            }),
+            message:singleMessage!==undefined?{...singleMessage, date:new Date(singleMessage.date)}:undefined
+        }
+        return returnMessage;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
@@ -437,26 +500,50 @@ export const getModules = async():Promise<ModuleApiDataType> => {
 export const createOrder = async(formData:Omit<IOrder, "_id">):Promise<OrderApiDataType> => {
     try {
         const newOrder: Omit<IOrder, "_id"> = formData;
-        const order: AxiosResponse<OrderApiDataType|IError> = await axios.post(`${url}/createOrder`, newOrder, await getHeaders());
+        const order: AxiosResponse<AxiosOrderApiDataType|IError> = await axios.post(`${url}/createOrder`, newOrder, await getHeaders());
         const error = (order.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return order.data as OrderApiDataType;
+        const singleOrder = (order.data as AxiosOrderApiDataType).order;
+        const returnOrder:OrderApiDataType = {
+            orders:(order.data as AxiosOrderApiDataType).orders.map(order=> {
+                return {...order, requestDate:new Date(order.requestDate), fulfillDate:order.fulfillDate?new Date(order.fulfillDate):undefined};
+            }),
+            order:singleOrder!==undefined
+                ?{
+                    ...singleOrder, 
+                    requestDate:new Date(singleOrder.requestDate), 
+                    fulfillDate:singleOrder.fulfillDate?new Date(singleOrder.fulfillDate):undefined}
+                :undefined
+        }
+        return returnOrder;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
     }
 }
 
-export const updateOrder = async(order: IOrder): Promise<OrderApiDataType> => {
+export const updateOrder = async(newOrder: IOrder): Promise<OrderApiDataType> => {
     try{
-        const updatedOrder: AxiosResponse<OrderApiDataType|IError> = await axios.put(`${url}/updateOrder/${order._id}`, order, await getHeaders());
-        const error = (updatedOrder.data as IError).error;
+        const order: AxiosResponse<AxiosOrderApiDataType|IError> = await axios.put(`${url}/updateOrder/${newOrder._id}`, newOrder, await getHeaders());
+        const error = (order.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return updatedOrder.data as OrderApiDataType;
+        const singleOrder = (order.data as AxiosOrderApiDataType).order;
+        const returnOrder:OrderApiDataType = {
+            orders:(order.data as AxiosOrderApiDataType).orders.map(order=> {
+                return {...order, requestDate:new Date(order.requestDate), fulfillDate:order.fulfillDate?new Date(order.fulfillDate):undefined};
+            }),
+            order:singleOrder!==undefined
+                ?{
+                    ...singleOrder, 
+                    requestDate:new Date(singleOrder.requestDate), 
+                    fulfillDate:singleOrder.fulfillDate?new Date(singleOrder.fulfillDate):undefined}
+                :undefined
+        }
+        return returnOrder;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
@@ -465,12 +552,24 @@ export const updateOrder = async(order: IOrder): Promise<OrderApiDataType> => {
 
 export const getOrders = async(_id:string):Promise<OrderApiDataType> => {
     try {
-        const order: AxiosResponse<OrderApiDataType|IError> = await axios.get(`${url}/getOrders`, await getHeaders());
+        const order: AxiosResponse<AxiosOrderApiDataType|IError> = await axios.get(`${url}/getOrders`, await getHeaders());
         const error = (order.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return order.data as OrderApiDataType;
+        const singleOrder = (order.data as AxiosOrderApiDataType).order;
+        const returnOrder:OrderApiDataType = {
+            orders:(order.data as AxiosOrderApiDataType).orders.map(order=> {
+                return {...order, requestDate:new Date(order.requestDate), fulfillDate:order.fulfillDate?new Date(order.fulfillDate):undefined};
+            }),
+            order:singleOrder!==undefined
+                ?{
+                    ...singleOrder, 
+                    requestDate:new Date(singleOrder.requestDate), 
+                    fulfillDate:singleOrder.fulfillDate?new Date(singleOrder.fulfillDate):undefined}
+                :undefined
+        }
+        return returnOrder;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
@@ -479,12 +578,24 @@ export const getOrders = async(_id:string):Promise<OrderApiDataType> => {
 
 export const getOrder = async(_id:string):Promise<OrderApiDataType> => {
     try {
-        const order: AxiosResponse<OrderApiDataType|IError> = await axios.get(`${url}/getOrder/${_id}`, await getHeaders());
+        const order: AxiosResponse<AxiosOrderApiDataType|IError> = await axios.get(`${url}/getOrder/${_id}`, await getHeaders());
         const error = (order.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return order.data as OrderApiDataType;
+        const singleOrder = (order.data as AxiosOrderApiDataType).order;
+        const returnOrder:OrderApiDataType = {
+            orders:(order.data as AxiosOrderApiDataType).orders.map(order=> {
+                return {...order, requestDate:new Date(order.requestDate), fulfillDate:order.fulfillDate?new Date(order.fulfillDate):undefined};
+            }),
+            order:singleOrder!==undefined
+                ?{
+                    ...singleOrder, 
+                    requestDate:new Date(singleOrder.requestDate), 
+                    fulfillDate:singleOrder.fulfillDate?new Date(singleOrder.fulfillDate):undefined}
+                :undefined
+        }
+        return returnOrder;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
@@ -493,12 +604,24 @@ export const getOrder = async(_id:string):Promise<OrderApiDataType> => {
 
 export const getActiveOrderByLocation = async(_id:string):Promise<OrderApiDataType> => {
     try {
-        const order: AxiosResponse<OrderApiDataType|IError> = await axios.get(`${url}/getActiveOrderByLocation/${_id}`, await getHeaders());
+        const order: AxiosResponse<AxiosOrderApiDataType|IError> = await axios.get(`${url}/getActiveOrderByLocation/${_id}`, await getHeaders());
         const error = (order.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return order.data as OrderApiDataType;
+        const singleOrder = (order.data as AxiosOrderApiDataType).order;
+        const returnOrder:OrderApiDataType = {
+            orders:(order.data as AxiosOrderApiDataType).orders.map(order=> {
+                return {...order, requestDate:new Date(order.requestDate), fulfillDate:order.fulfillDate?new Date(order.fulfillDate):undefined};
+            }),
+            order:singleOrder!==undefined
+                ?{
+                    ...singleOrder, 
+                    requestDate:new Date(singleOrder.requestDate), 
+                    fulfillDate:singleOrder.fulfillDate?new Date(singleOrder.fulfillDate):undefined}
+                :undefined
+        }
+        return returnOrder;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
@@ -507,12 +630,17 @@ export const getActiveOrderByLocation = async(_id:string):Promise<OrderApiDataTy
 
 export const deleteOrder = async (_id:string):Promise<OrderApiDataType> => {
     try {
-        const deleted: AxiosResponse<OrderApiDataType|IError> = await axios.delete(`${url}/deleteOrder/${_id}`, await getHeaders());
+        const deleted: AxiosResponse<AxiosOrderApiDataType|IError> = await axios.delete(`${url}/deleteOrder/${_id}`, await getHeaders());
         const error = (deleted.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return deleted.data as OrderApiDataType;
+        const returnOrder:OrderApiDataType = {
+            orders:(deleted.data as AxiosOrderApiDataType).orders.map(order=> {
+                return {...order, requestDate:new Date(order.requestDate), fulfillDate:order.fulfillDate?new Date(order.fulfillDate):undefined};
+            })
+        }
+        return returnOrder;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
@@ -964,12 +1092,27 @@ export const deleteShoppingCategory = async (_id:string):Promise<ShoppingCategor
 export const createShoppingList = async(formData:Omit<IShoppingList, "_id">):Promise<ShoppingListApiDataType> => {
     try {
         const newShoppingList: Omit<IShoppingList, "_id"> = formData;
-        const list: AxiosResponse<ShoppingListApiDataType|IError> = await axios.post(`${url}/createShoppingList`, newShoppingList, await getHeaders());
+        const list: AxiosResponse<AxiosShoppingListApiDataType|IError> = await axios.post(`${url}/createShoppingList`, newShoppingList, await getHeaders());
         const error = (list.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return list.data as ShoppingListApiDataType;
+        const singleList = (list.data as AxiosShoppingListApiDataType).shoppingList;
+        const returnList:ShoppingListApiDataType = {
+            shoppingLists:(list.data as AxiosShoppingListApiDataType).shoppingLists.map(list=> {
+                return {
+                    ...list,
+                    createdAt: new Date(list.createdAt)
+                };
+            }),
+            shoppingList:singleList!==undefined
+                ?{
+                    ...singleList,                 
+                    createdAt: new Date(singleList.createdAt)
+                }
+                :undefined
+        }
+        return returnList;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
@@ -978,12 +1121,27 @@ export const createShoppingList = async(formData:Omit<IShoppingList, "_id">):Pro
 
 export const getShoppingList = async(_id:string):Promise<ShoppingListApiDataType> => {
     try {
-        const list: AxiosResponse<ShoppingListApiDataType|IError> = await axios.get(`${url}/getShoppingList/${_id}`, await getHeaders());
+        const list: AxiosResponse<AxiosShoppingListApiDataType|IError> = await axios.get(`${url}/getShoppingList/${_id}`, await getHeaders());
         const error = (list.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return list.data as ShoppingListApiDataType;
+        const singleList = (list.data as AxiosShoppingListApiDataType).shoppingList;
+        const returnList:ShoppingListApiDataType = {
+            shoppingLists:(list.data as AxiosShoppingListApiDataType).shoppingLists.map(list=> {
+                return {
+                    ...list,
+                    createdAt: new Date(list.createdAt)
+                };
+            }),
+            shoppingList:singleList!==undefined
+                ?{
+                    ...singleList,                 
+                    createdAt: new Date(singleList.createdAt)
+                }
+                :undefined
+        }
+        return returnList;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
@@ -992,12 +1150,27 @@ export const getShoppingList = async(_id:string):Promise<ShoppingListApiDataType
 
 export const getActiveShoppingListByLocation = async (_id:string):Promise<ShoppingListApiDataType> => {
     try {
-        const list: AxiosResponse<ShoppingListApiDataType|IError> = await axios.get(`${url}/getActiveShoppingListByLocation/${_id}`, await getHeaders());
+        const list: AxiosResponse<AxiosShoppingListApiDataType|IError> = await axios.get(`${url}/getActiveShoppingListByLocation/${_id}`, await getHeaders());
         const error = (list.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return list.data as ShoppingListApiDataType;
+        const singleList = (list.data as AxiosShoppingListApiDataType).shoppingList;
+        const returnList:ShoppingListApiDataType = {
+            shoppingLists:(list.data as AxiosShoppingListApiDataType).shoppingLists.map(list=> {
+                return {
+                    ...list,
+                    createdAt: new Date(list.createdAt)
+                };
+            }),
+            shoppingList:singleList!==undefined
+                ?{
+                    ...singleList,                 
+                    createdAt: new Date(singleList.createdAt)
+                }
+                :undefined
+        }
+        return returnList;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
@@ -1006,12 +1179,27 @@ export const getActiveShoppingListByLocation = async (_id:string):Promise<Shoppi
 
 export const getShoppingListsByLocation = async(_id:string):Promise<ShoppingListApiDataType> => {
     try {
-        const lists: AxiosResponse<ShoppingListApiDataType|IError> = await axios.get(`${url}/getShoppingListsByLocation/${_id}`, await getHeaders());
-        const error = (lists.data as IError).error;
+        const list: AxiosResponse<AxiosShoppingListApiDataType|IError> = await axios.get(`${url}/getShoppingListsByLocation/${_id}`, await getHeaders());
+        const error = (list.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return lists.data as ShoppingListApiDataType;
+        const singleList = (list.data as AxiosShoppingListApiDataType).shoppingList;
+        const returnList:ShoppingListApiDataType = {
+            shoppingLists:(list.data as AxiosShoppingListApiDataType).shoppingLists.map(list=> {
+                return {
+                    ...list,
+                    createdAt: new Date(list.createdAt)
+                };
+            }),
+            shoppingList:singleList!==undefined
+                ?{
+                    ...singleList,                 
+                    createdAt: new Date(singleList.createdAt)
+                }
+                :undefined
+        }
+        return returnList;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
@@ -1021,26 +1209,56 @@ export const getShoppingListsByLocation = async(_id:string):Promise<ShoppingList
 
 export const getShoppingLists = async():Promise<ShoppingListApiDataType> => {
     try {
-        const lists: AxiosResponse<ShoppingListApiDataType|IError> = await axios.get(`${url}/getShoppingLists`, await getHeaders());
-        const error = (lists.data as IError).error;
+        const list: AxiosResponse<AxiosShoppingListApiDataType|IError> = await axios.get(`${url}/getShoppingLists`, await getHeaders());
+        const error = (list.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return lists.data as ShoppingListApiDataType;
+        const singleList = (list.data as AxiosShoppingListApiDataType).shoppingList;
+        const returnList:ShoppingListApiDataType = {
+            shoppingLists:(list.data as AxiosShoppingListApiDataType).shoppingLists.map(list=> {
+                return {
+                    ...list,
+                    createdAt: new Date(list.createdAt)
+                };
+            }),
+            shoppingList:singleList!==undefined
+                ?{
+                    ...singleList,                 
+                    createdAt: new Date(singleList.createdAt)
+                }
+                :undefined
+        }
+        return returnList;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
     }
 }
 
-export const updateShoppingList = async(list: IShoppingList): Promise<ShoppingListApiDataType> => {
+export const updateShoppingList = async(newList: IShoppingList): Promise<ShoppingListApiDataType> => {
     try{
-        const updatedShoppingList: AxiosResponse<ShoppingListApiDataType|IError> = await axios.put(`${url}/updateShoppingList/${list._id}`, list, await getHeaders());
-        const error = (updatedShoppingList.data as IError).error;
+        const list: AxiosResponse<AxiosShoppingListApiDataType|IError> = await axios.put(`${url}/updateShoppingList/${newList._id}`, newList, await getHeaders());
+        const error = (list.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return updatedShoppingList.data as ShoppingListApiDataType;
+        const singleList = (list.data as AxiosShoppingListApiDataType).shoppingList;
+        const returnList:ShoppingListApiDataType = {
+            shoppingLists:(list.data as AxiosShoppingListApiDataType).shoppingLists.map(list=> {
+                return {
+                    ...list,
+                    createdAt: new Date(list.createdAt)
+                };
+            }),
+            shoppingList:singleList!==undefined
+                ?{
+                    ...singleList,                 
+                    createdAt: new Date(singleList.createdAt)
+                }
+                :undefined
+        }
+        return returnList;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
@@ -1049,12 +1267,27 @@ export const updateShoppingList = async(list: IShoppingList): Promise<ShoppingLi
 
 export const deleteShoppingList = async (_id:string):Promise<ShoppingListApiDataType> => {
     try {
-        const deleted: AxiosResponse<ShoppingListApiDataType|IError> = await axios.delete(`${url}/deleteShoppingList/${_id}`, await getHeaders());
+        const deleted: AxiosResponse<AxiosShoppingListApiDataType|IError> = await axios.delete(`${url}/deleteShoppingList/${_id}`, await getHeaders());
         const error = (deleted.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return deleted.data as ShoppingListApiDataType;
+        const singleList = (deleted.data as AxiosShoppingListApiDataType).shoppingList;
+        const returnList:ShoppingListApiDataType = {
+            shoppingLists:(deleted.data as AxiosShoppingListApiDataType).shoppingLists.map(list=> {
+                return {
+                    ...list,
+                    createdAt: new Date(list.createdAt)
+                };
+            }),
+            shoppingList:singleList!==undefined
+                ?{
+                    ...singleList,                 
+                    createdAt: new Date(singleList.createdAt)
+                }
+                :undefined
+        }
+        return returnList;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));

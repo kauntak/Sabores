@@ -2,9 +2,71 @@
     margin: 10px;
 }
 
+.messageList{
+    border: 1px solid #31525b ;
+    border-radius: 10px;
+    overflow-y: scroll;
+    max-height: 200px;
+}
 
 .accordionHeader{
+    position: relative;
     display:flex;
     flex-direction: row;
-    justify-content: space-between;   
+    padding: 10px;
+    text-align: left;
+}
+.active{
+    background-color: #7999a1;
+}
+.read{
+    background-color: #fae6b1;
+}
+.unread{
+    background-color: #ffa101;
+
+}
+
+.messageInfo{
+    display:flex;
+    flex-direction: column;
+    width: 130px;
+}
+
+.messageInfo h5{
+    margin: 0px;
+}
+
+.messageInfo h6{
+    margin: 0px;
+}
+.subject{
+    position: relative;
+    max-width: 200px;
+    word-wrap: break-word;
+    top: 0;
+}
+
+.icons{
+    position: absolute;
+    right: 5px;
+}
+
+.icon{
+    margin: 10px;
+    color: #31525b;
+    cursor: pointer;
+}
+
+.locking{
+    margin: 10px;
+    color: #56727a;
+}
+
+.accordionContent{
+    margin-left: 15px;
+    overflow-y: hidden;
+    transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
+    background-color: #ecd9a8;
+    width: 85%;
 }

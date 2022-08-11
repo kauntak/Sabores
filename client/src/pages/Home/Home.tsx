@@ -41,10 +41,12 @@ export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, s
     const [activeListModule, setActiveListModule] = useState<NavListType>({moduleName:"home", displayName:"Home"});
     const [accessRole, setAccessRole] = useState<accessRoleType>("Employee");
     const [navBarList, setNavBarList] = useState<NavListType[]>(homeNavigation);
+    const [navBarUpdated, setNavBarUpdated] = useState<boolean>(false);
     const [locationList, setLocationList] = useState<NavListType[]>([]);
     const [showCheckInWarning, setShowCheckInWarning] = useState<boolean>(false);
     const [isManager, setIsManager] = useState<boolean>(false);
     const [messageList, setMessageList] = useState<IMessage[]>([]);
+    const [isMessagesSorted, setIsMessagesSorted] = useState<boolean>(false);
     const text = useContext(LanguageContext);
     const employee = useContext(EmployeeContext);
 
@@ -68,7 +70,10 @@ export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, s
                 };
                 accessibleNavigation = accessibleNavigation.concat(defaultNavigation);
                 accessibleNavigation.push({moduleName:"check-out", displayName:text.navList.checkOut});
-                setNavBarList(accessibleNavigation);
+                setNavBarList(()=> {
+                    setNavBarUpdated(true);
+                    return accessibleNavigation;
+                });
                 setAccessRole(newRole?.type?newRole.type:"Employee");
             });
             if(locationList.length === 0){
@@ -121,11 +126,7 @@ export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, s
             });
             getMessagesByEmployee(employee._id)
             .then(res => {
-                setMessageList(res.messages.sort((a,b)=> {
-                    if(a.date < b.date) return 1;
-                    else if(a.date > b.date) return -1;
-                    else return 0;
-                }));
+                setMessageList(res.messages);
             })
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -186,23 +187,53 @@ export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, s
     }, [employee.checkedIn])
 
     useEffect(()=> {
-        console.log(messageList);
-        if(messageList.filter(message => !(message.isRead)).length > 0){
-            setNavBarList(oldNavBar => {
-                if(oldNavBar.length === 1) return oldNavBar;
-                const newNavBar = [...oldNavBar];
-                newNavBar[1].isNotification = true;
-                return newNavBar;
-            })
-        } else {
-            setNavBarList(oldNavBar => {
-                if(oldNavBar.length === 1) return oldNavBar;
-                const newNavBar = [...oldNavBar];
-                newNavBar[1].isNotification = false;
-                return newNavBar;
-            })
+        if(isMessagesSorted){
+            setIsMessagesSorted(false);
+            return;
         }
-    }, [messageList]);
+        if(navBarUpdated) {
+            setNavBarUpdated(false);
+            if(messageList.filter(message => !(message.isRead)).length > 0){
+                console.log("is notification");
+                
+                setNavBarList(oldNavBar => {
+                    if(oldNavBar.length === 1) return oldNavBar;
+                    const newNavBar = [...oldNavBar];
+                    newNavBar[1].isNotification = true;
+                    return newNavBar;
+                })
+            } else {
+                console.log("no notification");
+
+                setNavBarList(oldNavBar => {
+                    if(oldNavBar.length === 1) return oldNavBar;
+                    const newNavBar = [...oldNavBar];
+                    newNavBar[1].isNotification = false;
+                    return newNavBar;
+                })
+            }
+        }
+        setMessageList(oldMessages => {
+            setIsMessagesSorted(true);
+            const newMessages = [...oldMessages];
+            newMessages.sort((a,b) => {
+                if(a.isRead && !b.isRead) {
+                  return 1;
+                } else if(!a.isRead && b.isRead) {
+                  return -1;
+                } else if(a.isRead && b.isRead) {
+                  if(a.isLocked && !b.isLocked) return -1;
+                  else if(!a.isLocked && b.isLocked) return 1;
+                }
+                if(a.date < b.date) return 1;
+                else if(a.date > b.date) return -1;
+                return 0;
+              }
+            );
+            return newMessages;
+        })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [messageList, navBarList]);
     
     useEffect(()=> {
         setActiveModule(activeListModule.moduleName);
