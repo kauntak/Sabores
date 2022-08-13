@@ -104,6 +104,7 @@ export const EditItemListComponent:React.FC<Props> = ({categories, currentList, 
                 {categoryList.map((category, index) => {
                     return (
                         <AccordionComponent 
+                            key={category.id+index}
                             title={category.name}
                             categoryIndex={index}
                             list={category.items}

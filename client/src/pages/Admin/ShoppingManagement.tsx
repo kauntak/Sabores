@@ -305,7 +305,8 @@ export const ShoppingManagement: React.FC<Props> = () => {
             _id: selectedItemId===""?undefined:selectedItemId,
             name: (fields[0]?.field as SingleField)?.value as string,
             category:(fields[1].field as MultiField).selected?.id!,
-            description:(fields[1]?.field as SingleField)?.value as string
+            description:(fields[2]?.field as SingleField)?.value as string,
+            orderItem: (fields[3]?.field as MultiField)?.selected?.id
         }
         if(selectedItemId===""){
             createShoppingItem(newItem)

@@ -23,7 +23,7 @@ export async function createOrderCategory(req: Request, res: Response): Promise<
 export async function updateOrderCategory(req: Request, res: Response): Promise<void>{
     try {
         const {params: {id}, body} = req;
-        const orderCategory: IOrderCategory|null = await OrderCategory.findByIdAndUpdate({'_id':id}, body);
+        const orderCategory: IOrderCategory|null = await OrderCategory.findByIdAndUpdate({'_id':id}, body, {new:true});
         const orderCategories: IOrderCategory[] = await OrderCategory.find();
         res.status(200).json({
             orderCategory,

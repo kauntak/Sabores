@@ -95,6 +95,7 @@ const MessageAccordion:React.FC<AccordionProps> = ({messages, from, index, activ
         if(activeId !== message._id) return;
         if(accordionRef.current && maxHeightRef.current === INITIAL_MAX_HEIGHT)
             maxHeightRef.current = accordionRef.current.offsetHeight;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeId])
 
     const onHeaderClick = (id:string, index:number) => {

@@ -25,7 +25,7 @@ export async function createReminder(req: Request, res: Response): Promise<void>
 export async function updateReminder(req: Request, res: Response): Promise<void>{
     try {
         const {params: {id}, body} = req;
-        const reminder: IReminder|null = await Reminder.findByIdAndUpdate({'_id':id}, body);
+        const reminder: IReminder|null = await Reminder.findByIdAndUpdate({'_id':id}, body, {new:true});
         const reminders: IReminder[] = await Reminder.find();
         res.status(200).json({
             reminder,

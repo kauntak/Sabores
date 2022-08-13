@@ -23,7 +23,7 @@ export async function createSupplier(req: Request, res: Response): Promise<void>
 export async function updateSupplier(req: Request, res: Response): Promise<void>{
     try {
         const {params: {id}, body} = req;
-        const supplier: ISupplier|null = await Supplier.findByIdAndUpdate({'_id':id}, body);
+        const supplier: ISupplier|null = await Supplier.findByIdAndUpdate({'_id':id}, body, {new:true});
         const suppliers: ISupplier[] = await Supplier.find();
         res.status(200).json({
             supplier,

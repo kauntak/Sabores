@@ -7,7 +7,8 @@ export interface IOrder {
     createdAt: Date,
     requestComment? : string,
     fulfilledBy?: Types.ObjectId,
-    isFulfilled?: boolean,
+    isCompleted?: boolean,
+    completedBatchId?: string,
     deliverByDate:Date,
     fulfillDate?: Date,
     fulfillComment?: string,
@@ -35,7 +36,7 @@ const orderSchema = new Schema<IOrder>({
         default: Date.now,
         required:true
     },
-    isFulfilled: {
+    isCompleted: {
         type: Boolean,
         required: false,
         default: false
@@ -77,8 +78,10 @@ const orderSchema = new Schema<IOrder>({
     ],
     expire_at:{
         type:Date,
-        default: Date.now,
         expires: "30d"
+    },
+    completedBatchId: {
+        type: String
     }
 });
 

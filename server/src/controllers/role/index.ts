@@ -23,7 +23,7 @@ export async function createRole(req: Request, res: Response): Promise<void>{
 export async function updateRole(req: Request, res: Response): Promise<void>{
     try {
         const {params: {id}, body} = req;
-        const role: IRole|null = await Role.findByIdAndUpdate({'_id':id}, body);
+        const role: IRole|null = await Role.findByIdAndUpdate({'_id':id}, body, {new:true});
         const roles: IRole[] = await Role.find();
         res.status(200).json({
             role,

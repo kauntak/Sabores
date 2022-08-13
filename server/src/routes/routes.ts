@@ -7,14 +7,14 @@ import { createEmployeeLog, updateEmployeeLog, getEmployeeLogs, getEmployeesLog,
 import { createLocation, updateLocation, getLocations, deleteLocation } from '../controllers/location';
 import { createMessage, updateMessage,getMessagesByDateRange, getMessagesByEmployee, getMessage, deleteMessage, readMessage, lockMessage, unlockMessage } from '../controllers/message';
 import { createModule, updateModule, getModules, deleteModule } from '../controllers/module';
-import { createOrder, updateOrder, getOrders, getOrder, deleteOrder, getActiveOrderByLocation } from '../controllers/order';
+import { createOrder, updateOrder, getOrders, getOrder, deleteOrder, getActiveOrderByLocation, completeOrders } from '../controllers/order';
 import { createOrderItem, updateOrderItem, getOrderItems, deleteOrderItem, getOrderItem } from '../controllers/orderItem';
 import { createOrderCategory, updateOrderCategory, getOrderCategories, deleteOrderCategory } from '../controllers/orderCategory';
 
 import { createReminder, updateReminder, getReminders, getReminderByRoleId, deleteReminder, getRemindersByIds } from '../controllers/reminder';
 import { createRole, updateRole, getRoles, getRole, deleteRole } from '../controllers/role';
 import { createShoppingItem, updateShoppingItem, getShoppingItems, getShoppingItem, deleteShoppingItem } from '../controllers/shoppingItem';
-import { createShoppingList, updateShoppingList, getShoppingLists, getShoppingList, deleteShoppingList, getActiveShoppingListByLocation, getShoppingListsByLocation } from '../controllers/shoppingList';
+import { createShoppingList, updateShoppingList, getShoppingLists, getShoppingList, deleteShoppingList, getActiveShoppingListByLocation, getShoppingListsByLocation, completeShoppingLists } from '../controllers/shoppingList';
 import { createShoppingCategory, updateShoppingCategory, getShoppingCategories, getShoppingCategory, deleteShoppingCategory } from '../controllers/shoppingCategory';
 import { createSupplier, deleteSupplier, getSupplier, getSuppliers, updateSupplier } from '../controllers/supplier';
 
@@ -59,6 +59,7 @@ router.delete('/api/deleteModule/:id', jsonParser, deleteModule);
 
 router.post('/api/createOrder', jsonParser, createOrder);
 router.put('/api/updateOrder/:id', jsonParser, updateOrder);
+router.put('/api/completeOrder/:ids', jsonParser, completeOrders);
 router.get('/api/getOrders', jsonParser, getOrders);
 router.get('/api/getOrder/:id', jsonParser, getOrder);
 router.get('/api/getActiveOrderByLocation/:id', jsonParser, getActiveOrderByLocation);
@@ -96,6 +97,7 @@ router.delete('/api/deleteShoppingItem/:id', jsonParser, deleteShoppingItem);
 
 router.post('/api/createShoppingList', jsonParser, createShoppingList);
 router.put('/api/updateShoppingList/:id', jsonParser, updateShoppingList);
+router.put('/api/completeShoppingLists/:ids', jsonParser, completeShoppingLists);
 router.get('/api/getShoppingLists', jsonParser, getShoppingLists);
 router.get('/api/getShoppingList/:id', jsonParser, getShoppingList);
 router.get('/api/getShoppingListsByLocation/:id', jsonParser, getShoppingListsByLocation);

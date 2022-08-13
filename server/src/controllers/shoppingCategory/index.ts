@@ -23,7 +23,7 @@ export async function createShoppingCategory(req: Request, res: Response): Promi
 export async function updateShoppingCategory(req: Request, res: Response): Promise<void>{
     try {
         const {params: {id}, body} = req;
-        const shoppingCategory: IShoppingCategory|null = await ShoppingCategory.findByIdAndUpdate({'_id':id}, body);
+        const shoppingCategory: IShoppingCategory|null = await ShoppingCategory.findByIdAndUpdate({'_id':id}, body, {new:true});
         const shoppingCategories: IShoppingCategory[] = await ShoppingCategory.find();
         res.status(200).json({
             shoppingCategory,

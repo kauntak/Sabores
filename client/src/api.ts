@@ -286,7 +286,7 @@ export const createMessage = async(formData:Omit<IMessage, "_id">):Promise<Messa
         }
         const singleMessage = (message.data as AxiosMessageApiType).message;
         const returnMessage:MessageApiDataType = {
-            messages:(message.data as AxiosMessageApiType).messages.map(message=> {
+            messages:(message.data as AxiosMessageApiType).messages?.map(message=> {
                 return {...message, date:new Date(message.date)};
             }),
             message:singleMessage!==undefined?{...singleMessage, date:new Date(singleMessage.date)}:undefined
@@ -307,7 +307,7 @@ export const updateMessage = async(message: IMessage): Promise<MessageApiDataTyp
         }
         const singleMessage = (updatedMessage.data as AxiosMessageApiType).message;
         const returnMessage:MessageApiDataType = {
-            messages:(updatedMessage.data as AxiosMessageApiType).messages.map(message=> {
+            messages:(updatedMessage.data as AxiosMessageApiType).messages?.map(message=> {
                 return {...message, date:new Date(message.date)};
             }),
             message:singleMessage!==undefined?{...singleMessage, date:new Date(singleMessage.date)}:undefined
@@ -328,7 +328,7 @@ export const readMessage = async(_id:string): Promise<MessageApiDataType> => {
         }
         const singleMessage = (updatedMessage.data as AxiosMessageApiType).message;
         const returnMessage:MessageApiDataType = {
-            messages:(updatedMessage.data as AxiosMessageApiType).messages.map(message=> {
+            messages:(updatedMessage.data as AxiosMessageApiType).messages?.map(message=> {
                 return {...message, date:new Date(message.date)};
             }),
             message:singleMessage!==undefined?{...singleMessage, date:new Date(singleMessage.date)}:undefined
@@ -349,7 +349,7 @@ export const lockMessage = async(_id:string): Promise<MessageApiDataType> => {
         }
         const singleMessage = (updatedMessage.data as AxiosMessageApiType).message;
         const returnMessage:MessageApiDataType = {
-            messages:(updatedMessage.data as AxiosMessageApiType).messages.map(message=> {
+            messages:(updatedMessage.data as AxiosMessageApiType).messages?.map(message=> {
                 return {...message, date:new Date(message.date)};
             }),
             message:singleMessage!==undefined?{...singleMessage, date:new Date(singleMessage.date)}:undefined
@@ -370,7 +370,7 @@ export const unlockMessage = async(_id:string): Promise<MessageApiDataType> => {
         }
         const singleMessage = (updatedMessage.data as AxiosMessageApiType).message;
         const returnMessage:MessageApiDataType = {
-            messages:(updatedMessage.data as AxiosMessageApiType).messages.map(message=> {
+            messages:(updatedMessage.data as AxiosMessageApiType).messages?.map(message=> {
                 return {...message, date:new Date(message.date)};
             }),
             message:singleMessage!==undefined?{...singleMessage, date:new Date(singleMessage.date)}:undefined
@@ -391,7 +391,7 @@ export const getMessage = async(_id:string):Promise<MessageApiDataType> => {
         }
         const singleMessage = (message.data as AxiosMessageApiType).message;
         const returnMessage:MessageApiDataType = {
-            messages:(message.data as AxiosMessageApiType).messages.map(message=> {
+            messages:(message.data as AxiosMessageApiType).messages?.map(message=> {
                 return {...message, date:new Date(message.date)};
             }),
             message:singleMessage!==undefined?{...singleMessage, date:new Date(singleMessage.date)}:undefined
@@ -412,7 +412,7 @@ export const getMessagesByEmployee = async(_id:string):Promise<MessageApiDataTyp
         }
         const singleMessage = (message.data as AxiosMessageApiType).message;
         const returnMessage:MessageApiDataType = {
-            messages:(message.data as AxiosMessageApiType).messages.map(message=> {
+            messages:(message.data as AxiosMessageApiType).messages?.map(message=> {
                 return {...message, date:new Date(message.date)};
             }),
             message:singleMessage!==undefined?{...singleMessage, date:new Date(singleMessage.date)}:undefined
@@ -433,7 +433,7 @@ export const getMessagesByDateRange = async(start:Date|null, end:Date|null):Prom
         }
         const singleMessage = (message.data as AxiosMessageApiType).message;
         const returnMessage:MessageApiDataType = {
-            messages:(message.data as AxiosMessageApiType).messages.map(message=> {
+            messages:(message.data as AxiosMessageApiType).messages?.map(message=> {
                 return {...message, date:new Date(message.date)};
             }),
             message:singleMessage!==undefined?{...singleMessage, date:new Date(singleMessage.date)}:undefined
@@ -452,12 +452,10 @@ export const deleteMessage = async (_id:string):Promise<MessageApiDataType> => {
         if(error !== undefined){
             throw new Error(error);
         }
-        const singleMessage = (deleted.data as AxiosMessageApiType).message;
         const returnMessage:MessageApiDataType = {
-            messages:(deleted.data as AxiosMessageApiType).messages.map(message=> {
+            messages:(deleted.data as AxiosMessageApiType).messages?.map(message=> {
                 return {...message, date:new Date(message.date)};
-            }),
-            message:singleMessage!==undefined?{...singleMessage, date:new Date(singleMessage.date)}:undefined
+            })
         }
         return returnMessage;
     } catch(error) {
@@ -507,14 +505,23 @@ export const createOrder = async(formData:Omit<IOrder, "_id">):Promise<OrderApiD
         }
         const singleOrder = (order.data as AxiosOrderApiDataType).order;
         const returnOrder:OrderApiDataType = {
-            orders:(order.data as AxiosOrderApiDataType).orders.map(order=> {
-                return {...order, requestDate:new Date(order.requestDate), fulfillDate:order.fulfillDate?new Date(order.fulfillDate):undefined};
+            orders:(order.data as AxiosOrderApiDataType).orders?.map(order=> {
+                return {
+                    ...order, 
+                    requestDate:new Date(order.requestDate), 
+                    fulfillDate:order.fulfillDate?new Date(order.fulfillDate):undefined,
+                    createdAt: new Date(order.createdAt),
+                    expire_at: order.expire_at?new Date(order.expire_at):undefined
+                };
             }),
             order:singleOrder!==undefined
                 ?{
                     ...singleOrder, 
                     requestDate:new Date(singleOrder.requestDate), 
-                    fulfillDate:singleOrder.fulfillDate?new Date(singleOrder.fulfillDate):undefined}
+                    fulfillDate:singleOrder.fulfillDate?new Date(singleOrder.fulfillDate):undefined,
+                    createdAt: new Date(singleOrder.createdAt),
+                    expire_at: singleOrder.expire_at?new Date(singleOrder.expire_at):undefined
+                }
                 :undefined
         }
         return returnOrder;
@@ -533,14 +540,23 @@ export const updateOrder = async(newOrder: IOrder): Promise<OrderApiDataType> =>
         }
         const singleOrder = (order.data as AxiosOrderApiDataType).order;
         const returnOrder:OrderApiDataType = {
-            orders:(order.data as AxiosOrderApiDataType).orders.map(order=> {
-                return {...order, requestDate:new Date(order.requestDate), fulfillDate:order.fulfillDate?new Date(order.fulfillDate):undefined};
+            orders:(order.data as AxiosOrderApiDataType).orders?.map(order=> {
+                return {
+                    ...order, 
+                    requestDate:new Date(order.requestDate), 
+                    fulfillDate:order.fulfillDate?new Date(order.fulfillDate):undefined,
+                    createdAt: new Date(order.createdAt),
+                    expire_at: order.expire_at?new Date(order.expire_at):undefined
+                };
             }),
             order:singleOrder!==undefined
                 ?{
                     ...singleOrder, 
                     requestDate:new Date(singleOrder.requestDate), 
-                    fulfillDate:singleOrder.fulfillDate?new Date(singleOrder.fulfillDate):undefined}
+                    fulfillDate:singleOrder.fulfillDate?new Date(singleOrder.fulfillDate):undefined,
+                    createdAt: new Date(singleOrder.createdAt),
+                    expire_at: singleOrder.expire_at?new Date(singleOrder.expire_at):undefined
+                }
                 :undefined
         }
         return returnOrder;
@@ -550,7 +566,7 @@ export const updateOrder = async(newOrder: IOrder): Promise<OrderApiDataType> =>
     }
 }
 
-export const getOrders = async(_id:string):Promise<OrderApiDataType> => {
+export const getOrders = async():Promise<OrderApiDataType> => {
     try {
         const order: AxiosResponse<AxiosOrderApiDataType|IError> = await axios.get(`${url}/getOrders`, await getHeaders());
         const error = (order.data as IError).error;
@@ -559,14 +575,23 @@ export const getOrders = async(_id:string):Promise<OrderApiDataType> => {
         }
         const singleOrder = (order.data as AxiosOrderApiDataType).order;
         const returnOrder:OrderApiDataType = {
-            orders:(order.data as AxiosOrderApiDataType).orders.map(order=> {
-                return {...order, requestDate:new Date(order.requestDate), fulfillDate:order.fulfillDate?new Date(order.fulfillDate):undefined};
+            orders:(order.data as AxiosOrderApiDataType).orders?.map(order=> {
+                return {
+                    ...order, 
+                    requestDate:new Date(order.requestDate), 
+                    fulfillDate:order.fulfillDate?new Date(order.fulfillDate):undefined,
+                    createdAt: new Date(order.createdAt),
+                    expire_at: order.expire_at?new Date(order.expire_at):undefined
+                };
             }),
             order:singleOrder!==undefined
                 ?{
                     ...singleOrder, 
                     requestDate:new Date(singleOrder.requestDate), 
-                    fulfillDate:singleOrder.fulfillDate?new Date(singleOrder.fulfillDate):undefined}
+                    fulfillDate:singleOrder.fulfillDate?new Date(singleOrder.fulfillDate):undefined,
+                    createdAt: new Date(singleOrder.createdAt),
+                    expire_at: singleOrder.expire_at?new Date(singleOrder.expire_at):undefined
+                }
                 :undefined
         }
         return returnOrder;
@@ -585,14 +610,23 @@ export const getOrder = async(_id:string):Promise<OrderApiDataType> => {
         }
         const singleOrder = (order.data as AxiosOrderApiDataType).order;
         const returnOrder:OrderApiDataType = {
-            orders:(order.data as AxiosOrderApiDataType).orders.map(order=> {
-                return {...order, requestDate:new Date(order.requestDate), fulfillDate:order.fulfillDate?new Date(order.fulfillDate):undefined};
+            orders:(order.data as AxiosOrderApiDataType).orders?.map(order=> {
+                return {
+                    ...order, 
+                    requestDate:new Date(order.requestDate), 
+                    fulfillDate:order.fulfillDate?new Date(order.fulfillDate):undefined,
+                    createdAt: new Date(order.createdAt),
+                    expire_at: order.expire_at?new Date(order.expire_at):undefined
+                };
             }),
             order:singleOrder!==undefined
                 ?{
                     ...singleOrder, 
                     requestDate:new Date(singleOrder.requestDate), 
-                    fulfillDate:singleOrder.fulfillDate?new Date(singleOrder.fulfillDate):undefined}
+                    fulfillDate:singleOrder.fulfillDate?new Date(singleOrder.fulfillDate):undefined,
+                    createdAt: new Date(singleOrder.createdAt),
+                    expire_at: singleOrder.expire_at?new Date(singleOrder.expire_at):undefined
+                }
                 :undefined
         }
         return returnOrder;
@@ -611,14 +645,23 @@ export const getActiveOrderByLocation = async(_id:string):Promise<OrderApiDataTy
         }
         const singleOrder = (order.data as AxiosOrderApiDataType).order;
         const returnOrder:OrderApiDataType = {
-            orders:(order.data as AxiosOrderApiDataType).orders.map(order=> {
-                return {...order, requestDate:new Date(order.requestDate), fulfillDate:order.fulfillDate?new Date(order.fulfillDate):undefined};
+            orders:(order.data as AxiosOrderApiDataType).orders?.map(order=> {
+                return {
+                    ...order, 
+                    requestDate:new Date(order.requestDate), 
+                    fulfillDate:order.fulfillDate?new Date(order.fulfillDate):undefined,
+                    createdAt: new Date(order.createdAt),
+                    expire_at: order.expire_at?new Date(order.expire_at):undefined
+                };
             }),
             order:singleOrder!==undefined
                 ?{
                     ...singleOrder, 
                     requestDate:new Date(singleOrder.requestDate), 
-                    fulfillDate:singleOrder.fulfillDate?new Date(singleOrder.fulfillDate):undefined}
+                    fulfillDate:singleOrder.fulfillDate?new Date(singleOrder.fulfillDate):undefined,
+                    createdAt: new Date(singleOrder.createdAt),
+                    expire_at: singleOrder.expire_at?new Date(singleOrder.expire_at):undefined
+                }
                 :undefined
         }
         return returnOrder;
@@ -636,8 +679,14 @@ export const deleteOrder = async (_id:string):Promise<OrderApiDataType> => {
             throw new Error(error);
         }
         const returnOrder:OrderApiDataType = {
-            orders:(deleted.data as AxiosOrderApiDataType).orders.map(order=> {
-                return {...order, requestDate:new Date(order.requestDate), fulfillDate:order.fulfillDate?new Date(order.fulfillDate):undefined};
+            orders:(deleted.data as AxiosOrderApiDataType).orders?.map(order=> {
+                return {
+                    ...order, 
+                    requestDate:new Date(order.requestDate), 
+                    fulfillDate:order.fulfillDate?new Date(order.fulfillDate):undefined,
+                    createdAt: new Date(order.createdAt),
+                    expire_at: order.expire_at?new Date(order.expire_at):undefined
+                };
             })
         }
         return returnOrder;
@@ -1099,16 +1148,18 @@ export const createShoppingList = async(formData:Omit<IShoppingList, "_id">):Pro
         }
         const singleList = (list.data as AxiosShoppingListApiDataType).shoppingList;
         const returnList:ShoppingListApiDataType = {
-            shoppingLists:(list.data as AxiosShoppingListApiDataType).shoppingLists.map(list=> {
+            shoppingLists:(list.data as AxiosShoppingListApiDataType).shoppingLists?.map(list=> {
                 return {
                     ...list,
-                    createdAt: new Date(list.createdAt)
+                    createdAt: new Date(list.createdAt),
+                    expire_at: list.expire_at?new Date(list.expire_at):undefined
                 };
             }),
             shoppingList:singleList!==undefined
                 ?{
                     ...singleList,                 
-                    createdAt: new Date(singleList.createdAt)
+                    createdAt: new Date(singleList.createdAt),
+                    expire_at: singleList.expire_at?new Date(singleList.expire_at):undefined
                 }
                 :undefined
         }
@@ -1128,16 +1179,18 @@ export const getShoppingList = async(_id:string):Promise<ShoppingListApiDataType
         }
         const singleList = (list.data as AxiosShoppingListApiDataType).shoppingList;
         const returnList:ShoppingListApiDataType = {
-            shoppingLists:(list.data as AxiosShoppingListApiDataType).shoppingLists.map(list=> {
+            shoppingLists:(list.data as AxiosShoppingListApiDataType).shoppingLists?.map(list=> {
                 return {
                     ...list,
-                    createdAt: new Date(list.createdAt)
+                    createdAt: new Date(list.createdAt),
+                    expire_at: list.expire_at?new Date(list.expire_at):undefined
                 };
             }),
             shoppingList:singleList!==undefined
                 ?{
                     ...singleList,                 
-                    createdAt: new Date(singleList.createdAt)
+                    createdAt: new Date(singleList.createdAt),
+                    expire_at: singleList.expire_at?new Date(singleList.expire_at):undefined
                 }
                 :undefined
         }
@@ -1157,16 +1210,18 @@ export const getActiveShoppingListByLocation = async (_id:string):Promise<Shoppi
         }
         const singleList = (list.data as AxiosShoppingListApiDataType).shoppingList;
         const returnList:ShoppingListApiDataType = {
-            shoppingLists:(list.data as AxiosShoppingListApiDataType).shoppingLists.map(list=> {
+            shoppingLists:(list.data as AxiosShoppingListApiDataType).shoppingLists?.map(list=> {
                 return {
                     ...list,
-                    createdAt: new Date(list.createdAt)
+                    createdAt: new Date(list.createdAt),
+                    expire_at: list.expire_at?new Date(list.expire_at):undefined
                 };
             }),
             shoppingList:singleList!==undefined
                 ?{
                     ...singleList,                 
-                    createdAt: new Date(singleList.createdAt)
+                    createdAt: new Date(singleList.createdAt),
+                    expire_at: singleList.expire_at?new Date(singleList.expire_at):undefined
                 }
                 :undefined
         }
@@ -1186,16 +1241,18 @@ export const getShoppingListsByLocation = async(_id:string):Promise<ShoppingList
         }
         const singleList = (list.data as AxiosShoppingListApiDataType).shoppingList;
         const returnList:ShoppingListApiDataType = {
-            shoppingLists:(list.data as AxiosShoppingListApiDataType).shoppingLists.map(list=> {
+            shoppingLists:(list.data as AxiosShoppingListApiDataType).shoppingLists?.map(list=> {
                 return {
                     ...list,
-                    createdAt: new Date(list.createdAt)
+                    createdAt: new Date(list.createdAt),
+                    expire_at: list.expire_at?new Date(list.expire_at):undefined
                 };
             }),
             shoppingList:singleList!==undefined
                 ?{
                     ...singleList,                 
-                    createdAt: new Date(singleList.createdAt)
+                    createdAt: new Date(singleList.createdAt),
+                    expire_at: singleList.expire_at?new Date(singleList.expire_at):undefined
                 }
                 :undefined
         }
@@ -1216,16 +1273,18 @@ export const getShoppingLists = async():Promise<ShoppingListApiDataType> => {
         }
         const singleList = (list.data as AxiosShoppingListApiDataType).shoppingList;
         const returnList:ShoppingListApiDataType = {
-            shoppingLists:(list.data as AxiosShoppingListApiDataType).shoppingLists.map(list=> {
+            shoppingLists:(list.data as AxiosShoppingListApiDataType).shoppingLists?.map(list=> {
                 return {
                     ...list,
-                    createdAt: new Date(list.createdAt)
+                    createdAt: new Date(list.createdAt),
+                    expire_at: list.expire_at?new Date(list.expire_at):undefined
                 };
             }),
             shoppingList:singleList!==undefined
                 ?{
                     ...singleList,                 
-                    createdAt: new Date(singleList.createdAt)
+                    createdAt: new Date(singleList.createdAt),
+                    expire_at: singleList.expire_at?new Date(singleList.expire_at):undefined
                 }
                 :undefined
         }
@@ -1245,16 +1304,18 @@ export const updateShoppingList = async(newList: IShoppingList): Promise<Shoppin
         }
         const singleList = (list.data as AxiosShoppingListApiDataType).shoppingList;
         const returnList:ShoppingListApiDataType = {
-            shoppingLists:(list.data as AxiosShoppingListApiDataType).shoppingLists.map(list=> {
+            shoppingLists:(list.data as AxiosShoppingListApiDataType).shoppingLists?.map(list=> {
                 return {
                     ...list,
-                    createdAt: new Date(list.createdAt)
+                    createdAt: new Date(list.createdAt),
+                    expire_at: list.expire_at?new Date(list.expire_at):undefined
                 };
             }),
             shoppingList:singleList!==undefined
                 ?{
                     ...singleList,                 
-                    createdAt: new Date(singleList.createdAt)
+                    createdAt: new Date(singleList.createdAt),
+                    expire_at: singleList.expire_at?new Date(singleList.expire_at):undefined
                 }
                 :undefined
         }
@@ -1272,20 +1333,14 @@ export const deleteShoppingList = async (_id:string):Promise<ShoppingListApiData
         if(error !== undefined){
             throw new Error(error);
         }
-        const singleList = (deleted.data as AxiosShoppingListApiDataType).shoppingList;
         const returnList:ShoppingListApiDataType = {
-            shoppingLists:(deleted.data as AxiosShoppingListApiDataType).shoppingLists.map(list=> {
+            shoppingLists:(deleted.data as AxiosShoppingListApiDataType).shoppingLists?.map(list=> {
                 return {
                     ...list,
-                    createdAt: new Date(list.createdAt)
+                    createdAt: new Date(list.createdAt),
+                    expire_at: list.expire_at?new Date(list.expire_at):undefined
                 };
-            }),
-            shoppingList:singleList!==undefined
-                ?{
-                    ...singleList,                 
-                    createdAt: new Date(singleList.createdAt)
-                }
-                :undefined
+            })
         }
         return returnList;
     } catch(error) {

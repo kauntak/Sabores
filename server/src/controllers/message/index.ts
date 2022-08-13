@@ -23,7 +23,7 @@ export async function createMessage(req: Request, res: Response): Promise<void>{
 export async function updateMessage(req: Request, res: Response): Promise<void>{
     try {
         const {params: {id}, body} = req;
-        const message: IMessage|null = await Message.findByIdAndUpdate({'_id':id}, body);
+        const message: IMessage|null = await Message.findByIdAndUpdate({'_id':id}, body, {new:true});
         const messages: IMessage[] = await Message.find();
         res.status(200).json({
             message,
@@ -39,7 +39,7 @@ export async function updateMessage(req: Request, res: Response): Promise<void>{
 export async function readMessage(req:Request, res: Response): Promise<void>{
     try {
         const {params: {id} } = req;
-        const message: IMessage|null = await Message.findByIdAndUpdate({'_id':id}, {isRead:true, expireAt:Date.now()});
+        const message: IMessage|null = await Message.findByIdAndUpdate({'_id':id}, {isRead:true, expireAt:Date.now()}, {new:true});
         const messages: IMessage[] = await Message.find();
         res.status(200).json({
             message,

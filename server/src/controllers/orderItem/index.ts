@@ -23,7 +23,7 @@ export async function createOrderItem(req: Request, res: Response): Promise<void
 export async function updateOrderItem(req: Request, res: Response): Promise<void>{
     try {
         const {params: {id}, body} = req;
-        const orderItem: IOrderItem|null = await OrderItem.findByIdAndUpdate({'_id':id}, body);
+        const orderItem: IOrderItem|null = await OrderItem.findByIdAndUpdate({'_id':id}, body, {new:true});
         const orderItems: IOrderItem[] = await OrderItem.find();
         res.status(200).json({
             orderItem,

@@ -24,7 +24,7 @@ export async function createModule(req: Request, res: Response): Promise<void>{
 export async function updateModule(req: Request, res: Response): Promise<void>{
     try {
         const {params: {id}, body} = req;
-        const module: IModule|null = await Module.findByIdAndUpdate({'_id':id}, body);
+        const module: IModule|null = await Module.findByIdAndUpdate({'_id':id}, body, {new:true});
         const modules: IModule[] = await Module.find();
         res.status(200).json({
             module,

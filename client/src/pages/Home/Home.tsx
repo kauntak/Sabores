@@ -57,6 +57,7 @@ export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, s
             getRole(roleId)
             .then(res => {
                 const newRole = res.role;
+                setAccessRole(newRole?.type?newRole.type:"Employee");
                 let accessibleNavigation:NavListType[] = [{moduleName:"home", displayName:text.navList.home}, {moduleName:"messages", displayName:text.navList.messages}];
                 const defaultNavigation:NavListType[]= [
                     {moduleName:"ordering", displayName:text.navList.ordering}
@@ -64,6 +65,9 @@ export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, s
                 switch(newRole?.type) {
                     case "Administrator":
                     case "Manager":
+                        if(newRole.type ==="Administrator") {
+                            accessibleNavigation.push({moduleName:"timeSheet", displayName:text.navList.timeSheet});
+                        }
                         accessibleNavigation.push({moduleName:"admin", displayName:text.navList.admin});
                         setIsManager(true);
                         break;
@@ -74,28 +78,7 @@ export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, s
                     setNavBarUpdated(true);
                     return accessibleNavigation;
                 });
-                setAccessRole(newRole?.type?newRole.type:"Employee");
             });
-            if(locationList.length === 0){
-                getLocations()
-                .then(locationsList => {
-                    setLocationList(
-                        employee.access.reduce<NavListType[]>((result, element) => {
-                            const foundLocations = locationsList.locations.find((mod) => {return (mod._id === element.locationId)});
-                            if(foundLocations === undefined) return result;
-                            const newAccessPoint = {
-                                id:foundLocations._id,
-                                moduleName:foundLocations.name,
-                                displayName:foundLocations.name};
-                            result.push(newAccessPoint);
-                            return result;
-                            }, [])
-                        )
-                    })
-                .catch(err => {
-                    console.log(err);
-                });
-            }
             getEmployeesMostRecentLog(employee._id)
             .then(logResult => {
                 setEmployeeLog(logResult.log!);
@@ -131,6 +114,29 @@ export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, s
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isLoggedIn]);
+
+    useEffect(()=>{
+        getLocations()
+        .then(locationsList => {
+            let list:NavListType[] = accessRole==="Administrator"?[{id:"ordering", moduleName:"ordering", displayName:"Orders"}]:[];
+            setLocationList(
+                employee.access.reduce<NavListType[]>((result, element) => {
+                    const foundLocations = locationsList.locations.find((mod) => {return (mod._id === element.locationId)});
+                    if(foundLocations === undefined) return result;
+                    const newAccessPoint = {
+                        id:foundLocations._id,
+                        moduleName:foundLocations.name,
+                        displayName:foundLocations.name};
+                    result.push(newAccessPoint);
+                    return result;
+                    }, list)
+                )
+            })
+        .catch(err => {
+            console.log(err);
+        });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [accessRole, employee.access]);
 
     const setAndReturnDefaultRemindersByRole = ():Promise<ReminderListType[]> => {
         return new Promise((resolve, reject) => {
@@ -194,8 +200,6 @@ export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, s
         if(navBarUpdated) {
             setNavBarUpdated(false);
             if(messageList.filter(message => !(message.isRead)).length > 0){
-                console.log("is notification");
-                
                 setNavBarList(oldNavBar => {
                     if(oldNavBar.length === 1) return oldNavBar;
                     const newNavBar = [...oldNavBar];
@@ -203,8 +207,6 @@ export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, s
                     return newNavBar;
                 })
             } else {
-                console.log("no notification");
-
                 setNavBarList(oldNavBar => {
                     if(oldNavBar.length === 1) return oldNavBar;
                     const newNavBar = [...oldNavBar];
@@ -348,12 +350,6 @@ const HomeScreen:React.FC<HomeScreenProps> = ({setEmployee, reminderList, setRem
                                 name={text.homeScreen.viewShoppingList} 
                                 id="shopping" 
                                 isNegativeColor={currentListView==="shopping"}
-                            />
-                            <ButtonComponent
-                                onClick={onButtonClick}
-                                name={text.homeScreen.viewMessageList}
-                                id="messages"
-                                isNegativeColor={currentListView==="messages"}
                             />
                             <ButtonComponent
                                 onClick={onButtonClick}

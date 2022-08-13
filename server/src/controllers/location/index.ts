@@ -23,7 +23,7 @@ export async function createLocation(req: Request, res: Response): Promise<void>
 export async function updateLocation(req: Request, res: Response): Promise<void>{
     try {
         const {params: {id}, body} = req;
-        const location: ILocation|null = await Location.findByIdAndUpdate({_id:id}, body);
+        const location: ILocation|null = await Location.findByIdAndUpdate({_id:id}, body, {new:true});
         const locations: ILocation[] = await Location.find();
         res.status(200).json({
             location,

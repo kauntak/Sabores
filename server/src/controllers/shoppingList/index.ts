@@ -20,10 +20,28 @@ export async function createShoppingList(req: Request, res: Response): Promise<v
     }
 }
 
+export async function completeShoppingLists(req: Request, res: Response): Promise<void>{
+    try {
+        const {params: {ids}, query:{completedBatchId}} = req;
+        const result:ReturnType<typeof ShoppingList.updateMany> = ShoppingList.updateMany({'_id':{$in:ids.split(",")}}, {completedBatchId, isCompleted:true, expire_at:new Date()});
+        if(!((await result).acknowledged)){
+
+        }
+        const shoppingLists: IShoppingList[] = await ShoppingList.find();
+        res.status(200).json({
+            shoppingLists
+        });
+    } catch (error) {
+        res.status(500).json({
+            error: returnError(error)
+        });
+    }
+}
+
 export async function updateShoppingList(req: Request, res: Response): Promise<void>{
     try {
         const {params: {id}, body} = req;
-        const shoppingList: IShoppingList|null = await ShoppingList.findByIdAndUpdate({'_id':id}, body);
+        const shoppingList: IShoppingList|null = await ShoppingList.findByIdAndUpdate({'_id':id}, body, {new:true});
         const shoppingLists: IShoppingList[] = await ShoppingList.find();
         res.status(200).json({
             shoppingList,
@@ -38,7 +56,7 @@ export async function updateShoppingList(req: Request, res: Response): Promise<v
 
 export async function getShoppingLists(req: Request, res:Response):Promise<void>{
     try{
-        const shoppingLists: IShoppingList[] = await ShoppingList.find({}, {sort:{createdAt:'desc'}});
+        const shoppingLists: IShoppingList[] = await ShoppingList.find({}, null, {sort:{createdAt:'desc'}});
         res.status(200).json({
             shoppingLists
         });
@@ -52,7 +70,7 @@ export async function getShoppingLists(req: Request, res:Response):Promise<void>
 export async function getShoppingListsByLocation(req: Request, res:Response):Promise<void>{
     try{
         const {params: {id}} = req;
-        const shoppingLists: IShoppingList[] = await ShoppingList.find({location:id}, {sort:{createdAt:'desc'}});
+        const shoppingLists: IShoppingList[] = await ShoppingList.find({location:id}, null, {sort:{createdAt:'desc'}});
         res.status(200).json({
             shoppingLists
         });

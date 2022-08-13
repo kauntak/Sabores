@@ -1,0 +1,104 @@
+.topBar{
+    margin-left: 20px;
+    margin-right: 40px;
+    display: flex;
+    position: relative;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+}
+
+.topBar div{
+    height: fit-content;
+    min-height: 30px;
+    position: absolute;    
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+}
+
+.topBar select{
+    margin-right: 5px;
+}
+
+.listUl{
+    padding: 0;
+    margin-left: 20px;
+}
+.accordion{
+    list-style: none;
+    position: relative;
+    max-width: 600px;
+    overflow: auto;
+}
+
+
+.accordionHeader{
+    padding-top: 10px;
+    padding-bottom: -10px;
+    background-color: #ffa101;
+    display: flex;
+    flex-direction: row;
+    position: relative;
+}
+
+.accordionHeader h4{
+    margin: 10px;
+    position: relative;    
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.showIcon{
+    margin: 10px;
+    position: relative;    
+    top: 50%;
+    transform: translateY(-50%);
+    transition: 0.3s ease-out;
+}
+.rotated{
+    position: relative;    
+    top: 50%;
+    transform: translateY(-50%) rotate(-90deg);
+    transition: 0.3s ease-out;
+}
+
+.accordionContent{
+    overflow: hidden;
+    transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
+    background-color: #ecdaa7;
+}
+
+.accordion ul{
+    padding: 0;
+}
+
+.displayItem{
+    list-style: none;
+    padding: 10px;
+    padding-left: 20px;
+}
+
+.displayItem:hover{
+    background-color: #5f7f88;
+}
+
+.item{
+    display: flex;
+    flex-direction: row;
+}
+
+.item h5,h6{
+    margin: 0;
+}
+
+.displayItem:hover .item h5{
+    color: #ffa101;
+}
+
+.displayItem:hover .item h6{
+    color: #ffa101;
+}
+
+.quantity{
+    width: 30px;
+}

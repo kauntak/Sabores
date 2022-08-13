@@ -14,7 +14,8 @@ export interface IShoppingList {
             employee: Types.ObjectId
         }
     ],
-    expire_at?: Date
+    expire_at?: Date,
+    completedBatchId: string
 }
 
 export interface IShoppingListDoc extends Document, IShoppingList {};
@@ -57,8 +58,10 @@ const shoppingListSchema = new Schema<IShoppingList>({
     ],
     expire_at:{
         type:Date,
-        default: Date.now,
-        expires: "60d"
+        expires: "30d"
+    },
+    completedBatchId:{
+        type:String
     }
 });
 

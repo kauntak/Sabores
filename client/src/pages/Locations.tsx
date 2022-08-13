@@ -6,6 +6,7 @@ import { getActiveOrderByLocation, getActiveShoppingListByLocation, getLocations
 import { EmployeeContext, LanguageContext } from "../App";
 import { EditItemListComponent } from "../components/EditItemListComponent";
 import { LoadingSpinner } from "../components/LoadinSpinnerComponent";
+import { OrderListComponent } from "../components/OrderListComponent";
 
 
 type Props = {
@@ -39,7 +40,11 @@ export const LocationsComponent:React.FC<Props> = ({accessList}) => {
                     isNegative={true}
                 />
             :""}
-            <LocationComponent locationName={currentLocation.displayName} id={currentLocation.id!}/>
+            {
+                currentLocation.id!=="ordering"?
+                <LocationComponent locationName={currentLocation.displayName} id={currentLocation.id!}/>
+                :<OrderListComponent />
+            }
         </>
     );
 }

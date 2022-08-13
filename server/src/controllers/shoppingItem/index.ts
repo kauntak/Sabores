@@ -23,7 +23,7 @@ export async function createShoppingItem(req: Request, res: Response): Promise<v
 export async function updateShoppingItem(req: Request, res: Response): Promise<void>{
     try {
         const {params: {id}, body} = req;
-        const shoppingItem: IShoppingItem|null = await ShoppingItem.findByIdAndUpdate({'_id':id}, body);
+        const shoppingItem: IShoppingItem|null = await ShoppingItem.findByIdAndUpdate({'_id':id}, body, {new:true});
         const shoppingItems: IShoppingItem[] = await ShoppingItem.find();
         res.status(200).json({
             shoppingItem,

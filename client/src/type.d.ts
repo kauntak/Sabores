@@ -198,11 +198,15 @@ export type AxiosOrderApiDataType = {
 interface IAxiosOrder {
     '_id': string,
     location: string,
+    createdAt: string,
     requestDate: string,
     requestComment? : string,
     fulfilledBy?: string,
     fulfillDate?: string,
     fulfillComment?: string,
+    isCompleted: boolean,
+    completedBatchId?: string,
+    expire_at:string,
     items: {
         item: string,
         quantity: number,
@@ -212,11 +216,15 @@ interface IAxiosOrder {
 
 export interface IOrder {
     '_id'?: string,
+    createdAt: Date,
     location: string,
     requestDate: Date,
     requestComment? : string,
     fulfilledBy?: string,
     fulfillDate?: Date,
+    isCompleted?: boolean,
+    completedBatchId?:string,
+    expire_at?: Date,
     fulfillComment?: string,
     items: {
         item: string,
@@ -281,6 +289,10 @@ export type AxiosShoppingListApiDataType = {
 interface IAxiosShoppingList {
     '_id': string,
     createdAt:string,
+    isCompleted: boolean,
+    completedBatchId?:string,
+    expire_at?: string,
+    location:string,
     comment?: string,
     items: {
         item: string,
@@ -292,7 +304,11 @@ interface IAxiosShoppingList {
 export interface IShoppingList {
     '_id': string,
     createdAt?:Date,
+    location:string,
     comment?: string,
+    isCompleted?: boolean,
+    completedBatchId?:string,
+    expire_at?: Date,
     items: {
         item: string,
         quantity: number,
@@ -374,4 +390,24 @@ type MultiField = {
     selected?: SingleField,
     isMultiSelect?:boolean
     isError?: boolean
+}
+
+type TotalOrderList = {
+    [key:string]:{
+        supplierName: string,
+        items: Array<TotalOrderItem>
+    }
+}
+
+type TotalOrderItem = {
+    orderItemName:string,
+    orderItemId:string,
+    orderItemQuantity: number,
+    shoppingItem?: TotalShoppingItem
+}
+
+type TotalShoppingItem = {
+    shoppingItemName:string,
+    shoppingItemId:string,
+    shoppingItemQuantity:number
 }

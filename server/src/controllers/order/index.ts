@@ -23,10 +23,28 @@ export async function createOrder(req: Request, res: Response): Promise<void>{
 export async function updateOrder(req: Request, res: Response): Promise<void>{
     try {
         const {params: {id}, body} = req;
-        const order: IOrder|null = await Order.findByIdAndUpdate({'_id':id}, body);
+        const order: IOrder|null = await Order.findByIdAndUpdate({'_id':id}, body, {new:true});
         const orders: IOrder[] = await Order.find();
         res.status(200).json({
             order,
+            orders
+        });
+    } catch (error) {
+        res.status(500).json({
+            error: returnError(error)
+        });
+    }
+}
+
+export async function completeOrders(req: Request, res: Response): Promise<void>{
+    try {
+        const {params: {ids}, query:{completedBatchId}} = req;
+        const result:ReturnType<typeof Order.updateMany> = Order.updateMany({'_id':{$in:ids.split(",")}}, {completedBatchId, isCompleted:true, expire_at:new Date()});
+        if(!((await result).acknowledged)){
+
+        }
+        const orders: IOrder[] = await Order.find();
+        res.status(200).json({
             orders
         });
     } catch (error) {
@@ -40,7 +58,7 @@ export async function updateOrder(req: Request, res: Response): Promise<void>{
 
 export async function getOrders(req: Request, res:Response):Promise<void>{
     try{
-        const orders: IOrder[] = await Order.find({}, {sort:{requestedDate:"desc"}});
+        const orders: IOrder[] = await Order.find({}, {}, {sort:{createdAt:"desc"}});
         res.status(200).json({
             orders
         });

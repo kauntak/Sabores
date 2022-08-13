@@ -67,7 +67,8 @@ const defaultText = {
     "admin":"Admin",
     "checkOut":"Check Out",
     "home":"Home",
-    "messages":"Messages"
+    "messages":"Messages",
+    "timeSheet":"Time Cards"
   },
   "homeScreen":{
       "logout": "Logout",
@@ -122,6 +123,14 @@ const defaultText = {
     "messages":"Messages",
     "messageExplanation":"Messages will automatically be deleted after 14 days unless locked.",
     "noMessages":"You don't have any messages yet!"
+  },
+  "totalOrder":{
+    "currentTotal": "Current",
+    "allLocations": "All Locations",
+    "completedButton": "Finished",
+    "markAsFinished": "Mark orders as finished?",
+    "invalidDate":"INVALID DATE",
+    "noOrders":"No order!"
   }
 };
 
