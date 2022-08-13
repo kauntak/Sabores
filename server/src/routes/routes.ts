@@ -59,7 +59,7 @@ router.delete('/api/deleteModule/:id', jsonParser, deleteModule);
 
 router.post('/api/createOrder', jsonParser, createOrder);
 router.put('/api/updateOrder/:id', jsonParser, updateOrder);
-router.put('/api/completeOrder/:ids', jsonParser, completeOrders);
+router.put('/api/completeOrders/:ids', jsonParser, completeOrders);
 router.get('/api/getOrders', jsonParser, getOrders);
 router.get('/api/getOrder/:id', jsonParser, getOrder);
 router.get('/api/getActiveOrderByLocation/:id', jsonParser, getActiveOrderByLocation);

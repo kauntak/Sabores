@@ -1,6 +1,8 @@
 .topBar{
     margin-left: 20px;
     margin-right: 40px;
+    min-height: 50px;
+
     display: flex;
     position: relative;
     flex-direction: row-reverse;
@@ -8,8 +10,8 @@
 }
 
 .topBar div{
+    padding: 10px;
     height: fit-content;
-    min-height: 30px;
     position: absolute;    
     top: 50%;
     transform: translateY(-50%);
@@ -18,6 +20,10 @@
 
 .topBar select{
     margin-right: 5px;
+}
+
+.noOrder{
+    margin: 40px;
 }
 
 .listUl{

@@ -566,6 +566,33 @@ export const updateOrder = async(newOrder: IOrder): Promise<OrderApiDataType> =>
     }
 }
 
+
+
+export const completeOrders = async (ids:string[], batchId:string):Promise<OrderApiDataType> => {
+    try {
+        const orders: AxiosResponse<AxiosOrderApiDataType|IError> = await axios.put(`${url}/completeOrders/${ids.join(",")}?completedBatchId=${batchId}`, {}, await getHeaders());
+        const error = (orders.data as IError).error;
+        if(error !== undefined){
+            throw new Error(error);
+        }
+        const returnList:OrderApiDataType = {
+            orders:(orders.data as AxiosOrderApiDataType).orders?.map(order=> {
+                return {
+                    ...order, 
+                    requestDate:new Date(order.requestDate), 
+                    fulfillDate:order.fulfillDate?new Date(order.fulfillDate):undefined,
+                    createdAt: new Date(order.createdAt),
+                    expire_at: order.expire_at?new Date(order.expire_at):undefined
+                };
+            })
+        }
+        return returnList;
+    } catch(error) {
+        console.log(error);
+		throw new Error(String(error));
+    }
+}
+
 export const getOrders = async():Promise<OrderApiDataType> => {
     try {
         const order: AxiosResponse<AxiosOrderApiDataType|IError> = await axios.get(`${url}/getOrders`, await getHeaders());
@@ -1318,6 +1345,29 @@ export const updateShoppingList = async(newList: IShoppingList): Promise<Shoppin
                     expire_at: singleList.expire_at?new Date(singleList.expire_at):undefined
                 }
                 :undefined
+        }
+        return returnList;
+    } catch(error) {
+        console.log(error);
+		throw new Error(String(error));
+    }
+}
+
+export const completeShoppingLists = async (ids:string[], batchId:string):Promise<ShoppingListApiDataType> => {
+    try {
+        const list: AxiosResponse<AxiosShoppingListApiDataType|IError> = await axios.put(`${url}/completeShoppingLists/${ids.join(",")}?completedBatchId=${batchId}`, {}, await getHeaders());
+        const error = (list.data as IError).error;
+        if(error !== undefined){
+            throw new Error(error);
+        }
+        const returnList:ShoppingListApiDataType = {
+            shoppingLists:(list.data as AxiosShoppingListApiDataType).shoppingLists?.map(list=> {
+                return {
+                    ...list,
+                    createdAt: new Date(list.createdAt),
+                    expire_at: list.expire_at?new Date(list.expire_at):undefined
+                };
+            })
         }
         return returnList;
     } catch(error) {

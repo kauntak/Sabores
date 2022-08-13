@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import styles from "./../css/orderList.module.css";
-import { getLocations, getOrderItems, getOrders, getShoppingItems, getShoppingLists, getSuppliers } from "../api";
+import { completeOrders, completeShoppingLists, getLocations, getOrderItems, getOrders, getShoppingItems, getShoppingLists, getSuppliers } from "../api";
 import { ILocation, IOrder, IOrderItem, IShoppingItem, IShoppingList, ISupplier, TotalOrderItem, TotalOrderList, TotalShoppingItem } from "../type";
 import { LoadingSpinner } from "./LoadinSpinnerComponent";
 import { BsChevronDown } from "react-icons/bs";
@@ -129,7 +129,7 @@ export const OrderListComponent:React.FC<Props> = ({}) => {
             if(!item.isCompleted) return newList;
             const id:string = item.completedBatchId!;
             if(newList.find(listItem => listItem.value === id)) return newList;
-            const time:string = item.createdAt?item.createdAt.toLocaleString():text.totalOrder.invalidDate;
+            const time:string = item.createdAt?item.createdAt.toLocaleString("en-US", {year:"numeric", month:"numeric", day:"numeric"}):text.totalOrder.invalidDate;
             newList.push({
                 value:id,
                 display: time
@@ -137,6 +137,7 @@ export const OrderListComponent:React.FC<Props> = ({}) => {
             return newList;
         }, []);
         setSelectOptionList(newOptionList);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [supplierList, shoppingLists, orderList]);
 
     useEffect(()=> {
@@ -272,6 +273,26 @@ export const OrderListComponent:React.FC<Props> = ({}) => {
     }
 
     const onCompleteConfirmClick = (e:React.MouseEvent<HTMLButtonElement>) => {
+        function decimalToHex(decimcal:number) {
+            return decimcal.toString(16).padStart(2, "0")
+        }
+        function generateId(length:number = 40) {
+            var arr = new Uint8Array(length / 2);
+            window.crypto.getRandomValues(arr);
+            return Array.from(arr, decimalToHex).join('');
+        }
+        
+        const newBatchId:string = generateId();
+        const orderIds:string[] = orderList.filter(order => !order.isCompleted).map(order => order._id!);
+        completeOrders(orderIds, newBatchId)
+        .then(res => {
+            setOrderList(res.orders);
+        });
+        const listIds:string[] = shoppingLists.filter(list => !list.isCompleted).map(list => list._id!);
+        completeShoppingLists(listIds, newBatchId)
+        .then(res => {
+            setShoppingLists(res.shoppingLists);
+        });
         setShowWarning(false);
     }
 
@@ -353,7 +374,7 @@ export const OrderListComponent:React.FC<Props> = ({}) => {
                         );
                     })}
                 </ul>
-                :<h2>{text.totalOrder.noOrders}</h2>
+                :<h2 className={styles["noOrder"]}>{text.totalOrder.noOrders}</h2>
             }  
         </>
     );
