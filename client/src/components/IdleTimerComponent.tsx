@@ -33,7 +33,12 @@ export const IdleTimerComponent:React.FC<Props> = ({isLoggedIn, setIsLoggedIn}) 
         timeoutSeconds:logoutTimeoutSeconds,
         onTimeout: () => setIsLoggedIn(false),
     });;
-
+    useEffect(()=> {
+        return ()=> {
+            warningTimer.stopTimer(currentTimer!);
+            logoutTimer.stopTimer(currentTimer!);
+        }
+    });
     useEffect(()=>{
         if(isTimeout) setCurrentTimer(logoutTimer.startInterval());
     // eslint-disable-next-line react-hooks/exhaustive-deps

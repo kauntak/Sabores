@@ -152,7 +152,7 @@ const App:React.FC = () => {
   const [loggedInEmployee, setLoggedInEmployee] = useState<Omit<IEmployee, "password">>(defaultEmployee);
   const [language, setLanguage] = useState<string>("en");
   const [token, setToken] = useState<string>("");
-  // const [loginTimer, setLoginTimer] = useState<ReturnType<typeof setTimeout>>();
+  const [loginTimer, setLoginTimer] = useState<ReturnType<typeof setTimeout>>();
   
   const [textTranslations, setTextTranslations] = useState<any>(defaultText);
 
@@ -185,13 +185,14 @@ const App:React.FC = () => {
   useEffect(()=> {
     currentToken = token;
     if(token !== "") {
-      // setLoginTimer(setTimeout(()=> {
-      //   setIsLoggedIn(false);
-      // }, 600000))
+      setLoginTimer(setTimeout(()=> {
+          setIsLoggedIn(false);
+        }, 7200)
+      )
       setIsLoggedIn(true);
       setCanClearToken(false);
     } else {
-      // clearTimeout(loginTimer);
+      clearTimeout(loginTimer);
       setIsLoggedIn(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
