@@ -13,9 +13,7 @@ import { ShoppingComponent } from "../Shopping";
 import { WarningOverlayComponent } from "../../components/WarningOverlayComponent";
 import { ButtonComponent } from "../../components/ButtonComponent";
 import { defaultEmployee, EmployeeContext, LanguageContext } from "../../App";
-import { ViewLogs } from "./ViewLogsComponent";
-import { ViewShoppingList } from "./ViewShoppingListComponent";
-import { ViewMessages } from "./ViewMessagesComponent";
+import { TimeSheet } from "./TimeSheet";
 import { Messages } from "../Messages";
 
 type Props = {
@@ -44,7 +42,6 @@ export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, s
     const [navBarUpdated, setNavBarUpdated] = useState<boolean>(false);
     const [locationList, setLocationList] = useState<NavListType[]>([]);
     const [showCheckInWarning, setShowCheckInWarning] = useState<boolean>(false);
-    const [isManager, setIsManager] = useState<boolean>(false);
     const [messageList, setMessageList] = useState<IMessage[]>([]);
     const [isMessagesSorted, setIsMessagesSorted] = useState<boolean>(false);
     const text = useContext(LanguageContext);
@@ -69,7 +66,6 @@ export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, s
                             accessibleNavigation.push({moduleName:"timeSheet", displayName:text.navList.timeSheet});
                         }
                         accessibleNavigation.push({moduleName:"admin", displayName:text.navList.admin});
-                        setIsManager(true);
                         break;
                 };
                 accessibleNavigation = accessibleNavigation.concat(defaultNavigation);
@@ -284,8 +280,7 @@ export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, s
                     "home": <HomeScreen
                         setEmployee={setEmployee}
                         reminderList={reminderList}
-                        setReminderList={setReminderList}
-                        isManager={isManager}/>,
+                        setReminderList={setReminderList}/>,
                     "admin":<AdminComponent
                         isAdmin={accessRole==="Administrator"}
                         currentEmployee={employee!}/>,
@@ -298,7 +293,7 @@ export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, s
                         reminderList={reminderList}
                         setReminderList={setReminderList}
                         setLoggedIn={setLoggedIn}/>,
-                    "timeSheet":<></>,
+                    "timeSheet":<TimeSheet />,
                     "messages":<Messages 
                         messages={messageList}
                         setMessages={setMessageList}
@@ -313,11 +308,9 @@ export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, s
 type HomeScreenProps = {
     setEmployee: Dispatch<SetStateAction<Omit<IEmployee, "password">>>,
     reminderList: ReminderListType[],
-    setReminderList: Dispatch<SetStateAction<ReminderListType[]>>,
-    isManager:boolean
+    setReminderList: Dispatch<SetStateAction<ReminderListType[]>>
 }
-const HomeScreen:React.FC<HomeScreenProps> = ({setEmployee, reminderList, setReminderList, isManager})=> {
-    const [currentListView, setCurrentListView] = useState<string>("");
+const HomeScreen:React.FC<HomeScreenProps> = ({setEmployee, reminderList, setReminderList})=> {
     const text = useContext(LanguageContext);
     const employee = useContext(EmployeeContext);
     
@@ -329,44 +322,9 @@ const HomeScreen:React.FC<HomeScreenProps> = ({setEmployee, reminderList, setRem
             return newEmployee;
         });
     }
-    
-    const onButtonClick = (e:React.MouseEvent<HTMLButtonElement>) => {
-        const id = e.currentTarget.dataset.id;
-        if(id === currentListView) {
-            setCurrentListView("");
-            return;
-        }
-        if(id === undefined) return;
-        setCurrentListView(id);
-    }
 
     return (
         <div className={styles["home"]}>
-            {isManager?
-                    <>
-                        <div className={styles["managerButtons"]}>
-                            <ButtonComponent
-                                onClick={onButtonClick} 
-                                name={text.homeScreen.viewShoppingList} 
-                                id="shopping" 
-                                isNegativeColor={currentListView==="shopping"}
-                            />
-                            <ButtonComponent
-                                onClick={onButtonClick}
-                                name={text.homeScreen.viewLogList}
-                                id="logs"
-                                isNegativeColor={currentListView==="logs"}
-                            />
-                        </div>
-                        {
-                            {
-                                "shopping":<ViewShoppingList/>,
-                                "messages":<ViewMessages/>,
-                                "logs":<ViewLogs/>
-                            }[currentListView]
-                        }
-                    </>
-                :""}
             <p>{text.homeScreen.quote}</p>
             <p>{text.homeScreen.title}</p>
             <h3>{text.homeScreen.yourTaskList}</h3>
