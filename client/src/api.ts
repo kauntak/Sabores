@@ -1,7 +1,7 @@
 import axios, {AxiosResponse} from "axios";
 import Module from "module";
 import { IError, returnError } from "./error";
-import { EmployeeApiDataType, EmployeeLogApiDataType, IEmployee, IEmployeeLog, ILocation, IMessage, IOrder, IOrderCategory, IOrderItem, IRole, IShoppingCategory, IShoppingItem, IShoppingList, LocationApiDataType, MessageApiDataType, OrderApiDataType, OrderCategoryApiDataType, OrderItemApiDataType, RoleApiDataType, ShoppingCategoryApiDataType, ShoppingItemApiDataType, ShoppingListApiDataType, IReminder, ReminderApiDataType, LoginApiDataType, ModuleApiDataType, IModule, ISupplier, SupplierApiDataType, IAxiosMessage, AxiosOrderApiDataType, AxiosMessageApiType, AxiosShoppingListApiDataType } from "./type";
+import { EmployeeApiDataType, EmployeeLogApiDataType, IEmployee, IEmployeeLog, ILocation, IMessage, IOrder, IOrderCategory, IOrderItem, IRole, IShoppingCategory, IShoppingItem, IShoppingList, LocationApiDataType, MessageApiDataType, OrderApiDataType, OrderCategoryApiDataType, OrderItemApiDataType, RoleApiDataType, ShoppingCategoryApiDataType, ShoppingItemApiDataType, ShoppingListApiDataType, IReminder, ReminderApiDataType, LoginApiDataType, ModuleApiDataType, IModule, ISupplier, SupplierApiDataType, IAxiosMessage, AxiosOrderApiDataType, AxiosMessageApiType, AxiosShoppingListApiDataType, AxiosEmployeeLogApiDataType } from "./type";
 import { getToken } from "./App";
 
 
@@ -119,7 +119,22 @@ export const createEmployeeLog = async(formData:Omit<IEmployeeLog, "_id">):Promi
         if(error !== undefined){
             throw new Error(error);
         }
-        return log.data as EmployeeLogApiDataType;
+        const singleLog = (log.data as AxiosEmployeeLogApiDataType).log;
+        const returnLog:EmployeeLogApiDataType = {
+            logs:(log.data as AxiosEmployeeLogApiDataType).logs?.map(log=> {
+                return {
+                    ...log, 
+                    checkInTime: log.checkInTime?new Date(log.checkInTime):undefined,
+                    checkOutTime: log.checkOutTime?new Date(log.checkOutTime):undefined,
+                };
+            }),
+            log: singleLog?{
+                ...singleLog,
+                checkInTime:singleLog.checkInTime?new Date(singleLog.checkInTime):undefined,
+                checkOutTime: singleLog.checkOutTime?new Date(singleLog.checkOutTime):undefined,
+            }:undefined
+        }
+        return returnLog;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
@@ -128,12 +143,27 @@ export const createEmployeeLog = async(formData:Omit<IEmployeeLog, "_id">):Promi
 
 export const updateEmployeeLog = async(log: IEmployeeLog): Promise<EmployeeLogApiDataType> => {
     try{
-        const updatedEmployeeLog: AxiosResponse<EmployeeLogApiDataType|IError> = await axios.put(`${url}/updateEmployeeLog/${log._id}`, log, await getHeaders());
+        const updatedEmployeeLog: AxiosResponse<AxiosEmployeeLogApiDataType|IError> = await axios.put(`${url}/updateEmployeeLog/${log._id}`, log, await getHeaders());
         const error = (updatedEmployeeLog.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return updatedEmployeeLog.data as EmployeeLogApiDataType;
+        const singleLog = (updatedEmployeeLog.data as AxiosEmployeeLogApiDataType).log;
+        const returnLog:EmployeeLogApiDataType = {
+            logs:(updatedEmployeeLog.data as AxiosEmployeeLogApiDataType).logs?.map(log=> {
+                return {
+                    ...log, 
+                    checkInTime: log.checkInTime?new Date(log.checkInTime):undefined,
+                    checkOutTime: log.checkOutTime?new Date(log.checkOutTime):undefined,
+                };
+            }),
+            log: singleLog?{
+                ...singleLog,
+                checkInTime:singleLog.checkInTime?new Date(singleLog.checkInTime):undefined,
+                checkOutTime: singleLog.checkOutTime?new Date(singleLog.checkOutTime):undefined,
+            }:undefined
+        }
+        return returnLog;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
@@ -142,12 +172,21 @@ export const updateEmployeeLog = async(log: IEmployeeLog): Promise<EmployeeLogAp
 
 export const getEmployeeLogs = async():Promise<EmployeeLogApiDataType> => {
     try {
-        const log: AxiosResponse<EmployeeLogApiDataType|IError> = await axios.get(`${url}/getEmployeeLogs`, await getHeaders());
+        const log: AxiosResponse<AxiosEmployeeLogApiDataType|IError> = await axios.get(`${url}/getEmployeeLogs`, await getHeaders());
         const error = (log.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return log.data as EmployeeLogApiDataType;
+        const returnLog:EmployeeLogApiDataType = {
+            logs:(log.data as AxiosEmployeeLogApiDataType).logs?.map(log=> {
+                return {
+                    ...log, 
+                    checkInTime: log.checkInTime?new Date(log.checkInTime):undefined,
+                    checkOutTime: log.checkOutTime?new Date(log.checkOutTime):undefined,
+                };
+            })
+        }
+        return returnLog;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
@@ -156,12 +195,21 @@ export const getEmployeeLogs = async():Promise<EmployeeLogApiDataType> => {
 
 export const getEmployeesLog = async(_id:string):Promise<EmployeeLogApiDataType> => {
     try {
-        const log: AxiosResponse<EmployeeLogApiDataType|IError> = await axios.get(`${url}/getEmployeesLog/${_id}`, await getHeaders());
+        const log: AxiosResponse<AxiosEmployeeLogApiDataType|IError> = await axios.get(`${url}/getEmployeesLog/${_id}`, await getHeaders());
         const error = (log.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return log.data as EmployeeLogApiDataType;
+        const returnLog:EmployeeLogApiDataType = {
+            logs:(log.data as AxiosEmployeeLogApiDataType).logs?.map(log=> {
+                return {
+                    ...log, 
+                    checkInTime: log.checkInTime?new Date(log.checkInTime):undefined,
+                    checkOutTime: log.checkOutTime?new Date(log.checkOutTime):undefined,
+                };
+            })
+        }
+        return returnLog;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
@@ -170,12 +218,27 @@ export const getEmployeesLog = async(_id:string):Promise<EmployeeLogApiDataType>
 
 export const getEmployeesMostRecentLog = async(_id:string):Promise<EmployeeLogApiDataType> => {
     try {
-        const log: AxiosResponse<EmployeeLogApiDataType|IError> = await axios.get(`${url}/getEmployeesMostRecentLog/${_id}`, await getHeaders());
+        const log: AxiosResponse<AxiosEmployeeLogApiDataType|IError> = await axios.get(`${url}/getEmployeesMostRecentLog/${_id}`, await getHeaders());
         const error = (log.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return log.data as EmployeeLogApiDataType;
+        const singleLog = (log.data as AxiosEmployeeLogApiDataType).log;
+        const returnLog:EmployeeLogApiDataType = {
+            logs:(log.data as AxiosEmployeeLogApiDataType).logs?.map(log=> {
+                return {
+                    ...log, 
+                    checkInTime: log.checkInTime?new Date(log.checkInTime):undefined,
+                    checkOutTime: log.checkOutTime?new Date(log.checkOutTime):undefined,
+                };
+            }),
+            log: singleLog?{
+                ...singleLog,
+                checkInTime:singleLog.checkInTime?new Date(singleLog.checkInTime):undefined,
+                checkOutTime: singleLog.checkOutTime?new Date(singleLog.checkOutTime):undefined,
+            }:undefined
+        }
+        return returnLog;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
@@ -184,12 +247,27 @@ export const getEmployeesMostRecentLog = async(_id:string):Promise<EmployeeLogAp
 
 export const getEmployeeLogsByDateRange = async(start:Date|null, end:Date|null):Promise<EmployeeLogApiDataType> => {
     try {
-        const log: AxiosResponse<EmployeeLogApiDataType|IError> = await axios.get(`${url}/getEmployeeLogsByDateRange/start/${start?start.getTime():0}/end/${end?end.getTime():0}/`, await getHeaders());
+        const log: AxiosResponse<AxiosEmployeeLogApiDataType|IError> = await axios.get(`${url}/getEmployeeLogsByDateRange/start/${start?start.getTime():0}/end/${end?end.getTime():0}/`, await getHeaders());
         const error = (log.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return log.data as EmployeeLogApiDataType;
+        const singleLog = (log.data as AxiosEmployeeLogApiDataType).log;
+        const returnLog:EmployeeLogApiDataType = {
+            logs:(log.data as AxiosEmployeeLogApiDataType).logs?.map(log=> {
+                return {
+                    ...log, 
+                    checkInTime: log.checkInTime?new Date(log.checkInTime):undefined,
+                    checkOutTime: log.checkOutTime?new Date(log.checkOutTime):undefined,
+                };
+            }),
+            log: singleLog?{
+                ...singleLog,
+                checkInTime:singleLog.checkInTime?new Date(singleLog.checkInTime):undefined,
+                checkOutTime: singleLog.checkOutTime?new Date(singleLog.checkOutTime):undefined,
+            }:undefined
+        }
+        return returnLog;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));
@@ -198,12 +276,27 @@ export const getEmployeeLogsByDateRange = async(start:Date|null, end:Date|null):
 
 export const deleteEmployeeLog = async (_id:string):Promise<EmployeeLogApiDataType> => {
     try {
-        const deleted: AxiosResponse<EmployeeLogApiDataType|IError> = await axios.delete(`${url}/deleteEmployeeLog/${_id}`, await getHeaders());
-        const error = (deleted.data as IError).error;
+        const log: AxiosResponse<EmployeeLogApiDataType|IError> = await axios.delete(`${url}/deleteEmployeeLog/${_id}`, await getHeaders());
+        const error = (log.data as IError).error;
         if(error !== undefined){
             throw new Error(error);
         }
-        return deleted.data as EmployeeLogApiDataType;
+        const singleLog = (log.data as AxiosEmployeeLogApiDataType).log;
+        const returnLog:EmployeeLogApiDataType = {
+            logs:(log.data as AxiosEmployeeLogApiDataType).logs?.map(log=> {
+                return {
+                    ...log, 
+                    checkInTime: log.checkInTime?new Date(log.checkInTime):undefined,
+                    checkOutTime: log.checkOutTime?new Date(log.checkOutTime):undefined,
+                };
+            }),
+            log: singleLog?{
+                ...singleLog,
+                checkInTime:singleLog.checkInTime?new Date(singleLog.checkInTime):undefined,
+                checkOutTime: singleLog.checkOutTime?new Date(singleLog.checkOutTime):undefined,
+            }:undefined
+        }
+        return returnLog;
     } catch(error) {
         console.log(error);
 		throw new Error(String(error));

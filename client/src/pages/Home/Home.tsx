@@ -292,7 +292,9 @@ export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, s
                         setEmployee={setEmployee}
                         reminderList={reminderList}
                         setReminderList={setReminderList}
-                        setLoggedIn={setLoggedIn}/>,
+                        setLoggedIn={setLoggedIn}
+                        log={employeeLog}
+                        />,
                     "timeSheet":<TimeSheet />,
                     "messages":<Messages 
                         messages={messageList}
