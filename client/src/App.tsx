@@ -187,7 +187,7 @@ const App:React.FC = () => {
     if(token !== "") {
       setLoginTimer(setTimeout(()=> {
           setIsLoggedIn(false);
-        }, 7200)
+        }, 3600000)
       )
       setIsLoggedIn(true);
       setCanClearToken(false);

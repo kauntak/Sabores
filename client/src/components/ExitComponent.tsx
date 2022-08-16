@@ -2,8 +2,7 @@ import React, { RefObject } from "react";
 import styles from "./../css/exit.module.css";
 
 type Props = {
-    onClick: (event:React.MouseEvent<HTMLSpanElement>)=>void,
-    ref: RefObject<HTMLSpanElement>
+    onClick: (event:React.MouseEvent<HTMLSpanElement>)=>void
 }
 
 export const ExitComponent:React.FC<Props> = ({onClick}) => {

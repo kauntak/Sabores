@@ -16,7 +16,6 @@ const logoutTimeoutSeconds:number = 30;
 export const IdleTimerComponent:React.FC<Props> = ({isLoggedIn, setIsLoggedIn}) => {
     const [isTimeout, setIsTimeout] = useState<boolean>(false);
     const [currentTimer, setCurrentTimer] = useState<ReturnType<typeof setInterval>>();
-    const exitSpan = useRef<HTMLSpanElement>(null);
     const text = useContext(LanguageContext);
     
     const warningTimer:IdleTimer = new IdleTimer({
@@ -33,12 +32,12 @@ export const IdleTimerComponent:React.FC<Props> = ({isLoggedIn, setIsLoggedIn}) 
         timeoutSeconds:logoutTimeoutSeconds,
         onTimeout: () => setIsLoggedIn(false),
     });;
-    useEffect(()=> {
-        return ()=> {
-            warningTimer.stopTimer(currentTimer!);
-            logoutTimer.stopTimer(currentTimer!);
-        }
-    });
+    // useEffect(()=> {
+    //     return ()=> {
+    //         warningTimer.stopTimer(currentTimer!);
+    //         logoutTimer.stopTimer(currentTimer!);
+    //     }
+    // }, []);
     useEffect(()=>{
         if(isTimeout) setCurrentTimer(logoutTimer.startInterval());
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -67,7 +66,7 @@ export const IdleTimerComponent:React.FC<Props> = ({isLoggedIn, setIsLoggedIn}) 
             {isTimeout?
                 <div className={styles["force-logout-shader"]}>
                     <div className={styles["force-logout-window"]}>
-                        <ExitComponent onClick={continueClick} ref={exitSpan}/>
+                        <ExitComponent onClick={continueClick}/>
                         <h1>{text.idleTimer.stillThere}</h1>
                         <div style={{display:"flex"}}>
                             <ButtonComponent
