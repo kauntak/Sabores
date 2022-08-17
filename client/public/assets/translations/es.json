@@ -23,17 +23,20 @@
 
     },
     "navList":{
-      "orders":"Orders!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
-      "shopping":"Shopping!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
-      "employee":"Employees!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
-      "ordering":"Orders!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
-      "role":"Roles!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
-      "admin":"Admin!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
-      "checkOut":"Check Out!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
-      "home":"Home!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+      "orders":"Pedidos",
+      "shopping":"Compra",
+      "employee":"Empleados",
+      "ordering":"Pedir",
+      "role":"Ocupación",
+      "admin":"Administración",
+      "checkOut":"Reloj de Salida",
+      "home":"Inicio",
+      "messages":"Mensajes",
+      "timeSheet":"Hojas de Horas",
+      "locations":"Ubicaciones"
     },
     "homeScreen":{
-        "logout": "Logout!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
+        "logout": "Cerrar Sesión",
         "navBar": ["Página de Inicio", "Administrador", "Reloj de Salida", "Compras", "Ubicaciones"],
         "title":"¡Sé asombroso, diviértete!",
         "quote":"\"Las personas rara vez tienen éxito a menos que se diviertan con lo que están haciendo.\" -Dale Carnegie",
@@ -42,48 +45,98 @@
             "pleaseCheckIn":"Por favor empezar el dia primero.",
             "checkInButton": "Empezar el dia"
         },
-        "viewShoppingList":"Shopping List!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
-        "viewMessageList":"Messages!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
-        "viewLogList":"Logs!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        "hi":"¡Hola {replace}!"
     },
     "admin":{
+      "shopping":{
+        "categories":"Categorías",
+        "items":"Articulos"
+      },
+      "orders":{
+        "categories":"Categorías de Pedidos",
+        "items":"Encargar Artículos",
+        "suppliers": "Proveedor"
+      },
+      "roles":{
+        "roles":"Ocupación",
+        "tasks":"Tarea"
+      }
   
     },
-    "shopping":{
-  
+    "list":{
+      "addCategory": "Añadir Categoría",
+      "addItem":"Añadir Artículo",
+      "addSupplier":"Añadir Proveedor",
+      "name":"Nombre",
+      "category":"Categoría",
+      "description":"Descripción",
+      "edit":"Editar {replace}",
+      "supplier":"Proveedor",
+      "bulkItem": "enlace de artículo a granel",
+      "type":"Escribe",
+      "addRole":"Añadir Ocupación",
+      "addReminder":"Añadir Tarea",
+      "editReminder": "Editar Tarea",
+      "role":"Ocupación",
+      "addLocation":"Añadir Ubicaciones",
+      "yes":"Sí",
+      "no":"No",
+      "addEmployee":"Añadir Empleado",
+      "isMain": "¿Es la Ubicaciones Central?",
+      "firstName":"Primer Nombre",
+      "middleName":"Segundo Nombre",
+      "firstAndMiddle":"Primer/Segundo Nombre",
+      "lastName":"Apellido",
+      "password":"La Contraseña",
+      "confirmPassword":"Confirmar contraseña",
+      "access":"Ubicaciones",
+      "email":"Email",
+      "phone": "Número de Teléfono",
+      "address":"Dirección"
     },
     "checkOut":{
-        "finishDay":"Do you Want to finish the day and log out?!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
-        "checkoutButton": "Finish the day!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        "finishDay":"¿Quieres terminar el día y cerrar sesión?",
+        "checkoutButton": "Terminar el Dia",
+        "comment":"Mensajes"
     },
     "warning":{
-        "ok":"OK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
-        "cancel":"Cancel!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
-        "delete":"This will PERMANENTLY delete {replace}.!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
-        "canNotDelete": "{replace} is being used. Can not delete.!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
-        "canNotDeleteSelf": "You can not delete yourself.!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        "ok":"OK",
+        "cancel":"Cancelar",
+        "delete":"Esto eliminará permanentemente {replace}.",
+        "canNotDelete": "Se está utilizando {replace}. No se puede borrar",
+        "canNotDeleteSelf": "No puedes borrarte a ti mismo."
     },
     "location":{
-        "save": "Save Order!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        "save": "Guardar pedido",
+        "saved":"¡Salvado!"
     },
     "dataTable":{
-      "searchToolTip":"Use commas to search different columns.!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+      "searchToolTip":"Use comas para buscar en diferentes columnas."
     },
     "createMessage":{
-        "send":"Send",
-        "to":"To",
-        "subject":"Subject",
-        "message":"Message",
-        "newMessage":"New Message",
-        "sending":"Sending...",
-        "sent":"Message Sent!",
-        "sendError":"Hmm...something went wrong...Please try again later.",
-        "required":"{replace} is required.",
-        "notFound":"{replace} not found."
+        "send":"Enviar",
+        "to":"A",
+        "subject":"Sujeto",
+        "message":"Mensaje",
+        "newMessage":"Nuevo Mensaje",
+        "sending":"Enviando...",
+        "sent":"¡Mensaje enviado!",
+        "sendError":"Hmm... algo salió mal... Vuelva a intentarlo más tarde.",
+        "required":"El {replace} es obligatorio.",
+        "notFound":"{replace} no encontrado."
       },
       "message":{
-        "messages":"Messages",
-        "messageExplanation":"Messages will automatically be deleted after 14 days unless locked.",
-        "noMessages":"You don't have any messages yet!"
+        "messages":"Mensajes",
+        "messageExplanation":"Los mensajes se eliminarán automáticamente después de 14 días a menos que estén bloqueados.",
+        "noMessages":"¡Aún no tienes ningún mensaje!"
+      },
+      "timeSheet":{
+        "comment":"Mensajes",
+        "date":"Fecha",
+        "timeIn":"Tiempo En",
+        "timeOut":"Tiempo Afuera",
+        "shiftTotal":"Turno total",
+        "noTimeSheets":"No hay registros para esta semana."
       }
+    
 }

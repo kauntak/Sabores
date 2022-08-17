@@ -41,7 +41,7 @@ export const AdminComponent:React.FC<Props> = ({isAdmin, currentEmployee}) => {
     const [activeModule, setActiveModule] = useState<string>("main");
 
     const navList:NavListType[] = isAdmin?managerList.concat([
-        {moduleName:"location", displayName:"Locations"},
+        {moduleName:"location", displayName:text.navList.locations},
     ]):managerList;
 
     const onNavClick = (e:React.MouseEvent<HTMLAnchorElement>):void => {

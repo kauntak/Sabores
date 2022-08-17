@@ -1,0 +1,109 @@
+.top{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 10px;
+}
+
+.selector{
+    display: flex;
+    flex-direction: column;
+    max-width: 200px;
+}
+
+.arrowDiv{
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+}
+.arrow{
+    margin-top: 12px;
+}
+
+
+.list{
+    margin: 10px;
+    min-width: 450px;
+    min-height: 100px;
+    background-color: #ecdaa7;
+    border: 2px solid #5f7f88;
+    border-radius: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0;
+    list-style: none;
+    position: relative;
+    top: 0;
+}
+
+.header{
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    background-color: #ffa101;
+    align-items: flex-start;
+    width: 100%;
+    padding: 10px;
+    padding-right: 0;
+}
+
+.list li:nth-child(odd){
+    background-color: #ece3a7;
+}
+
+.accordionHeader{
+    display:flex;
+    flex-direction: row;
+    background-color: inherit;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    padding-right: 10px;
+    height: 40px;
+}
+
+.accordionContent{
+    transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
+    overflow: hidden;
+    margin-bottom: 10px;
+    padding-right: 10px;
+}
+
+.listItem h4:nth-child(n){
+    width: 120px;
+    margin: 0;
+    bottom: 0;
+    align-self: flex-end;
+    position: relative
+}
+
+.timeOut{
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+    position: relative;
+}
+
+.timeOut h6{
+    min-height: 18px;
+}
+
+.reminders{
+    margin-left: 10px;
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+.reminder{
+    margin: 5px;
+}
+
+.accordionContent p{
+    margin: 5px;
+    margin-left: 10px;
+
+}

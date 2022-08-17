@@ -66,19 +66,19 @@ export const ShoppingManagement: React.FC<Props> = () => {
         const newFields:Field[] = [
             {  
                 name:"Name",
-                display:"Name",
+                display:text.list.name,
                 fieldType:"Single",
                 required: true,
                 field:{value:""}
             }, {
                 name: "Description",
-                display:"Description",
+                display:text.list.description,
                 fieldType:"Single",
                 required:false,
                 field:{value:""}
             }
         ]
-        setAddEditTitle("Add Category");
+        setAddEditTitle(text.list.addCategory);
         setSaveButton(()=> onSaveCategoryButton);
         setAddEditFields(newFields);
         //setShowAddEditComponent(true);
@@ -90,19 +90,19 @@ export const ShoppingManagement: React.FC<Props> = () => {
         const editFields:Field[] = [
             {
                 name:"Name",
-                display:"Name",
+                display:text.list.name,
                 fieldType:"Single",
                 required: true,
                 field:{value:categoryToEdit.name}
             }, {
                 name: "Description",
-                display:"Description",
+                display:text.list.description,
                 fieldType:"Single",
                 required:false,
                 field:{value:categoryToEdit.description}
             }
         ];
-        setAddEditTitle("Edit " + categoryToEdit.name);
+        setAddEditTitle(text.list.edit.replace("{replace}", categoryToEdit.name));
         setSaveButton(()=> onSaveCategoryButton);
         setAddEditFields(editFields);
     }
@@ -157,13 +157,13 @@ export const ShoppingManagement: React.FC<Props> = () => {
         const newFields:Field[] = [
             {  
                 name:"Name",
-                display:"Name",
+                display:text.list.name,
                 fieldType:"Single",
                 required: true,
                 field:{value:""}
             }, {
                 name:"Category",
-                display:"Category",
+                display:text.list.category,
                 required: true,
                 fieldType:"Multi",
                 field: {
@@ -180,13 +180,13 @@ export const ShoppingManagement: React.FC<Props> = () => {
 
             },{
                 name: "Description",
-                display:"Description",
+                display:text.list.description,
                 fieldType:"Single",
                 required:false,
                 field:{value:""}
             }, {
                 name:"Bulk Item Link",
-                display:"Bulk Item Link",
+                display:text.list.bulkItem,
                 required: false,
                 fieldType:"Multi",
                 field: {
@@ -203,7 +203,7 @@ export const ShoppingManagement: React.FC<Props> = () => {
 
             }
         ]
-        setAddEditTitle("Add Item");
+        setAddEditTitle(text.list.addItem);
         setSaveButton(()=> onSaveItemButton);
         setAddEditFields(newFields);
     }
@@ -226,13 +226,13 @@ export const ShoppingManagement: React.FC<Props> = () => {
         const editFields:Field[] = [
             {
                 name:"Name",
-                display:"Name",
+                display:text.list.name,
                 fieldType:"Single",
                 required: true,
                 field:{value:itemToEdit.name}
             }, {
                 name:"Category",
-                display:"Category",
+                display:text.list.category,
                 fieldType:"Multi",
                 field: {
                     isMultiSelect:false,
@@ -249,13 +249,13 @@ export const ShoppingManagement: React.FC<Props> = () => {
 
             },{
                 name: "Description",
-                display:"Description",
+                display:text.list.description,
                 fieldType:"Single",
                 required:false,
                 field:{value:itemToEdit.description}
             }, {
                 name:"Bulk Item Link",
-                display:"Bulk Item Link",
+                display:text.list.bulkItem,
                 required: false,
                 fieldType:"Multi",
                 field: {
@@ -273,7 +273,7 @@ export const ShoppingManagement: React.FC<Props> = () => {
 
             }
         ];
-        setAddEditTitle("Edit " + itemToEdit.name);
+        setAddEditTitle(text.list.edit.replace("{replace}", itemToEdit.name));
         setSaveButton(()=> onSaveItemButton);
         setAddEditFields(editFields);
     }
@@ -342,7 +342,7 @@ export const ShoppingManagement: React.FC<Props> = () => {
                     cancel={onCancelButton}
                     />
             :""}
-            <h2>Shopping Categories</h2>
+            <h2>{text.admin.shopping.categories}</h2>
             <div className={styles["buttonList"]}>
                 <ButtonComponent 
                     name={<BsPlusLg />}
@@ -366,7 +366,7 @@ export const ShoppingManagement: React.FC<Props> = () => {
                 }
             </div>
             <DataTable
-                headers={["Name", "Description"]}
+                headers={[text.list.name, text.list.description]}
                 rows={categoryList.map(category => {
                     return {
                         id:category._id!,
@@ -376,7 +376,7 @@ export const ShoppingManagement: React.FC<Props> = () => {
                 currentId={selectedCategoryId}
                 setId={setSelectedCategoryId}
             />
-            <h2>Shopping Items</h2>
+            <h2>{text.admin.shopping.items}</h2>
             <div className={styles["buttonList"]}>
                 <ButtonComponent 
                     name={<BsPlusLg />}
@@ -400,7 +400,7 @@ export const ShoppingManagement: React.FC<Props> = () => {
                 }
             </div>
             <DataTable
-                headers={["Name", "Category", "Description"]}
+                headers={[text.list.name, text.list.category, text.list.description]}
                 rows={itemList.map(item => {
                     return {
                         id: item._id!,

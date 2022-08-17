@@ -37,13 +37,13 @@ export const RoleManagement: React.FC<Props> = () => {
     const defaultRoleFields:Field[] = [
         {
             name:"name",
-            display:"Name",
+            display:text.list.name,
             fieldType:"Single",
             required: true,
             field:{value:""}
         }, {
             name:"type",
-            display:"Type",
+            display:text.list.type,
             fieldType:"Multi",
             required: true,
             field:{
@@ -65,7 +65,7 @@ export const RoleManagement: React.FC<Props> = () => {
             }
         }, {
             name:"description",
-            display:"Description",
+            display:text.list.description,
             fieldType:"Single",
             required: false,
             field:{value:""}
@@ -85,7 +85,7 @@ export const RoleManagement: React.FC<Props> = () => {
         const newDefaultReminder:Field[] = [
             {
                 name:"role",
-                display:"Role",
+                display:text.list.role,
                 fieldType:"Multi",
                 required:true,
                 field:{
@@ -101,7 +101,7 @@ export const RoleManagement: React.FC<Props> = () => {
                 }
             }, {
                 name: "description",
-                display: "Description",
+                display: text.list.description,
                 fieldType:"Single",
                 required: true,
                 field:{value:""}
@@ -127,7 +127,7 @@ export const RoleManagement: React.FC<Props> = () => {
 
     const onAddRoleClick = (e:React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        setAddEditTitle("Add Role");
+        setAddEditTitle(text.list.addRole);
         setIsEdit(false);
         setSaveButton(() => saveRoleButton);
         setAddEditFields(deepCopyFields(defaultRoleFields) as Field[]);
@@ -143,7 +143,7 @@ export const RoleManagement: React.FC<Props> = () => {
                 (editFields[0].field as SingleField).value = roleToEdit.name;
                 (editFields[1].field as MultiField).selected = (editFields[1].field as MultiField).list.find(item => item.display === roleToEdit.type);
                 (editFields[2].field as SingleField).value = roleToEdit.description;
-                setAddEditTitle(`Edit ${roleToEdit.name}`);
+                setAddEditTitle(text.list.edit.replace("{replace}", roleToEdit.name));
                 setIsEdit(true);
                 setSaveButton(() => saveRoleButton);
                 setAddEditFields(editFields);
@@ -202,7 +202,7 @@ export const RoleManagement: React.FC<Props> = () => {
     }
     const onAddReminderClick = (e:React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        setAddEditTitle("Add Reminder");
+        setAddEditTitle(text.list.addReminder);
         setIsEdit(false);
         setSaveButton(() => saveReminderButton);
         setAddEditFields(deepCopyFields(defaultReminderFields) as Field[]);
@@ -217,7 +217,7 @@ export const RoleManagement: React.FC<Props> = () => {
         const editFields = deepCopyFields(defaultReminderFields);
         (editFields[0].field as MultiField).selected = (editFields[0].field as MultiField).list.find(item => item.id === reminderToEdit.role);
         (editFields[1].field as SingleField).value = reminderToEdit.description;
-        setAddEditTitle(`Edit Reminder`);
+        setAddEditTitle(text.list.editReminder);
         setIsEdit(true);
         setSaveButton(() => saveReminderButton);
         setAddEditFields(editFields);

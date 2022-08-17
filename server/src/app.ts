@@ -26,7 +26,7 @@ mongoose.connect(MONGO_URI, (error):void => {
 });
 
 app.use(logger('tiny'));
-app.use(cors({origin: 'http://localhost:3000'}));
+app.use(cors());
 app.use(verifyJWT);
 
 app.use(routes);

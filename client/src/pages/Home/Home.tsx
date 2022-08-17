@@ -12,7 +12,7 @@ import { NavBarComponent } from "../../components/NavBarComponent";
 import { ShoppingComponent } from "../Shopping";
 import { WarningOverlayComponent } from "../../components/WarningOverlayComponent";
 import { ButtonComponent } from "../../components/ButtonComponent";
-import { defaultEmployee, EmployeeContext, LanguageContext } from "../../App";
+import { ChangeContext, defaultEmployee, EmployeeContext, LanguageContext } from "../../App";
 import { TimeSheet } from "./TimeSheet";
 import { Messages } from "../Messages";
 
@@ -24,7 +24,7 @@ type Props = {
     setCanClearToken: Dispatch<SetStateAction<boolean>>
 };
 
-type ModulesType = "home"| "admin" | "check-out" | "ordering" | "timeSheet" | "messages";
+type ModulesType = "home"| "admin" | "checkOut" | "ordering" | "timeSheet" | "messages";
 
 const defaultLog:IEmployeeLog = {
     employee: ""
@@ -33,19 +33,36 @@ const defaultLog:IEmployeeLog = {
 const homeNavigation:NavListType[] = [{moduleName:"home", displayName:"Home"}]
 
 export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, setEmployee, setCanClearToken}) => {
+    const text = useContext(LanguageContext);
+    const employee = useContext(EmployeeContext);
     const [employeeLog, setEmployeeLog] = useState<IEmployeeLog>(defaultLog);
     const [reminderList, setReminderList] = useState<ReminderListType[]>([]);
     const [activeModule, setActiveModule] = useState<ModulesType>("home");
-    const [activeListModule, setActiveListModule] = useState<NavListType>({moduleName:"home", displayName:"Home"});
+    const [activeListModule, setActiveListModule] = useState<NavListType>({moduleName:"home", displayName:text.navList.home});
     const [accessRole, setAccessRole] = useState<accessRoleType>("Employee");
     const [navBarList, setNavBarList] = useState<NavListType[]>(homeNavigation);
     const [navBarUpdated, setNavBarUpdated] = useState<boolean>(false);
     const [locationList, setLocationList] = useState<NavListType[]>([]);
-    const [showCheckInWarning, setShowCheckInWarning] = useState<boolean>(false);
+    const [showNavWarning, setShowNavWarning] = useState<boolean>(false);
+    const [warningMessage, setWarningMessage] = useState<string>("");
+    const [onWarningClick, setOnWarningClick] = useState<(e:React.MouseEvent<HTMLButtonElement>) =>void>(()=>{});
+    const [canCancel, setCanCancel] = useState<boolean>(false);
     const [messageList, setMessageList] = useState<IMessage[]>([]);
     const [isMessagesSorted, setIsMessagesSorted] = useState<boolean>(false);
-    const text = useContext(LanguageContext);
-    const employee = useContext(EmployeeContext);
+    const isChange = useContext(ChangeContext);
+    
+    useEffect(()=>{
+        setNavBarList(oldNav => {
+            const newNavBar = oldNav.map(nav => {
+                return {
+                    moduleName: nav.moduleName,
+                    displayName: (text.navList as any)[nav.moduleName]
+                }
+            });
+            
+            return newNavBar;
+        })
+    }, [text]);
 
     useEffect(()=> {
         if(isLoggedIn){
@@ -69,7 +86,7 @@ export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, s
                         break;
                 };
                 accessibleNavigation = accessibleNavigation.concat(defaultNavigation);
-                accessibleNavigation.push({moduleName:"check-out", displayName:text.navList.checkOut});
+                accessibleNavigation.push({moduleName:"checkOut", displayName:text.navList.checkOut});
                 setNavBarList(()=> {
                     setNavBarUpdated(true);
                     return accessibleNavigation;
@@ -114,7 +131,7 @@ export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, s
     useEffect(()=>{
         getLocations()
         .then(locationsList => {
-            let list:NavListType[] = accessRole==="Administrator"?[{id:"ordering", moduleName:"ordering", displayName:"Orders"}]:[];
+            let list:NavListType[] = accessRole==="Administrator"?[{id:"ordering", moduleName:"ordering", displayName:text.navList.ordering}]:[];
             setLocationList(
                 employee.access.reduce<NavListType[]>((result, element) => {
                     const foundLocations = locationsList.locations.find((mod) => {return (mod._id === element.locationId)});
@@ -243,9 +260,26 @@ export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, s
     const onNavBarClick = (e:React.MouseEvent<HTMLAnchorElement>):void => {
         e.preventDefault();
         if(!employee || ((employee.checkedIn === undefined || employee.checkedIn === false) && accessRole !== "Administrator")){
-            setShowCheckInWarning(true);
+            setWarningMessage(text.homeScreen.checkIn.pleaseCheckIn);
+            setCanCancel(false);
+            setOnWarningClick(()=>()=>{});
+            setShowNavWarning(true);
             return;
         }
+        if(isChange){
+            setWarningMessage(text.warning.discardChanges);
+            setCanCancel(true);
+            const onClick = ()=>{
+                setActiveListModule({
+                    displayName:e.currentTarget.dataset.display!,
+                    moduleName:e.currentTarget.dataset.link!
+                });
+            }
+            setOnWarningClick(()=>onClick);
+            setShowNavWarning(true);
+            return;
+        }
+
         setActiveListModule({
             displayName:e.currentTarget.dataset.display!,
             moduleName:e.currentTarget.dataset.link!
@@ -254,14 +288,17 @@ export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, s
 
     return (
         <>
-            {showCheckInWarning?
-                <WarningOverlayComponent
-                    warning={text.homeScreen.checkIn.pleaseCheckIn}
-                    setShowWarning={setShowCheckInWarning}/>
+            {showNavWarning
+                ?<WarningOverlayComponent
+                    warning={warningMessage}
+                    setShowWarning={setShowNavWarning}
+                    onClick={onWarningClick}
+                    canCancel={canCancel}
+                />
                 :""
             }
             <div className={styles["header"]}>
-                <h1>{"Hi " + employee.firstName}</h1>
+                <h1>{text.homeScreen.hi.replace("{replace}", employee.firstName)}</h1>
                 <ButtonComponent
                     onClick={onLogoutClick}
                     name={text.homeScreen.logout}
@@ -288,7 +325,7 @@ export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, s
                     "ordering":<LocationsComponent
                         accessList={locationList}
                         />,
-                    "check-out":<CheckOutComponent
+                    "checkOut":<CheckOutComponent
                         setEmployee={setEmployee}
                         reminderList={reminderList}
                         setReminderList={setReminderList}

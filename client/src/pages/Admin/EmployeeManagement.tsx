@@ -59,39 +59,39 @@ export const EmployeeManagement: React.FC<Props> = ({isAdmin, currentEmployee}) 
         setDefaultEmployeeFields( [
             {
                 name:"firstName",
-                display:"First Name",
+                display:text.list.firstName,
                 fieldType:"Single",
                 required: true,
                 field:{value:""}
             }, {
                 name:"middleName",
-                display:"Middle Name",
+                display:text.list.middleName,
                 fieldType:"Single",
                 required: false,
                 field:{value:""}
             }, {
                 name:"lastName",
-                display:"Last Name",
+                display:text.list.lastName,
                 fieldType:"Single",
                 required: true,
                 field:{value:""}
             }, {
                 name:"password",
-                display:"Password",
+                display:text.list.password,
                 fieldType:"Single",
                 required: true,
                 isCensored: true,
                 field:{value:""}
             }, {
                 name:"confirmPassword",
-                display:"Confirm Password",
+                display:text.list.confirmPassword,
                 fieldType:"Single",
                 required: true,
                 isCensored: true,
                 field:{value:""}
             }, {
                 name:"role",
-                display:"Role",
+                display:text.list.role,
                 fieldType:"Multi",
                 required: true,
                 field:{
@@ -101,7 +101,7 @@ export const EmployeeManagement: React.FC<Props> = ({isAdmin, currentEmployee}) 
                 }
             }, {
                 name:"access",
-                display:"Access",
+                display:text.list.access,
                 fieldType:"Multi",
                 required: true,
                 field:{
@@ -111,19 +111,19 @@ export const EmployeeManagement: React.FC<Props> = ({isAdmin, currentEmployee}) 
                 }
             }, {
                 name:"email",
-                display:"eMail",
+                display:text.list.email,
                 fieldType:"Single",
                 required: false,
                 field:{value:""}
             }, {
                 name:"phone",
-                display:"Phone Number",
+                display:text.list.phone,
                 fieldType:"Single",
                 required: false,
                 field:{value:""}
             }, {
                 name:"address",
-                display:"Address",
+                display:text.list.address,
                 fieldType:"Single",
                 required: false,
                 field:{value:""}
@@ -146,7 +146,7 @@ export const EmployeeManagement: React.FC<Props> = ({isAdmin, currentEmployee}) 
 
     const onAddClick = (e:React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        setAddEditTitle("Add Employee");
+        setAddEditTitle(text.list.addEmployee);
         setIsEdit(false);
         setAddEditFields(deepCopyFields(defaultEmployeeFields) as Field[]);
     }
@@ -174,7 +174,7 @@ export const EmployeeManagement: React.FC<Props> = ({isAdmin, currentEmployee}) 
                 (editFields[7].field as SingleField).value = employeeToEdit.email;
                 (editFields[8].field as SingleField).value = employeeToEdit.phone;
                 (editFields[9].field as SingleField).value = employeeToEdit.address;
-                setAddEditTitle(`Edit ${employeeToEdit.firstName}`);
+                setAddEditTitle(text.list.edit.replace("{replace}", employeeToEdit.firstName));
                 setIsEdit(true);
                 setAddEditFields(editFields);
         });
@@ -288,9 +288,9 @@ export const EmployeeManagement: React.FC<Props> = ({isAdmin, currentEmployee}) 
             </div>
             <DataTable 
                 headers={[
-                    "First Name",
-                    "Last Name",
-                    "Location"
+                    text.list.firstAndMiddle,
+                    text.list.lastName,
+                    text.list.access
                 ]}
                 rows={employeeList.map(employee => {
                     return {

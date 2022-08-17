@@ -2,6 +2,9 @@ import { Response, Request } from "express";
 import mongoose from "mongoose";
 
 import { EmployeeLog, IEmployeeLog, IEmployeeLogDoc } from "../../models/employeeLog";
+import { Employee, IEmployee, IEmployeeDoc } from "../../models/employee";
+import { Reminder, IReminder, IReminderDoc } from "../../models/reminder";
+
 import { IError, returnError } from "../../models/error";
 
 export async function createEmployeeLog(req: Request, res: Response): Promise<void>{
@@ -44,13 +47,31 @@ export async function getEmployeesMostRecentLog(req: Request, res:Response):Prom
         const {params: {id}} = req;
         let log:IEmployeeLog|null =  await EmployeeLog.findOne({employee:id, checkOutTime:{$exists:false}},{}, {sort:{checkInTime:-1}}).exec();
         let createNewLog:boolean = false;
-        if(log !== null && log.checkInTime!== undefined && (log.checkInTime.getTime() - Date.now()) > 54000000){
+        console.log(log);
+        if(log !== null 
+            && log.checkInTime!== undefined 
+            && (Date.now() - log.checkInTime.getTime()) > 54000000
+        ){
             log.checkOutTime = new Date(log.checkInTime.getTime() + 54000000);
             await EmployeeLog.findOneAndUpdate({_id:log._id}, log).exec();
             createNewLog = true;
         }
         if(log===null || createNewLog) {
-            log = await EmployeeLog.create({employee:id});
+            const employee:IEmployee|null = await Employee.findById({_id:id});
+            if(employee===null) {
+                res.status(500).json({error: returnError("Employee not found")});
+                return;
+            }
+            const reminders:IReminder[] = await Reminder.find({role:employee.role});
+            log = await EmployeeLog.create({
+                employee:id,
+                reminder:reminders.map(reminder => {
+                    return {
+                        reminderId: reminder._id,
+                        isCompleted: false
+                    };
+                })
+            });
         }
         res.status(200).json({
             log

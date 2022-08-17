@@ -3,10 +3,11 @@ import { CategoryListType, ILocation, IOrder, IOrderCategory, IOrderItem, IShopp
 import { NavBarComponent } from "../components/NavBarComponent";
 import { ButtonComponent } from "../components/ButtonComponent";
 import { getActiveOrderByLocation, getActiveShoppingListByLocation, getLocations, getOrderCategories, getOrderItems, getShoppingCategories, getShoppingItems, updateOrder, updateShoppingList } from "../api";
-import { EmployeeContext, LanguageContext } from "../App";
+import { ChangeContext, EmployeeContext, LanguageContext, SetChangeContext } from "../App";
 import { EditItemListComponent } from "../components/EditItemListComponent";
 import { LoadingSpinner } from "../components/LoadinSpinnerComponent";
 import { OrderListComponent } from "../components/OrderListComponent";
+import { WarningOverlayComponent } from "../components/WarningOverlayComponent";
 
 
 type Props = {
@@ -15,7 +16,11 @@ type Props = {
 
 export const LocationsComponent:React.FC<Props> = ({accessList}) => {
     const [currentLocation, setCurrentLocation] = useState<NavListType>({displayName:"", moduleName:""});
-    
+    const [possibleLocation, setPossibleLocation] = useState<NavListType>({displayName:"", moduleName:""});
+    const [showWarning, setShowWarning] = useState<boolean>(false);
+    const isChange = useContext(ChangeContext);
+    const text = useContext(LanguageContext);
+
     useEffect(()=> {
         setCurrentLocation(accessList[0]);
     }, [accessList])
@@ -23,15 +28,35 @@ export const LocationsComponent:React.FC<Props> = ({accessList}) => {
     
     const onClick= (e:React.MouseEvent<HTMLAnchorElement>):void => {
         e.preventDefault();
-        setCurrentLocation({
+        const newPossibleLocation = {
             id:e.currentTarget.dataset.id,
             displayName:e.currentTarget.dataset.display!,
             moduleName:e.currentTarget.dataset.link!
-        });
+        };
+        if(isChange){
+            setPossibleLocation(newPossibleLocation);
+            
+            return;
+        }
+        setCurrentLocation(newPossibleLocation);
+    }
+
+    const onConfirmClick = ()=>{
+        setCurrentLocation(possibleLocation);
     }
     
     return (
         <>
+            {
+                showWarning
+                ?<WarningOverlayComponent
+                    warning={text.warning.discardChanges}
+                    setShowWarning={setShowWarning}
+                    onClick={onConfirmClick}
+                    canCancel={true}
+                />
+                :""
+            }
             {accessList.length!==1?
                 <NavBarComponent 
                     list={accessList}
@@ -60,8 +85,11 @@ const LocationComponent:React.FC<LocationComponentProp> = ({locationName, id }) 
     const [itemList, setItemList] = useState<ItemObjectType>({});
     const [isMain, setIsMain] = useState<boolean>(false);
     const [locationList, setLocationList] = useState<ILocation[]>([]);
+    const [isSaved, setIsSaved] = useState<boolean>(false);
+    const [isFirstRender, setIsFirstRender] = useState<boolean>(true);
     const text = useContext(LanguageContext);
     const employee = useContext(EmployeeContext);
+    const setIsChange = useContext(SetChangeContext);
 
     useEffect(()=> {
         getLocations()
@@ -116,7 +144,17 @@ const LocationComponent:React.FC<LocationComponentProp> = ({locationName, id }) 
             }
         });
         setItemList(newItemList);
-    }, [list])
+    }, [list]);
+
+    useEffect(()=> {
+        if(isFirstRender){
+            setIsFirstRender(false);
+            return;
+        }
+        setIsChange(true);
+        setIsSaved(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [itemList]);
 
     const setNewCategories = (categoryList:IOrderCategory[]|IShoppingCategory[], itemList:(IOrderItem|IShoppingItem)[]):void => {
         const newCategories:CategoryListType[] = categoryList
@@ -177,13 +215,21 @@ const LocationComponent:React.FC<LocationComponentProp> = ({locationName, id }) 
             updatedOrder.items = newItems;
             console.log(updatedOrder);
             updateOrder(updatedOrder)
-                .then(res => console.log(res.order));
+                .then(res => {
+                    setIsSaved(true)
+                    setIsChange(false);
+                }
+            );
         } else {
             const updatedShoppingList:IShoppingList = {...(list as IShoppingList)};
             updatedShoppingList.items = newItems;
             console.log(updatedShoppingList);
             updateShoppingList(updatedShoppingList)
-                .then(res => console.log(res.shoppingList))
+                .then(res => {
+                    setIsSaved(true)
+                    setIsChange(false);
+                }
+            );
         }
     }
 
@@ -197,10 +243,16 @@ const LocationComponent:React.FC<LocationComponentProp> = ({locationName, id }) 
                     currentList={itemList}
                     setCurrentList={setItemList}
                 />
-                <ButtonComponent
-                    onClick={onSaveButtonClick}
-                    name={text.location.save}
-                />
+                {
+                    isFirstRender
+                    ?isSaved
+                        ?<ButtonComponent
+                            onClick={onSaveButtonClick}
+                            name={text.location.save}
+                        />
+                        :<h3>{text.location.saved}</h3>
+                    :""
+                }
             </>
             :<LoadingSpinner />}
         </>

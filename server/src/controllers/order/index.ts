@@ -88,7 +88,7 @@ export async function getOrder(req: Request, res:Response):Promise<void>{
 export async function getActiveOrderByLocation(req: Request, res:Response):Promise<void>{
     try{
         const {params: {id}} = req;
-        let order:IOrder|null =  await Order.findOne({location:id, isFulfilled:false}).exec();
+        let order:IOrder|null =  await Order.findOne({location:id, isCompleted:false}).exec();
         console.log(order, id);
         if(order===null)
             order = await Order.create({

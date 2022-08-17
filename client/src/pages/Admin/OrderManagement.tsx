@@ -66,19 +66,19 @@ export const OrderManagement: React.FC<Props> = () => {
         const newFields:Field[] = [
             {  
                 name:"Name",
-                display:"Name",
+                display:text.list.name,
                 fieldType:"Single",
                 required: true,
                 field:{value:""}
             }, {
                 name: "Description",
-                display:"Description",
+                display:text.list.description,
                 fieldType:"Single",
                 required:false,
                 field:{value:""}
             }
         ]
-        setAddEditTitle("Add Category");
+        setAddEditTitle(text.list.addCategory);
         setSaveButton(()=> onSaveCategoryButton);
         setAddEditFields(newFields);
         //setShowAddEditComponent(true);
@@ -90,19 +90,19 @@ export const OrderManagement: React.FC<Props> = () => {
         const editFields:Field[] = [
             {
                 name:"Name",
-                display:"Name",
+                display:text.list.name,
                 fieldType:"Single",
                 required: true,
                 field:{value:categoryToEdit.name}
             }, {
                 name: "Description",
-                display:"Description",
+                display:text.list.description,
                 fieldType:"Single",
                 required:false,
                 field:{value:categoryToEdit.description}
             }
         ];
-        setAddEditTitle("Edit " + categoryToEdit.name);
+        setAddEditTitle(text.list.edit.replace("{replace}", categoryToEdit.name));
         setSaveButton(()=> onSaveCategoryButton);
         setAddEditFields(editFields);
     }
@@ -157,13 +157,13 @@ export const OrderManagement: React.FC<Props> = () => {
         const newFields:Field[] = [
             {  
                 name:"Name",
-                display:"Name",
+                display:text.list.name,
                 fieldType:"Single",
                 required: true,
                 field:{value:""}
             }, {
                 name:"Category",
-                display:"Category",
+                display:text.list.category,
                 fieldType:"Multi",
                 field: {
                     isMultiSelect:false,
@@ -179,13 +179,13 @@ export const OrderManagement: React.FC<Props> = () => {
 
             },{
                 name: "Description",
-                display:"Description",
+                display:text.list.description,
                 fieldType:"Single",
                 required:false,
                 field:{value:""}
             }, {
                 name:"Supplier",
-                display:"Supplier",
+                display:text.list.supplier,
                 fieldType:"Multi",
                 required: false,
                 field: {
@@ -201,7 +201,7 @@ export const OrderManagement: React.FC<Props> = () => {
                 }
             }
         ]
-        setAddEditTitle("Add Item");
+        setAddEditTitle(text.list.addItem);
         setSaveButton(()=> onSaveItemButton);
         setAddEditFields(newFields);
     }
@@ -224,13 +224,13 @@ export const OrderManagement: React.FC<Props> = () => {
         const editFields:Field[] = [
             {
                 name:"Name",
-                display:"Name",
+                display:text.list.name,
                 fieldType:"Single",
                 required: true,
                 field:{value:itemToEdit.name}
             }, {
                 name:"Category",
-                display:"Category",
+                display:text.list.category,
                 fieldType:"Multi",
                 field: {
                     isMultiSelect:false,
@@ -247,13 +247,13 @@ export const OrderManagement: React.FC<Props> = () => {
 
             },{
                 name: "Description",
-                display:"Description",
+                display:text.list.description,
                 fieldType:"Single",
                 required:false,
                 field:{value:itemToEdit.description}
             }, {
                 name:"Supplier",
-                display:"Supplier",
+                display:text.list.supplier,
                 fieldType:"Multi",
                 required: false,
                 field: {
@@ -271,7 +271,7 @@ export const OrderManagement: React.FC<Props> = () => {
 
             }
         ];
-        setAddEditTitle("Edit " + itemToEdit.name);
+        setAddEditTitle(text.list.edit.replace("{replace}", itemToEdit.name));
         setSaveButton(()=> onSaveItemButton);
         setAddEditFields(editFields);
     }
@@ -340,19 +340,19 @@ export const OrderManagement: React.FC<Props> = () => {
         const newFields:Field[] = [
             {  
                 name:"Name",
-                display:"Name",
+                display:text.list.name,
                 fieldType:"Single",
                 required: true,
                 field:{value:""}
             },{
                 name: "Description",
-                display:"Description",
+                display:text.list.description,
                 fieldType:"Single",
                 required:false,
                 field:{value:""}
             }
         ]
-        setAddEditTitle("Add Item");
+        setAddEditTitle(text.list.addSupplier);
         setSaveButton(()=> onSaveSupplierButton);
         setAddEditFields(newFields);
     }
@@ -363,19 +363,19 @@ export const OrderManagement: React.FC<Props> = () => {
         const editFields:Field[] = [
             {
                 name:"Name",
-                display:"Name",
+                display:text.list.name,
                 fieldType:"Single",
                 required: true,
                 field:{value:supplierToEdit.name}
             }, {
                 name: "Description",
-                display:"Description",
+                display:text.list.description,
                 fieldType:"Single",
                 required:false,
                 field:{value:supplierToEdit.description}
             }
         ];
-        setAddEditTitle("Edit " + supplierToEdit.name);
+        setAddEditTitle(text.list.edit.replace("{replace}", supplierToEdit.name));
         setSaveButton(()=> onSaveSupplierButton);
         setAddEditFields(editFields);
     }
@@ -430,7 +430,7 @@ export const OrderManagement: React.FC<Props> = () => {
                     cancel={onCancelButton}
                     />
             :""}
-            <h2>Order Categories</h2>
+            <h2>{text.admin.orders.categories}</h2>
             <div className={styles["buttonList"]}>
                 <ButtonComponent 
                     name={<BsPlusLg />}
@@ -454,7 +454,7 @@ export const OrderManagement: React.FC<Props> = () => {
                 }
             </div>
             <DataTable
-                headers={["Name", "Description"]}
+                headers={[text.list.name, text.list.description]}
                 rows={categoryList.map(category => {
                     return {
                         id:category._id!,
@@ -464,7 +464,7 @@ export const OrderManagement: React.FC<Props> = () => {
                 currentId={selectedCategoryId}
                 setId={setSelectedCategoryId}
             />
-            <h2>Order Items</h2>
+            <h2>{text.admin.orders.items}</h2>
             <div className={styles["buttonList"]}>
                 <ButtonComponent 
                     name={<BsPlusLg />}
@@ -488,7 +488,7 @@ export const OrderManagement: React.FC<Props> = () => {
                 }
             </div>
             <DataTable
-                headers={["Name", "Category", "Description"]}
+                headers={[text.list.name, text.list.category, text.list.description]}
                 rows={itemList.map(item => {
                     return {
                         id: item._id!,
@@ -498,7 +498,7 @@ export const OrderManagement: React.FC<Props> = () => {
                 currentId={selectedItemId}
                 setId={setSelectedItemId}
             />
-            <h2>Suppliers</h2>
+            <h2>{text.admin.orders.suppliers}</h2>
             <div className={styles["buttonList"]}>
                 <ButtonComponent 
                     name={<BsPlusLg />}
@@ -522,7 +522,7 @@ export const OrderManagement: React.FC<Props> = () => {
                 }
             </div>
             <DataTable
-                headers={["Name", "Description"]}
+                headers={[text.list.name, text.list.description]}
                 rows={supplierList.map(supplier => {
                     return {
                         id:supplier._id!,

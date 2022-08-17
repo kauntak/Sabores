@@ -32,7 +32,7 @@ export function getToken():Promise<string>|string{
   } else return currentToken;
 }
 
-const languages = ["es"];
+const languages = ["es", "ja"];
 
 const defaultText = {
   "setLanguage":{
@@ -68,7 +68,8 @@ const defaultText = {
     "checkOut":"Check Out",
     "home":"Home",
     "messages":"Messages",
-    "timeSheet":"Time Cards"
+    "timeSheet":"Time Cards",
+    "locations":"Locations"
   },
   "homeScreen":{
       "logout": "Logout",
@@ -80,29 +81,70 @@ const defaultText = {
           "pleaseCheckIn":"Please start day first.",
           "checkInButton":"Start the day"
       },
-      "viewShoppingList":"Shopping List",
-      "viewMessageList":"Messages",
-      "viewLogList":"Logs"
+      "hi":"Hi {replace}!"
   },
   "admin":{
-
+    "shopping":{
+      "categories":"Categories",
+      "items":"Items"
+    },
+    "orders":{
+      "categories":"Order Categories",
+      "items":"Order Items",
+      "suppliers": "Suppliers"
+    },
+    "roles":{
+      "roles":"Roles",
+      "tasks":"Tasks"
+    }
   },
-  "shopping":{
-
+  "list":{
+    "addCategory": "Add Category",
+    "addItem":"Add Item",
+    "addSupplier":"Add Supplier",
+    "name":"Name",
+    "category":"Category",
+    "description":"Description",
+    "edit":"Edit {replace}",
+    "supplier":"Supplier",
+    "bulkItem": "Bulk Item Link",
+    "type":"Type",
+    "addRole":"Add Role",
+    "addReminder":"Add Task",
+    "editReminder": "Edit Task",
+    "role":"Role",
+    "addLocation":"Add Location",
+    "yes":"Yes",
+    "no":"No",
+    "addEmployee":"Add Employee",
+    "isMain": "Is Main?",
+    "firstName":"First Name",
+    "middleName":"Middle Name",
+    "firstAndMiddle":"First/Middle Name",
+    "lastName":"Last Name",
+    "password":"Password",
+    "confirmPassword":"Confirm Password",
+    "access":"Locations",
+    "email":"e-Mail",
+    "phone": "Phone Number",
+    "address":"Address"
   },
   "checkOut":{
       "finishDay":"Do you Want to finish the day and log out?",
-      "checkoutButton": "Finish the day"
+      "checkoutButton": "Finish the day",
+      "comment":"Comment"
   },
   "warning":{
       "ok":"OK",
       "cancel":"Cancel",
       "delete":"This will PERMANENTLY delete {replace}.",
       "canNotDelete": "{replace} is being used. Can not delete.",
-      "canNotDeleteSelf": "You can not delete yourself."
+      "canNotDeleteSelf": "You can not delete yourself.",
+      "discardChanges":"Discard Changes?"
   },
   "location":{
-      "save": "Save Order"
+      "save": "Save Order",
+      "saved": "Saved!"
   },
   "dataTable":{
     "searchToolTip":"Use commas to search different columns."
@@ -131,6 +173,14 @@ const defaultText = {
     "markAsFinished": "Mark orders as finished?",
     "invalidDate":"INVALID DATE",
     "noOrders":"No order!"
+  },
+  "timeSheet":{
+    "comment":"Comment",
+    "date":"Date",
+    "timeIn":"Time In",
+    "timeOut":"Time Out",
+    "shiftTotal":"Shift Total",
+    "noTimeSheets":"No logs for this week."
   }
 };
 
@@ -143,6 +193,8 @@ export const defaultEmployee = {
 
 export const LanguageContext = createContext(defaultText);
 export const EmployeeContext = createContext<IEmployee>(defaultEmployee);
+export const ChangeContext = createContext<boolean>(false);
+export const SetChangeContext = createContext<Dispatch<SetStateAction<boolean>>>((_)=>{return});
 
 const App:React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
@@ -153,8 +205,15 @@ const App:React.FC = () => {
   const [language, setLanguage] = useState<string>("en");
   const [token, setToken] = useState<string>("");
   const [loginTimer, setLoginTimer] = useState<ReturnType<typeof setTimeout>>();
-  
   const [textTranslations, setTextTranslations] = useState<any>(defaultText);
+  const [isChanges, setIsChanges] = useState<boolean>(false);
+
+  window.onbeforeunload = (e:BeforeUnloadEvent) => {
+    if(isChanges){
+      e.preventDefault();
+      return;// e.returnValue = textTranslations.warning.discardChanges;
+    }
+  }
 
   useEffect(()=>{
       if(language==="en") {
@@ -224,13 +283,17 @@ const App:React.FC = () => {
         <div className="main-window">
           {isLoggedIn
             ?<EmployeeContext.Provider value={loggedInEmployee!}>
-                <HomeComponent
-                  token={token}
-                  isLoggedIn={isLoggedIn}
-                  setLoggedIn={setIsLoggedIn}
-                  setEmployee={setLoggedInEmployee as Dispatch<SetStateAction<Omit<IEmployee, "password">>>}
-                  setCanClearToken={setCanClearToken}
-                />
+                <ChangeContext.Provider value={isChanges}>
+                  <SetChangeContext.Provider value={setIsChanges}>
+                    <HomeComponent
+                      token={token}
+                      isLoggedIn={isLoggedIn}
+                      setLoggedIn={setIsLoggedIn}
+                      setEmployee={setLoggedInEmployee as Dispatch<SetStateAction<Omit<IEmployee, "password">>>}
+                      setCanClearToken={setCanClearToken}
+                    />
+                  </SetChangeContext.Provider>
+                </ChangeContext.Provider>
               </EmployeeContext.Provider>
             :<LoginScreenComponent
               employeeList={employees}

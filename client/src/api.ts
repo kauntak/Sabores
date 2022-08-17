@@ -5,7 +5,7 @@ import { EmployeeApiDataType, EmployeeLogApiDataType, IEmployee, IEmployeeLog, I
 import { getToken } from "./App";
 
 
-const url: string = "http://localhost:8080/api";
+const url: string = "http://192.168.0.11:8080/api";
 
 async function getHeaders() {
     const token = await getToken();

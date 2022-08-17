@@ -39,11 +39,11 @@ export const LocationManagement: React.FC<Props> = () => {
     const booleanList:SingleField[] = [
         {
             name:"Yes",
-            display:"Yes",
+            display:text.list.yes,
             id:"yes"
         }, {
             name:"No",
-            display:"No",
+            display:text.list.no,
             id:"no"
         }
     ]
@@ -51,13 +51,13 @@ export const LocationManagement: React.FC<Props> = () => {
     const defaultLocationFields:Field[] =  [
         {
             name:"name",
-            display:"Name",
+            display:text.list.name,
             fieldType:"Single",
             required: true,
             field:{value:""}
         }, {
             name:"main",
-            display:"Is Main?",
+            display:text.list.isMain,
             required: false,
             fieldType: "Multi",
             field: {
@@ -84,7 +84,7 @@ export const LocationManagement: React.FC<Props> = () => {
 
     const onAddClick = (e:React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        setAddEditTitle("Add Location");
+        setAddEditTitle(text.list.addLocation);
         setIsEdit(false);
         setAddEditFields(deepCopyFields(defaultLocationFields) as Field[]);
     }
@@ -100,7 +100,7 @@ export const LocationManagement: React.FC<Props> = () => {
         (editFields[1].field as MultiField).selected = locationToEdit.isMain?booleanList[0]:undefined;
 
         
-        setAddEditTitle(`Edit ${locationToEdit.name}`);
+        setAddEditTitle(text.list.edit.replace("{replace}", locationToEdit.name));
         setIsEdit(true);
         setAddEditFields(editFields);
         
@@ -198,7 +198,7 @@ export const LocationManagement: React.FC<Props> = () => {
                 }
             </div>
             <DataTable 
-                headers={["Location Name"]}
+                headers={[text.list.name]}
                 rows={locationList.map(location => {
                     return {
                         id:location._id!,
