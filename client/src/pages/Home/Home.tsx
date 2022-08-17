@@ -1,5 +1,5 @@
 /* eslint-disable no-fallthrough */
-import React, { Dispatch, SetStateAction, useContext, useEffect, useRef, useState } from "react";
+import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import styles from "./../../css/home.module.css";
 
 import { getEmployeesMostRecentLog, getLocations, getMessagesByEmployee, getReminderByRoleId, getRemindersByIds, getRole, updateEmployee, updateEmployeeLog } from "../../api";
@@ -17,11 +17,9 @@ import { TimeSheet } from "./TimeSheet";
 import { Messages } from "../Messages";
 
 type Props = {
-    token:string,
     isLoggedIn:boolean,
     setLoggedIn: Dispatch<SetStateAction<boolean>>,
     setEmployee: Dispatch<SetStateAction<Omit<IEmployee, "password">>>
-    setCanClearToken: Dispatch<SetStateAction<boolean>>
 };
 
 type ModulesType = "home"| "admin" | "checkOut" | "ordering" | "timeSheet" | "messages";
@@ -32,7 +30,7 @@ const defaultLog:IEmployeeLog = {
 
 const homeNavigation:NavListType[] = [{moduleName:"home", displayName:"Home"}]
 
-export const HomeComponent:React.FC<Props> = ({token, isLoggedIn, setLoggedIn, setEmployee, setCanClearToken}) => {
+export const HomeComponent:React.FC<Props> = ({isLoggedIn, setLoggedIn, setEmployee}) => {
     const text = useContext(LanguageContext);
     const employee = useContext(EmployeeContext);
     const [employeeLog, setEmployeeLog] = useState<IEmployeeLog>(defaultLog);

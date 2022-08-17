@@ -198,7 +198,6 @@ export const SetChangeContext = createContext<Dispatch<SetStateAction<boolean>>>
 
 const App:React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [canClearToken, setCanClearToken] = useState<boolean>(false);
   const [loginId, setLoginId] = useState("");
   const [employees, setEmployees] = useState<IEmployee[]>([]);
   const [loggedInEmployee, setLoggedInEmployee] = useState<Omit<IEmployee, "password">>(defaultEmployee);
@@ -249,7 +248,6 @@ const App:React.FC = () => {
         }, 3600000)
       )
       setIsLoggedIn(true);
-      setCanClearToken(false);
     } else {
       clearTimeout(loginTimer);
       setIsLoggedIn(false);
@@ -286,11 +284,9 @@ const App:React.FC = () => {
                 <ChangeContext.Provider value={isChanges}>
                   <SetChangeContext.Provider value={setIsChanges}>
                     <HomeComponent
-                      token={token}
                       isLoggedIn={isLoggedIn}
                       setLoggedIn={setIsLoggedIn}
                       setEmployee={setLoggedInEmployee as Dispatch<SetStateAction<Omit<IEmployee, "password">>>}
-                      setCanClearToken={setCanClearToken}
                     />
                   </SetChangeContext.Provider>
                 </ChangeContext.Provider>

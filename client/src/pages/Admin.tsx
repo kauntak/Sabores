@@ -15,20 +15,6 @@ type Props = {
     currentEmployee:IEmployee
 }
 
-const MANAGER_LIST = [
-    "Add/Edit/Delete Shopping items/categories",
-    "Add/Edit/Delete Order Items/categories", 
-    "Add/Edit/Delete Employee", 
-    "Add/Edit/Delete Role Reminder",
-    "View Employee Log",
-    "View Messages",
-    "View Shopping List"
-] as const;
-const ADMIN_LIST = [
-    "Add Employee Role",
-    "Add Location"
-] as const
-
 
 export const AdminComponent:React.FC<Props> = ({isAdmin, currentEmployee}) => {
     const text = useContext(LanguageContext);
