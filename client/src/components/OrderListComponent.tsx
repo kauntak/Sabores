@@ -1,18 +1,13 @@
-import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import styles from "./../css/orderList.module.css";
 import { completeOrders, completeShoppingLists, getLocations, getOrderItems, getOrders, getShoppingItems, getShoppingLists, getSuppliers } from "../api";
-import { ILocation, IOrder, IOrderItem, IShoppingItem, IShoppingList, ISupplier, TotalOrderItem, TotalOrderList, TotalShoppingItem } from "../type";
+import { IOrder, IOrderItem, IShoppingItem, IShoppingList, ISupplier, TotalOrderItem, TotalOrderList } from "../type";
 import { LoadingSpinner } from "./LoadinSpinnerComponent";
 import { BsChevronDown } from "react-icons/bs";
-import { BiCheckbox, BiCheckboxChecked } from "react-icons/bi";
 import { ButtonComponent } from "./ButtonComponent";
-import { text } from "stream/consumers";
 import { WarningOverlayComponent } from "./WarningOverlayComponent";
 import { LanguageContext } from "../App";
 
-
-type Props = {
-}
 
 type DisplayItem = {
     id:string,
@@ -36,16 +31,14 @@ type SelectionType = {
 
 type ListFilterFunction = (list:IShoppingList|IOrder, index?:number, array?:IShoppingList[]|IOrder[], type?:"Order"|"ShoppingList") => boolean
 
-const defaultListFilterFunction:ListFilterFunction = (list) => !list.isCompleted;
 
-export const OrderListComponent:React.FC<Props> = ({}) => {
+export const OrderListComponent:React.FC = () => {
     const [supplierList, setSupplierList] = useState<ISupplier[]>([]);
     const [shoppingLists, setShoppingLists] = useState<IShoppingList[]>([]);
     const [orderList, setOrderList] = useState<IOrder[]>([]);
     const [shoppingItemList, setShoppingItemList] = useState<IShoppingItem[]>([]);
     const [orderItemList, setOrderItemList] = useState<IOrderItem[]>([]);
     const [totalList, setTotalList] = useState<TotalOrderList>({});
-    const [locationList, setLocationList] = useState<ILocation[]>([]);
     const [selectOptionList, setSelectOptionList] = useState<SelectionType[]>([]);
     const [selectLocationList, setSelectLocationList] = useState<SelectionType[]>([]);
     const [displayList, setDisplayList] = useState<DisplayItem[]>([]);
@@ -55,10 +48,7 @@ export const OrderListComponent:React.FC<Props> = ({}) => {
     const text = useContext(LanguageContext);
     const dateIndex = useRef<number>(-1);
     const locationIndex = useRef<number>(-1);
-    const listFilterFunction = useRef<ListFilterFunction>(()=>{return false;});
-    // const [currentDisplayIndex, setCurrentDisplayIndex] = useState<number>(-1);
-    // const [currentLocationIndex, setCurrentLocationIndex] = useState<number>(-1);
-    // const [listFilterFunction, setListFilterFunction] = useState<ListFilterFunction>(() => ()=>{return false});
+    
     const selectedFilterFunction:ListFilterFunction = (list) => {
         if(dateIndex.current === -1){
             if(locationIndex.current === -1){
@@ -106,7 +96,6 @@ export const OrderListComponent:React.FC<Props> = ({}) => {
         });
         getLocations()
         .then(res => {
-            setLocationList(res.locations);
             const newLocationList:SelectionType[] = res.locations.map(location => {
                 return {
                     value:location._id!,
