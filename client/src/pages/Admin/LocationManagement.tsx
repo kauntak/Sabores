@@ -9,7 +9,7 @@ import { WarningOverlayComponent } from "../../components/WarningOverlayComponen
 import { AddAndEditComponent, deepCopyFields } from "../../components/AddAndEditComponent";
 import { DataTable } from "../../components/DataTable";
 import { useContext } from "react";
-import { LanguageContext, WarningContext } from "../../App";
+import { LanguageContext } from "../../App";
 
 type Props = {
 
@@ -22,14 +22,16 @@ export const LocationManagement: React.FC<Props> = () => {
     const text = useContext(LanguageContext);
     const [activeLocationId, setActiveLocationId] = useState<string>("");
     const [locationList, setLocationList] = useState<ILocation[]>([]);
+    const [showWarning, setShowWarning] = useState<boolean>(false);
+    const [warningButton, setWarningButton] = useState<(e:React.MouseEvent<HTMLButtonElement>) => void>(() => defaultButton);
+    const [canCancel, setCanCancel] = useState<boolean>(true);
+    const [warningMessage, setWarningMessage] = useState<string>("");
     const [showAddEditComponent, setShowAddEditComponent] = useState<boolean>(false);
     const [isEdit, setIsEdit] = useState<boolean>(false);
     const [addEditTitle, setAddEditTitle] = useState<string>("");
     const [addEditFields, setAddEditFields] = useState<Field[]>([]);
-    const warning = useContext(WarningContext);
 
     useEffect(()=> {
-        warning.reset();
         getLocations()
             .then(res => setLocationList(res.locations));
     }, []);
@@ -108,10 +110,10 @@ export const LocationManagement: React.FC<Props> = () => {
         e.preventDefault();
         const locationToDelete = locationList.find(location => location._id === activeLocationId);
         if(locationToDelete === undefined) return;
-        warning.setMessage(text.warning.delete.replace("{replace}", locationToDelete.name));
-        warning.setOnClick(() => onConfirmDelete);
-        warning.setCanCancel(true);
-        warning.setShow(true);
+        setWarningMessage(text.warning.delete.replace("{replace}", locationToDelete.name));
+        setWarningButton(() => onConfirmDelete);
+        setCanCancel(true);
+        setShowWarning(true);
     }
 
     const onConfirmDelete = (e:React.MouseEvent<HTMLButtonElement>) => {
@@ -120,8 +122,8 @@ export const LocationManagement: React.FC<Props> = () => {
             .then(res => {
                 setLocationList(res.locations);
                 setActiveLocationId("");
-                warning.setShow(false);
-                warning.setOnClick(() => defaultButton);
+                setShowWarning(false);
+                setWarningButton(() => defaultButton);
             }
         );
     }
@@ -154,6 +156,15 @@ export const LocationManagement: React.FC<Props> = () => {
 
     return (
         <>
+            {showWarning?
+                <WarningOverlayComponent
+                    warning={warningMessage}
+                    setShowWarning={setShowWarning}
+                    onClick={warningButton}
+                    canCancel={canCancel}
+                    />
+                :""
+            }
             {showAddEditComponent?
                 <AddAndEditComponent
                     title={addEditTitle}

@@ -96,7 +96,8 @@ const defaultText = {
     "roles":{
       "roles":"Roles",
       "tasks":"Tasks"
-    }
+    },
+    "select":"Select..."
   },
   "list":{
     "addCategory": "Add Category",
@@ -257,6 +258,7 @@ const App:React.FC = () => {
 
   useEffect(()=> {
     if(!isLoggedIn && token !=="") {
+      setIsChanges(false);
       updateEmployee(loggedInEmployee)
         .then(()=> {
           setToken("");
@@ -268,7 +270,6 @@ const App:React.FC = () => {
 
   return (
     <>
-      {/* <IdleTimerComponent isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} text={textTranslations.idleTimer}/> */}
       <LanguageContext.Provider value={textTranslations}>
         <SetLanguageComponent
           setLanguage={setLanguage}

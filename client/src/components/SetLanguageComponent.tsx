@@ -23,6 +23,10 @@ export const SetLanguageComponent: React.FC<Props> = ({setLanguage, languages}) 
     }
 
     useEffect(()=>{
+        console.log("test");
+    }, []);
+
+    useEffect(()=>{
         const fetchLanguageFiles = (fileName:string):Promise<languageListType> => {
             return new Promise(resolve => {
                 fetch(`assets/translations/${fileName}.json`, {
@@ -32,6 +36,8 @@ export const SetLanguageComponent: React.FC<Props> = ({setLanguage, languages}) 
                     }
                 }).then(res=> {
                     return (res.json());
+                }).catch( err => {
+                    resolve({title:"N/A", language:"N/A"});
                 }).then(res =>{
                     resolve({
                         title:res.setLanguage.title,
@@ -42,7 +48,7 @@ export const SetLanguageComponent: React.FC<Props> = ({setLanguage, languages}) 
         }
         const fileReadResults = Promise.all(languages.map(fetchLanguageFiles));
         fileReadResults.then(res => {
-            setLanguageList([{title:"en", language:"English"}].concat(res));
+            setLanguageList([{title:"en", language:"English"}].concat(res.filter(l => l.title !== "N/A")));
         });
     }, [languages]);
     

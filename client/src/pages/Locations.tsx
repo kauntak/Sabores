@@ -3,7 +3,7 @@ import { CategoryListType, ILocation, IOrder, IOrderCategory, IOrderItem, IShopp
 import { NavBarComponent } from "../components/NavBarComponent";
 import { ButtonComponent } from "../components/ButtonComponent";
 import { getActiveOrderByLocation, getActiveShoppingListByLocation, getLocations, getOrderCategories, getOrderItems, getShoppingCategories, getShoppingItems, updateOrder, updateShoppingList } from "../api";
-import { ChangeContext, EmployeeContext, LanguageContext, SetChangeContext, WarningContext } from "../App";
+import { ChangeContext, EmployeeContext, LanguageContext, SetChangeContext } from "../App";
 import { EditItemListComponent } from "../components/EditItemListComponent";
 import { LoadingSpinner } from "../components/LoadinSpinnerComponent";
 import { OrderListComponent } from "../components/OrderListComponent";
@@ -17,18 +17,10 @@ type Props = {
 export const LocationsComponent:React.FC<Props> = ({accessList}) => {
     const [currentLocation, setCurrentLocation] = useState<NavListType>({displayName:"", moduleName:""});
     const [possibleLocation, setPossibleLocation] = useState<NavListType>({displayName:"", moduleName:""});
+    const [showWarning, setShowWarning] = useState<boolean>(false);
     const isChange = useContext(ChangeContext);
     const text = useContext(LanguageContext);
     const setIsChange = useContext(SetChangeContext);
-    const warning = useContext(WarningContext);
-
-    useEffect(()=> {
-        warning.reset();
-        warning.setMessage(text.warning.discardChanges);
-        warning.setOnClick(onConfirmClick);
-        warning.setCanCancel(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
     useEffect(()=> {
         setCurrentLocation(accessList[0]);
@@ -44,7 +36,7 @@ export const LocationsComponent:React.FC<Props> = ({accessList}) => {
         };
         if(isChange){
             setPossibleLocation(newPossibleLocation);
-            warning.setShow(true);
+            setShowWarning(true);
             return;
         }
         setCurrentLocation(newPossibleLocation);
@@ -57,6 +49,16 @@ export const LocationsComponent:React.FC<Props> = ({accessList}) => {
     
     return (
         <>
+            {
+                showWarning
+                ?<WarningOverlayComponent
+                    warning={text.warning.discardChanges}
+                    setShowWarning={setShowWarning}
+                    onClick={onConfirmClick}
+                    canCancel={true}
+                />
+                :""
+            }
             {accessList.length!==1?
                 <NavBarComponent 
                     list={accessList}
