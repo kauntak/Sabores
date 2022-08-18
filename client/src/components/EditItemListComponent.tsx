@@ -2,7 +2,7 @@ import React, { Dispatch, RefObject, SetStateAction, useContext, useEffect, useR
 import styles from "./../css/itemList.module.css";
 import { BiPlusCircle, BiMinusCircle } from "react-icons/bi";
 import { CategoryListType, ItemListType, ItemObjectType } from "../type";
-import { EmployeeContext } from "../App";
+import { EmployeeContext, SetChangeContext } from "../App";
 import { SearchBar } from "./SearchBarComponent";
 import { BsChevronDown } from "react-icons/bs";
 
@@ -223,7 +223,7 @@ type ItemProps = {
 
 const ItemComponent:React.FC<ItemProps> = ({activeItemId, setActiveItemId, item, refArray, categoryIndex, index, quantity, setCurrentItems}) => {
     const loggedInEmployee = useContext(EmployeeContext);
-
+    const setIsChange = useContext(SetChangeContext);
 
     const onClick = (e:React.MouseEvent<HTMLLIElement>) => {
         const id = e.currentTarget.dataset.id!;
@@ -241,6 +241,7 @@ const ItemComponent:React.FC<ItemProps> = ({activeItemId, setActiveItemId, item,
                 quantity: newValue === ""?undefined:parseInt(newValue),
                 employee: loggedInEmployee._id!
             }
+            setIsChange(true);
             return newItems;
         })
     }
@@ -254,6 +255,7 @@ const ItemComponent:React.FC<ItemProps> = ({activeItemId, setActiveItemId, item,
                 quantity: newQuantity >= 0 ? newQuantity : undefined,
                 employee: loggedInEmployee._id!
             };
+            setIsChange(true);
             return newItems;
         })
     }

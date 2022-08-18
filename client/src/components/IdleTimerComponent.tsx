@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useContext, useEffect, useRef, useState } from "react";
+import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import { LanguageContext } from "../App";
 import styles from "./../css/idleTimer.module.css";
 import { ButtonComponent } from "./ButtonComponent";

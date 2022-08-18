@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { BsCheckLg, BsXLg } from "react-icons/bs";
+import { LanguageContext } from "../App";
 import { Field, MultiField, SingleField } from "../type";
 import styles from "./../css/addAndEdit.module.css";
 import { ButtonComponent } from "./ButtonComponent";
@@ -56,6 +57,7 @@ export const deepCopyFields:(fieldsToCopy:Field[])=>Field[] = (fieldsToCopy) => 
 export const AddAndEditComponent:React.FC<Props> = ({title, propFields, isEdit, save, cancel}) => {
     const [fields, setFields] = useState<Field[]>([]);
     const refs = useRef<Array<HTMLSelectElement|HTMLInputElement>>([]);
+    const text = useContext(LanguageContext);
 
     useEffect(()=> {
         setFields(propFields);
@@ -242,7 +244,7 @@ export const AddAndEditComponent:React.FC<Props> = ({title, propFields, isEdit, 
                                                 ref={element => refs.current[index] = element!}
                                                 onKeyDown={(e)=>onItemKeyDown(e, index)}
                                             >
-                                                <option value="Select...">Select...</option>
+                                                <option value="Select...">{text.admin.select}</option>
                                                 {(field.field as MultiField).list.map((item, innerIndex) => (
                                                     <option value={item.name} data-id={item.id} key={innerIndex+(item?.id?item.id:"")}>{item.display}</option>
                                                 ))}

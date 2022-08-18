@@ -18,7 +18,6 @@ export async function createEmployee(req: Request, res: Response): Promise<void>
         const {body} = req;
         body.password = await hash(body.password, 10);
         const employee = new Employee(body);
-        console.log(employee);
         const newEmployee = await employee.save();
         const employees = await Employee.find();
         
@@ -27,7 +26,6 @@ export async function createEmployee(req: Request, res: Response): Promise<void>
             employees: filterEmployeesData(employees)
         });
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             error: returnError(error)
         });
@@ -87,7 +85,6 @@ export async function authenticateEmployee(req: Request, res:Response):Promise<v
     try{
         const employeeLoginData:IEmployeeLoginData = req.body;
         const employee: IEmployee|null = await Employee.findOne({_id:employeeLoginData.id}).exec();
-        console.log(employee);
         if(employee === null){
             res.status(401).json({
                 error: returnError("Employee not found.")

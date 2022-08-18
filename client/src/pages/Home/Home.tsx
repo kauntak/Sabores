@@ -12,7 +12,7 @@ import { NavBarComponent } from "../../components/NavBarComponent";
 import { ShoppingComponent } from "../Shopping";
 import { WarningOverlayComponent } from "../../components/WarningOverlayComponent";
 import { ButtonComponent } from "../../components/ButtonComponent";
-import { ChangeContext, defaultEmployee, EmployeeContext, LanguageContext } from "../../App";
+import { ChangeContext, defaultEmployee, EmployeeContext, LanguageContext, SetChangeContext } from "../../App";
 import { TimeSheet } from "./TimeSheet";
 import { Messages } from "../Messages";
 
@@ -48,6 +48,7 @@ export const HomeComponent:React.FC<Props> = ({isLoggedIn, setLoggedIn, setEmplo
     const [messageList, setMessageList] = useState<IMessage[]>([]);
     const [isMessagesSorted, setIsMessagesSorted] = useState<boolean>(false);
     const isChange = useContext(ChangeContext);
+    const setIsChange = useContext(SetChangeContext);
     
     useEffect(()=>{
         setNavBarList(oldNav => {
@@ -264,24 +265,23 @@ export const HomeComponent:React.FC<Props> = ({isLoggedIn, setLoggedIn, setEmplo
             setShowNavWarning(true);
             return;
         }
+        const possibleNav = {
+            displayName:e.currentTarget.dataset.display!,
+            moduleName:e.currentTarget.dataset.link!
+        };
         if(isChange){
             setWarningMessage(text.warning.discardChanges);
             setCanCancel(true);
             const onClick = ()=>{
-                setActiveListModule({
-                    displayName:e.currentTarget.dataset.display!,
-                    moduleName:e.currentTarget.dataset.link!
-                });
+                setIsChange(false);
+                setActiveListModule(possibleNav);
             }
             setOnWarningClick(()=>onClick);
             setShowNavWarning(true);
             return;
         }
 
-        setActiveListModule({
-            displayName:e.currentTarget.dataset.display!,
-            moduleName:e.currentTarget.dataset.link!
-        });
+        setActiveListModule(possibleNav);
     }
 
     return (

@@ -60,7 +60,8 @@
       "roles":{
         "roles":"Ocupación",
         "tasks":"Tarea"
-      }
+      },
+      "select":"Seleccione..."
   
     },
     "list":{
@@ -130,13 +131,22 @@
         "messageExplanation":"Los mensajes se eliminarán automáticamente después de 14 días a menos que estén bloqueados.",
         "noMessages":"¡Aún no tienes ningún mensaje!"
       },
+      "totalOrder":{
+        "currentTotal": "Presente",
+        "allLocations": "Todas las Localizaciones",
+        "completedButton": "Finalizar",
+        "markAsFinished": "¿Marcar el pedido como terminado?",
+        "invalidDate":"FECHA INVALIDA",
+        "noOrders":"¡Sin pedidos!"
+      },
       "timeSheet":{
         "comment":"Mensajes",
         "date":"Fecha",
         "timeIn":"Tiempo En",
         "timeOut":"Tiempo Afuera",
         "shiftTotal":"Turno total",
-        "noTimeSheets":"No hay registros para esta semana."
+        "noTimeSheets":"No hay registros para esta semana.",
+        "totalHours":"Horas totales"
       }
     
 }

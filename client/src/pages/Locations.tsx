@@ -3,7 +3,7 @@ import { CategoryListType, ILocation, IOrder, IOrderCategory, IOrderItem, IShopp
 import { NavBarComponent } from "../components/NavBarComponent";
 import { ButtonComponent } from "../components/ButtonComponent";
 import { getActiveOrderByLocation, getActiveShoppingListByLocation, getLocations, getOrderCategories, getOrderItems, getShoppingCategories, getShoppingItems, updateOrder, updateShoppingList } from "../api";
-import { ChangeContext, EmployeeContext, LanguageContext, SetChangeContext } from "../App";
+import { ChangeContext, EmployeeContext, LanguageContext, SetChangeContext, WarningContext } from "../App";
 import { EditItemListComponent } from "../components/EditItemListComponent";
 import { LoadingSpinner } from "../components/LoadinSpinnerComponent";
 import { OrderListComponent } from "../components/OrderListComponent";
@@ -17,9 +17,18 @@ type Props = {
 export const LocationsComponent:React.FC<Props> = ({accessList}) => {
     const [currentLocation, setCurrentLocation] = useState<NavListType>({displayName:"", moduleName:""});
     const [possibleLocation, setPossibleLocation] = useState<NavListType>({displayName:"", moduleName:""});
-    const [showWarning, setShowWarning] = useState<boolean>(false);
     const isChange = useContext(ChangeContext);
     const text = useContext(LanguageContext);
+    const setIsChange = useContext(SetChangeContext);
+    const warning = useContext(WarningContext);
+
+    useEffect(()=> {
+        warning.reset();
+        warning.setMessage(text.warning.discardChanges);
+        warning.setOnClick(onConfirmClick);
+        warning.setCanCancel(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     useEffect(()=> {
         setCurrentLocation(accessList[0]);
@@ -35,7 +44,7 @@ export const LocationsComponent:React.FC<Props> = ({accessList}) => {
         };
         if(isChange){
             setPossibleLocation(newPossibleLocation);
-            
+            warning.setShow(true);
             return;
         }
         setCurrentLocation(newPossibleLocation);
@@ -43,20 +52,11 @@ export const LocationsComponent:React.FC<Props> = ({accessList}) => {
 
     const onConfirmClick = ()=>{
         setCurrentLocation(possibleLocation);
+        setIsChange(false);
     }
     
     return (
         <>
-            {
-                showWarning
-                ?<WarningOverlayComponent
-                    warning={text.warning.discardChanges}
-                    setShowWarning={setShowWarning}
-                    onClick={onConfirmClick}
-                    canCancel={true}
-                />
-                :""
-            }
             {accessList.length!==1?
                 <NavBarComponent 
                     list={accessList}
@@ -86,10 +86,11 @@ const LocationComponent:React.FC<LocationComponentProp> = ({locationName, id }) 
     const [isMain, setIsMain] = useState<boolean>(false);
     const [locationList, setLocationList] = useState<ILocation[]>([]);
     const [isSaved, setIsSaved] = useState<boolean>(false);
-    const [isFirstRender, setIsFirstRender] = useState<boolean>(true);
+    const [wasChanged, setWasChanged] = useState<boolean>(false);
     const text = useContext(LanguageContext);
     const employee = useContext(EmployeeContext);
     const setIsChange = useContext(SetChangeContext);
+    const isChange = useContext(ChangeContext);
 
     useEffect(()=> {
         getLocations()
@@ -147,14 +148,14 @@ const LocationComponent:React.FC<LocationComponentProp> = ({locationName, id }) 
     }, [list]);
 
     useEffect(()=> {
-        if(isFirstRender){
-            setIsFirstRender(false);
-            return;
+        if(isChange){
+            setWasChanged(true);
+            setIsSaved(false);
         }
-        setIsChange(true);
-        setIsSaved(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [itemList]);
+        return ()=> {
+            setWasChanged(false);
+        }
+    }, [isChange])
 
     const setNewCategories = (categoryList:IOrderCategory[]|IShoppingCategory[], itemList:(IOrderItem|IShoppingItem)[]):void => {
         const newCategories:CategoryListType[] = categoryList
@@ -244,13 +245,18 @@ const LocationComponent:React.FC<LocationComponentProp> = ({locationName, id }) 
                     setCurrentList={setItemList}
                 />
                 {
-                    isFirstRender
-                    ?isSaved
-                        ?<ButtonComponent
+                    wasChanged
+                    ?<div>
+                        <ButtonComponent
                             onClick={onSaveButtonClick}
                             name={text.location.save}
                         />
-                        :<h3>{text.location.saved}</h3>
+                        {
+                            isSaved
+                            ?<h3>{text.location.saved}</h3>
+                            :""
+                        }
+                    </div>
                     :""
                 }
             </>

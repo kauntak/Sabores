@@ -7,10 +7,11 @@ type Props = {
     warning:string,
     setShowWarning: Dispatch<SetStateAction<boolean>>
     onClick?:(e:React.MouseEvent<HTMLButtonElement>)=>void,
+    ExtraComponent?:React.FC<any>,
     canCancel?: boolean
 }
 
-export const WarningOverlayComponent:React.FC<Props> = ({warning, setShowWarning, onClick, canCancel})=> {
+export const WarningOverlayComponent:React.FC<Props> = ({warning, setShowWarning, ExtraComponent, onClick, canCancel})=> {
     const text = useContext(LanguageContext);
 
     const onButtonClick = (e:React.MouseEvent<HTMLButtonElement>) => {
@@ -28,13 +29,20 @@ export const WarningOverlayComponent:React.FC<Props> = ({warning, setShowWarning
     return (
         <div className={styles["overlay"]}>
             <div className={styles["warningBox"]}>
-                <h2>{warning}</h2>
-                <div className={styles["buttonsDiv"]}>
-                    {canCancel?
-                        <ButtonComponent onClick={onCancelClick} name={text.warning.cancel} isNegativeColor={true}/>
-                        :""}
-                    <ButtonComponent onClick={onButtonClick} name={text.warning.ok} isNegativeColor={canCancel?false:true}/>
-                </div>
+                <>
+                    <h2>{warning}</h2>
+                    {
+                        ExtraComponent!==undefined
+                        ?<ExtraComponent />
+                        :""
+                    }
+                    <div className={styles["buttonsDiv"]}>
+                        {canCancel?
+                            <ButtonComponent onClick={onCancelClick} name={text.warning.cancel} isNegativeColor={true}/>
+                            :""}
+                        <ButtonComponent onClick={onButtonClick} name={text.warning.ok} isNegativeColor={canCancel?false:true}/>
+                    </div>
+                </>
             </div>
         </div>
     );
