@@ -1,4 +1,4 @@
-import React, { RefObject } from "react";
+import React  from "react";
 import styles from "./../css/exit.module.css";
 
 type Props = {
