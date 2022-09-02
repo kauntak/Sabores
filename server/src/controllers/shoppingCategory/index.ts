@@ -1,7 +1,7 @@
 import { Response, Request } from "express";
 
-import { ShoppingCategory, IShoppingCategory, IShoppingCategoryDoc } from "../../models/shoppingCategory";
-import { IError, returnError } from "../../models/error";
+import { ShoppingCategory, IShoppingCategory } from "../../models/shoppingCategory";
+import { returnError } from "../../models/error";
 
 export async function createShoppingCategory(req: Request, res: Response): Promise<void>{
     try {
