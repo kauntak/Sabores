@@ -23,10 +23,6 @@ export const SetLanguageComponent: React.FC<Props> = ({setLanguage, languages}) 
     }
 
     useEffect(()=>{
-        console.log("test");
-    }, []);
-
-    useEffect(()=>{
         const fetchLanguageFiles = (fileName:string):Promise<languageListType> => {
             return new Promise(resolve => {
                 fetch(`assets/translations/${fileName}.json`, {
