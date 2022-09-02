@@ -110,7 +110,6 @@ const LocationComponent:React.FC<LocationComponentProp> = ({locationName, id }) 
         if(location.isMain){
             getActiveOrderByLocation(id)
                 .then(res => {
-                    console.log(res, id);
                     setList(res.order!);
                 });
             getOrderCategories()
@@ -216,7 +215,6 @@ const LocationComponent:React.FC<LocationComponentProp> = ({locationName, id }) 
         if(isMain) {
             const updatedOrder:IOrder = {...(list as IOrder)};
             updatedOrder.items = newItems;
-            console.log(updatedOrder);
             updateOrder(updatedOrder)
                 .then(res => {
                     setIsSaved(true)
@@ -226,7 +224,6 @@ const LocationComponent:React.FC<LocationComponentProp> = ({locationName, id }) 
         } else {
             const updatedShoppingList:IShoppingList = {...(list as IShoppingList)};
             updatedShoppingList.items = newItems;
-            console.log(updatedShoppingList);
             updateShoppingList(updatedShoppingList)
                 .then(res => {
                     setIsSaved(true)
