@@ -4,22 +4,23 @@
   "description": "Sabores App",
   "main": "index.js",
   "dependencies": {
-    "@types/mongoose": "^5.11.97",
-    "react": "^17.0.2"
+    "react": "^17.0.2",
+    "nodemon": "^2.0.19"
   },
   "devDependencies": {
+    "@types/mongoose": "^5.11.97",
     "concurrently": "^7.0.0",
     "nodemon": "^2.0.19"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "cd server/dist/js && node app.js",
+    "start": "cd server/src && nodemon app.js",
     "client": "cd client && npm start --host 0.0.0.0",
     "buildClient" : "cd client && npm install && npm run build",
     "server": "cd server && npm start",
     "buildServer": "cd server && npm install --save-dev typescript && tsc build",
     "dev": "concurrently -n 'server,client' -c 'blue,green' \"npm run server\" \"npm run client\"",
-    "heroku-postbuild" : "\"npm run buildClient\" && \"npm run buildServer\""
+    "heroku-postbuild" : "cd client && npm install && npm run build"
   },
   "repository": {
     "type": "git",
