@@ -1,7 +1,7 @@
 import { Response, Request } from "express";
 
-import { Message, IMessage, IMessageDoc } from "../../models/message";
-import { IError, returnError } from "../../models/error";
+import { Message, IMessage } from "../../models/message";
+import { returnError } from "../../models/error";
 
 export async function createMessage(req: Request, res: Response): Promise<void>{
     try {

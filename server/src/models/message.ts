@@ -1,4 +1,4 @@
-import { Schema, model, Types, Document } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 
 const ObjectId = Schema.Types.ObjectId;
 
@@ -13,7 +13,6 @@ export interface IMessage {
     expireAt?:Date
 }
 
-export interface IMessageDoc extends Document, IMessage {};
 
 const messageSchema = new Schema<IMessage>({
     to: {

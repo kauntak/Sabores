@@ -1,4 +1,4 @@
-import { Schema, model, Types, Document } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 
 const ObjectId = Schema.Types.ObjectId;
 
@@ -9,7 +9,6 @@ export interface IOrderItem {
     supplier?: Types.ObjectId
 }
 
-export interface IOrderItemDoc extends Document, IOrderItem {};
 
 const orderItemSchema = new Schema<IOrderItem>({
     name: {

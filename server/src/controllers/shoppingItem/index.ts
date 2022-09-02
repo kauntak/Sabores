@@ -1,7 +1,7 @@
 import { Response, Request } from "express";
 
-import { ShoppingItem, IShoppingItem, IShoppingItemDoc } from "../../models/shoppingItem";
-import { IError, returnError } from "../../models/error";
+import { ShoppingItem, IShoppingItem } from "../../models/shoppingItem";
+import { returnError } from "../../models/error";
 
 export async function createShoppingItem(req: Request, res: Response): Promise<void>{
     try {

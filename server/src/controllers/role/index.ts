@@ -1,7 +1,7 @@
 import { Response, Request } from "express";
 
-import { Role, IRole, IRoleDoc } from "../../models/role";
-import { IError, returnError } from "../../models/error";
+import { Role, IRole } from "../../models/role";
+import { returnError } from "../../models/error";
 
 export async function createRole(req: Request, res: Response): Promise<void>{
     try {

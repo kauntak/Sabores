@@ -1,7 +1,7 @@
 import { Response, Request } from "express";
 
-import { OrderItem, IOrderItem, IOrderItemDoc } from "../../models/orderItem";
-import { IError, returnError } from "../../models/error";
+import { OrderItem, IOrderItem } from "../../models/orderItem";
+import { returnError } from "../../models/error";
 
 export async function createOrderItem(req: Request, res: Response): Promise<void>{
     try {

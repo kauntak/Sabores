@@ -1,7 +1,7 @@
 import { Response, Request } from "express";
 
-import { OrderCategory, IOrderCategory, IOrderCategoryDoc } from "../../models/orderCategory";
-import { IError, returnError } from "../../models/error";
+import { OrderCategory, IOrderCategory } from "../../models/orderCategory";
+import { returnError } from "../../models/error";
 
 export async function createOrderCategory(req: Request, res: Response): Promise<void>{
     try {

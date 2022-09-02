@@ -1,4 +1,4 @@
-import { Schema, model, Types, Document } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 
 const ObjectId = Schema.Types.ObjectId;
 
@@ -18,7 +18,6 @@ export interface IShoppingList {
     completedBatchId: string
 }
 
-export interface IShoppingListDoc extends Document, IShoppingList {};
 
 const shoppingListSchema = new Schema<IShoppingList>({
     createdAt: {

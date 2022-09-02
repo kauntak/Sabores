@@ -1,4 +1,4 @@
-import { Schema, model, Types, Document } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 
 const ObjectId = Schema.Types.ObjectId;
 
@@ -22,7 +22,6 @@ export interface IOrder {
     expire_at?: Date
 }
 
-export interface IOrderDoc extends Document, IOrder {};
 
 const orderSchema = new Schema<IOrder>({
     location: {

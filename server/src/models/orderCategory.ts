@@ -1,11 +1,10 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model } from "mongoose";
 
 export interface IOrderCategory {
     name: string,
     description? : string
 }
 
-export interface IOrderCategoryDoc extends Document, IOrderCategory {};
 
 const orderCategorySchema = new Schema<IOrderCategory>({
     name: {

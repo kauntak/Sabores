@@ -1,7 +1,7 @@
 import { Response, Request } from "express";
 
-import { Module, IModule, IModuleDoc } from "../../models/module";
-import { IError, returnError } from "../../models/error";
+import { Module, IModule } from "../../models/module";
+import { returnError } from "../../models/error";
 
 export async function createModule(req: Request, res: Response): Promise<void>{
     try {

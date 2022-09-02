@@ -1,4 +1,4 @@
-import { Schema, model, Types, Document } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 
 const ObjectId = Schema.Types.ObjectId;
 
@@ -26,7 +26,6 @@ export interface IEmployeeLoginData {
 }
 
 
-export interface IEmployeeDoc extends Document, Omit<IEmployee, "_id"> {};
 
 
 

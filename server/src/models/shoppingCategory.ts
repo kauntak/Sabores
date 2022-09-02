@@ -5,7 +5,6 @@ export interface IShoppingCategory {
     description?: string
 }
 
-export interface IShoppingCategoryDoc extends Document, IShoppingCategory {};
 
 const shoppingCategorySchema = new Schema<IShoppingCategory>({
     name: {

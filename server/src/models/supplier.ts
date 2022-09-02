@@ -1,4 +1,4 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model } from "mongoose";
 
 export interface ISupplier {
     _id?: string,
@@ -6,7 +6,6 @@ export interface ISupplier {
     description? : string
 }
 
-export interface ISupplierDoc extends Document, Omit<ISupplier, "_id"> {};
 
 const supplierSchema = new Schema<ISupplier>({
     name: {

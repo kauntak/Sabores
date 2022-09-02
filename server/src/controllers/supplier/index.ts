@@ -1,7 +1,7 @@
 import { Response, Request } from "express";
 
-import { Supplier, ISupplier, ISupplierDoc } from "../../models/supplier";
-import { IError, returnError } from "../../models/error";
+import { Supplier, ISupplier } from "../../models/supplier";
+import { returnError } from "../../models/error";
 
 export async function createSupplier(req: Request, res: Response): Promise<void>{
     try {

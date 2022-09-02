@@ -1,4 +1,4 @@
-import { Schema, model, Types, Document } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 
 const ObjectId = Schema.Types.ObjectId;
 
@@ -8,7 +8,6 @@ export interface IReminder {
     role: Types.ObjectId
 }
 
-export interface IReminderDoc extends Document, Omit<IReminder, "_id"> {};
 
 const reminderSchema = new Schema<IReminder>({
     description: {

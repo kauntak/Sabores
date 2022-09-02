@@ -9,7 +9,6 @@ export interface IRole {
     type: accessRoleType
 }
 
-export interface IRoleDoc extends Document, IRole {};
 
 const roleSchema = new Schema<IRole>({
     name:{

@@ -5,7 +5,6 @@ export interface IModule {
     displayName:string
 }
 
-export interface IModuleDoc extends Document, IModule {};
 
 const moduleSchema = new Schema<IModule>({
     moduleName: {

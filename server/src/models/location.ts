@@ -1,4 +1,4 @@
-import { Schema, model, Types, Document } from "mongoose";
+import { Schema, model } from "mongoose";
 
 const ObjectId = Schema.Types.ObjectId;
 
@@ -7,7 +7,6 @@ export interface ILocation {
     isMain?: boolean
 }
 
-export interface ILocationDoc extends Document, ILocation {};
 
 const locationSchema = new Schema<ILocation>({
     name: {

@@ -1,4 +1,4 @@
-import { Schema, model, Types, Document } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 
 const ObjectId = Schema.Types.ObjectId;
 
@@ -15,7 +15,6 @@ export interface IEmployeeLog {
     expire_at?: Date
 }
 
-export interface IEmployeeLogDoc extends Document, Omit<IEmployeeLog, "_id"> {};
 
 const employeeLogSchema = new Schema<IEmployeeLog>({
     employee: {

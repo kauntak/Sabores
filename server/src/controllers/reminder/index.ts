@@ -1,7 +1,7 @@
 import { Response, Request } from "express";
 
-import { Reminder, IReminder, IReminderDoc } from "../../models/reminder";
-import { IError, returnError } from "../../models/error";
+import { Reminder, IReminder } from "../../models/reminder";
+import { returnError } from "../../models/error";
 import mongoose from "mongoose";
 
 export async function createReminder(req: Request, res: Response): Promise<void>{

@@ -1,11 +1,10 @@
 import { Response, Request } from "express";
-import mongoose from "mongoose";
 
-import { EmployeeLog, IEmployeeLog, IEmployeeLogDoc } from "../../models/employeeLog";
-import { Employee, IEmployee, IEmployeeDoc } from "../../models/employee";
-import { Reminder, IReminder, IReminderDoc } from "../../models/reminder";
+import { EmployeeLog, IEmployeeLog } from "../../models/employeeLog";
+import { Employee, IEmployee } from "../../models/employee";
+import { Reminder, IReminder } from "../../models/reminder";
 
-import { IError, returnError } from "../../models/error";
+import { returnError } from "../../models/error";
 
 export async function createEmployeeLog(req: Request, res: Response): Promise<void>{
     try {
@@ -29,7 +28,7 @@ export async function createEmployeeLog(req: Request, res: Response): Promise<vo
 export async function updateEmployeeLog(req: Request, res: Response): Promise<void>{
     try {
         const {params: {id}, body} = req;
-        const log: IEmployeeLogDoc|null = await EmployeeLog.findByIdAndUpdate({'_id':id}, body , {new: true, runValidators:true});
+        const log: (IEmployeeLog & {_id:string})|null = await EmployeeLog.findByIdAndUpdate({'_id':id}, body , {new: true, runValidators:true});
         const logs: IEmployeeLog[] = await EmployeeLog.find();
         res.status(200).json({
             log,

@@ -1,4 +1,4 @@
-import { Schema, model, Types, Document } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 
 const ObjectId = Schema.Types.ObjectId;
 
@@ -9,7 +9,6 @@ export interface IShoppingItem {
     orderItem?: Types.ObjectId
 }
 
-export interface IShoppingItemDoc extends Document, IShoppingItem {};
 
 const shoppingItemSchema = new Schema<IShoppingItem>({
     category: {

@@ -1,7 +1,7 @@
 import { Response, Request } from "express";
 
-import { Location, ILocation, ILocationDoc } from "../../models/location";
-import { IError, returnError } from "../../models/error";
+import { Location, ILocation } from "../../models/location";
+import { returnError } from "../../models/error";
 
 export async function createLocation(req: Request, res: Response): Promise<void>{
     try {
