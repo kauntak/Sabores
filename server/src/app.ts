@@ -1,6 +1,6 @@
 import express, {NextFunction, Request, Response} from 'express';
 import { verify } from 'jsonwebtoken';
-import mongoose, { ConnectOptions } from 'mongoose';
+import mongoose from 'mongoose';
 import path from 'path';
 import { returnError } from './models/error';
 import routes from './routes/routes';
@@ -9,8 +9,6 @@ import routes from './routes/routes';
 require('dotenv').config({ path: __dirname + '/.env'});
 const logger = require('morgan');
 const cors = require('cors');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
 
 const JWT_KEY = process.env.JWT_KEY || "super secret password";
 
@@ -24,6 +22,14 @@ mongoose.connect(MONGO_URI, (error):void => {
     if(error) console.log(error);
     else console.log("Mongo DB Connection successful.");
 });
+
+if(process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging") {
+    app.use(express.static("./../../client/build"));
+    app.get('*', (req:Request, res:Response) => {
+        res.sendFile(path.join(__dirname + './../../client/build/index.html'));
+    })
+}
+
 
 app.use(logger('tiny'));
 app.use(cors());
