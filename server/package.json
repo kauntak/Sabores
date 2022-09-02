@@ -15,7 +15,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/app.ts"
+    "start": "nodemon src/app.ts",
+    "tsc": "tsc"
   },
   "repository": {
     "type": "git",
