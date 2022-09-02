@@ -1,1 +1,1 @@
-web: cd server/src && nodemon app.ts
+web: cd server/dist && node app.ts
