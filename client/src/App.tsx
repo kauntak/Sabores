@@ -32,7 +32,7 @@ export function getToken():Promise<string>|string{
   } else return currentToken;
 }
 
-const languages = ["es", "ja"];
+const languages = ["es"];
 
 const defaultText = {
   "setLanguage":{
