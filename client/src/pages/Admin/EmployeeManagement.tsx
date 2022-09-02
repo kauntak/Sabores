@@ -129,6 +129,7 @@ export const EmployeeManagement: React.FC<Props> = ({isAdmin, currentEmployee}) 
                 field:{value:""}
             }
         ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [locationList, roleList])
     
     useEffect(()=> {
