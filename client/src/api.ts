@@ -1,11 +1,10 @@
 import axios, {AxiosResponse} from "axios";
-import Module from "module";
-import { IError, returnError } from "./error";
-import { EmployeeApiDataType, EmployeeLogApiDataType, IEmployee, IEmployeeLog, ILocation, IMessage, IOrder, IOrderCategory, IOrderItem, IRole, IShoppingCategory, IShoppingItem, IShoppingList, LocationApiDataType, MessageApiDataType, OrderApiDataType, OrderCategoryApiDataType, OrderItemApiDataType, RoleApiDataType, ShoppingCategoryApiDataType, ShoppingItemApiDataType, ShoppingListApiDataType, IReminder, ReminderApiDataType, LoginApiDataType, ModuleApiDataType, IModule, ISupplier, SupplierApiDataType, IAxiosMessage, AxiosOrderApiDataType, AxiosMessageApiType, AxiosShoppingListApiDataType, AxiosEmployeeLogApiDataType } from "./type";
+import { IError } from "./error";
+import { EmployeeApiDataType, EmployeeLogApiDataType, IEmployee, IEmployeeLog, ILocation, IMessage, IOrder, IOrderCategory, IOrderItem, IRole, IShoppingCategory, IShoppingItem, IShoppingList, LocationApiDataType, MessageApiDataType, OrderApiDataType, OrderCategoryApiDataType, OrderItemApiDataType, RoleApiDataType, ShoppingCategoryApiDataType, ShoppingItemApiDataType, ShoppingListApiDataType, IReminder, ReminderApiDataType, LoginApiDataType, ModuleApiDataType, IModule, ISupplier, SupplierApiDataType, AxiosOrderApiDataType, AxiosMessageApiType, AxiosShoppingListApiDataType, AxiosEmployeeLogApiDataType } from "./type";
 import { getToken } from "./App";
 
 
-const url: string = "http://192.168.0.11:8080/api";
+const url: string = process.env.NODE_ENV === "production" ? "https://sabores-app.herokuapp.com/api" : "https://localhost:8080/api";
 
 async function getHeaders() {
     const token = await getToken();
