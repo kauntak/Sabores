@@ -44,7 +44,7 @@ const timeFormat:Intl.DateTimeFormatOptions = {
     minute:"2-digit"
 };
 
-export const TimeSheet: React.FC<Props> = ({}) => {
+export const TimeSheet: React.FC<Props> = () => {
     const [logs, setLogs] = useState<IEmployeeLog[]>([]);
     const [employeeList, setEmployeeList] = useState<IEmployee[]>([]);
     const [reminderList, setReminderList] = useState<IReminder[]>([]);
@@ -108,6 +108,7 @@ export const TimeSheet: React.FC<Props> = ({}) => {
             return displayItem;
         });
         setDisplayList(newDisplayList);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [employeeIndex, weekIndex]);
 
     useEffect(()=>{
@@ -144,7 +145,6 @@ export const TimeSheet: React.FC<Props> = ({}) => {
             index = employeeList.length - 1;
         }
         const returnEmployee = employeeList[index];
-        console.log(index, employeeList);
         return returnEmployee?.firstName || "---";
     }
 
