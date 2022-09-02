@@ -6,7 +6,6 @@ import { returnError } from "../../models/error";
 export async function createModule(req: Request, res: Response): Promise<void>{
     try {
         const {body} = req;
-        console.log(body);
         const module = new Module(body);
         const newModule = await module.save();
         const modules = await Module.find();
