@@ -1,5 +1,4 @@
 import React, { RefObject } from "react"
-import { IconType } from "react-icons";
 import styles from "./../css/button.module.css";
 
 type Props = {
