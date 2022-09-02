@@ -4,7 +4,6 @@
   "description": "Server for Sabores App",
   "main": "app.ts",
   "dependencies": {
-    "bcrpyt": "^2.0.0",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
