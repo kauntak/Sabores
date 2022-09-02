@@ -95,7 +95,6 @@ export const LocationManagement: React.FC<Props> = () => {
         const locationToEdit = locationList.find(location => location._id === activeLocationId);
         if(locationToEdit === undefined) return;
         const editFields:Field[] = deepCopyFields(defaultLocationFields) as Field[];
-        console.log(locationList);
         (editFields[0].field as SingleField).value = locationToEdit.name;
         (editFields[1].field as MultiField).selected = locationToEdit.isMain?booleanList[0]:undefined;
 
@@ -129,7 +128,6 @@ export const LocationManagement: React.FC<Props> = () => {
     }
 
     const saveButton = (fields:Field[]):void => {
-        console.log(fields);
         const newLocation:ILocation = {
             name: (fields[0].field as SingleField).value as string,
             isMain: (fields[1].field as MultiField).selected?.id==="yes"
