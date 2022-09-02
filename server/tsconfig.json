@@ -5,6 +5,8 @@
       "outDir": "dist/",
       "rootDir": "src",
       "strict": true,
+      "skipLibCheck": true,
+      "skipDefaultLibCheck": true,
       "esModuleInterop": true,
       "strictFunctionTypes": false,
       "forceConsistentCasingInFileNames": true

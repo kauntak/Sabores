@@ -15,6 +15,7 @@
       "strict": true,
       "strictFunctionTypes": false,
       "forceConsistentCasingInFileNames": true,
+      "skipDefaultLibCheck": true,
       "noFallthroughCasesInSwitch": true,
       "moduleResolution": "node",
       "resolveJsonModule": true,
