@@ -4,7 +4,7 @@ import { EmployeeApiDataType, EmployeeLogApiDataType, IEmployee, IEmployeeLog, I
 import { getToken } from "./App";
 
 
-const url: string = process.env.NODE_ENV === "production" ? "https://sabores-app.herokuapp.com/api" : "https://localhost:8080/api";
+const url: string = process.env.NODE_ENV === "production" ? "/api" : "https://localhost:8080/api";
 
 async function getHeaders() {
     const token = await getToken();
