@@ -23,6 +23,6 @@
       "jsx": "react-jsx"
     },
     "include": ["server/src"],
-    "exclude": ["sever/src/types/*.ts", "node_modules/*", ".vscode", "type.d.ts"]
+    "exclude": ["sever/src/types/*.ts", "node_modules", "server/node_modules", ".vscode", "type.d.ts"]
   }
   
